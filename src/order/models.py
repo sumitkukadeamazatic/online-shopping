@@ -10,7 +10,7 @@ class Cart(models.Model):
 
     class Meta:
         db_table = 'cart'
-        managed  = False
+        #managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='cart_index')
         ]
@@ -23,7 +23,6 @@ class Payment_method(models.Model):
 
     class Meta:
         db_table = 'payment_method'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='payment_method_index')
         ]
@@ -51,12 +50,11 @@ class Order(models.Model):
 
     class Meta:
         db_table = 'order'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at','shipping_pincode','billing_pincode','shipping_city','shipping_state','billing_city','billing_state'], name='order_index')
         ]
 
-class Cart_product(models.Model):
+class CartProduct(models.Model):
     cart_id             = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     #product_id         = models.ForeignKey(Product,on_delete=models.CASCADE,related_name=None)
     #seller_id          = models.ForeignKey(Seller,on_delete=models.CASCADE,related_name=None)
@@ -67,7 +65,6 @@ class Cart_product(models.Model):
 
     class Meta:
         db_table = 'cart_product'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='cart_product_index')
         ]
@@ -88,7 +85,6 @@ class Lineitem(models.Model):
 
     class Meta:
         db_table = 'lineitem'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at','status'], name='lineitem_index')
         ]
@@ -103,7 +99,6 @@ class Order_log(models.Model):
 
     class Meta:
         db_table = 'order_log'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='order_log_index')
         ]
@@ -118,7 +113,6 @@ class Shiping_details(models.Model):
 
     class Meta:
         db_table = 'shiping_details'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at','tracking_number','deliverd_date','courior_name'], name='shiping_details_index')
         ]
@@ -133,7 +127,6 @@ class Line_shiping_details(models.Model):
 
     class Meta:
         db_table = 'line_shiping_details'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='line_shiping_details_index')
         ]
@@ -148,7 +141,6 @@ class Lineitem_tax(models.Model):
 
     class Meta:
         db_table = 'lineitem_tax'
-        managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at','tax_name'], name='lineitem_tax_index')
         ]

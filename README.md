@@ -1,3 +1,2 @@
 # online-shopping
 practice project
-

@@ -27,11 +27,11 @@ class ReturnLineitem(models.Model):
 
     class Meta:
         db_table = 'return_lineitem'
-        indexes = [models.Index(fields=['status','raeson','created_at','updated_at'],name='return_lineitem_index'),]
+        indexes = [models.Index(fields=['status','reason','created_at','updated_at'],name='return_lineitem_index'),]
 
 
 class ReturnOrderLog(models.Model):
-    return_lineitem_id = models.ForeignKey(ReturnLineitem)
+#    return_lineitem_id = models.ForeignKey(ReturnLineitem)
     status = models.CharField(max_length=20)
     description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,7 +43,7 @@ class ReturnOrderLog(models.Model):
 
 class ReturnLineitemShippingDetail(models.Model):
 #    shipping_detail_id = models.ForeignKey(ShippingDetail)
-    return_lineitem_id = models.ForeignKey(Lineitem)
+#    return_lineitem_id = models.ForeignKey(Lineitem)
     quantity = models.IntegerField()
     description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -51,5 +51,5 @@ class ReturnLineitemShippingDetail(models.Model):
 
     class Meta:
         db_table = 'return_lineitem_shipping_detail'
-        indexes = [models.Index(fields=['created_at','updated_at'],name='return_lineitem_shipping_detail_index'),]
+        indexes = [models.Index(fields=['created_at','updated_at'],name='return_lineitem_shipp_dtl_idx'),]
 

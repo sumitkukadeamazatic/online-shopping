@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'return',
 ]
 
 MIDDLEWARE = [
@@ -82,8 +83,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'online_shopping',
-        'USER': 'ameya',
-        'PASSWORD': 'ameya',
+        'USER': 'supriya',
+        'PASSWORD': 'amazatic9',
         'HOST': 'localhost',
         'PORT': '5432',
     }

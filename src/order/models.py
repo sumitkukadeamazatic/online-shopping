@@ -7,8 +7,8 @@ from product import models as product_model
 class Cart(models.Model):
     user_id             = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
     is_cart_processed   = models.BooleanField()
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'cart'
@@ -45,8 +45,8 @@ class Order(models.Model):
     billing_pincode         = models.CharField(max_length=10)
     totoal_shipping_cost    = models.DecimalField( max_digits=19, decimal_places=2)    
     status                  = models.CharField(max_length=20)
-    created_at              = models.DateTimeField()
-    updated_at              = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'order'
@@ -60,8 +60,8 @@ class CartProduct(models.Model):
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
     is_order_generated  = models.BooleanField()
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'cart_product'
@@ -80,8 +80,8 @@ class Lineitem(models.Model):
     shiping_cost        = models.DecimalField( max_digits=19, decimal_places=2,blank=True, null=True)
     selling_price       = models.DecimalField( max_digits=19, decimal_places=2)
     gift_wrap_charges   = models.DecimalField( max_digits=19, decimal_places=2,blank=True, null=True)
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'lineitem'
@@ -94,8 +94,8 @@ class OrderLog(models.Model):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     status              = models.CharField(max_length=20)
     description         = models.TextField(blank=True, null=True)
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'order_log'
@@ -108,8 +108,8 @@ class ShippingDetails(models.Model):
     tracking_number     = models.CharField(max_length=50)
     deliverd_date       = models.DateField(blank=True, null=True)
     tracking_url         = models.TextField(blank=True, null=True)
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'shipping_details'
@@ -122,8 +122,8 @@ class LineShippingDetails(models.Model):
     shiping_details_id  = models.ForeignKey(ShippingDetails,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
     description         = models.TextField(blank=True, null=True)
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'line_shiping_details'
@@ -136,8 +136,8 @@ class LineitemTax(models.Model):
     tax_name            = models.CharField(max_length=20)
     discount            = models.DecimalField( max_digits=4, decimal_places=2)
     tax_amount         = models.DecimalField( max_digits=19, decimal_places=2)
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'lineitem_tax'

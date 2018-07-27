@@ -61,8 +61,10 @@ class CategoryTax(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=50)
     slug = models.CharField(max_length=50)
+    images = ArrayField(models.TextField())
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
 
     class Meta:
         indexes = [
@@ -112,8 +114,8 @@ class ProductFeature(models.Model):
 class ProductSeller(models.Model):
     seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
-    quentity = models.IntegerField()
-    discount = models.DecimalField(max_digits=5, decimal_places=2)
+    quentity = models.IntegerField(null = True)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, null = True)
     min_delivery_days = models.PositiveSmallIntegerField()
     max_delivery_days = models.PositiveSmallIntegerField()
     available_pin_codes = ArrayField(models.CharField(max_length=10))

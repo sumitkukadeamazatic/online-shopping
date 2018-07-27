@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-
+from user import models as user_model
+from seller import models as seller_model
+from product import models as product_model
 
 class Cart(models.Model):
-    #user_id             = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
+    user_id             = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
     is_cart_processed   = models.BooleanField()
     created_at          = models.DateTimeField()
     updated_at          = models.DateTimeField()
@@ -19,7 +21,6 @@ class PaymentMethod(models.Model):
     slug                = models.CharField(max_length=50)
     created_at          = models.DateTimeField()
     updated_at          = models.DateTimeField()
-
     class Meta:
         db_table = 'payment_method'
         indexes = [
@@ -30,7 +31,7 @@ class PaymentMethod(models.Model):
 class Order(models.Model):
     payment_method_id       = models.ForeignKey(PaymentMethod,on_delete=models.CASCADE,related_name=None)
     cart_id                 = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
-    #address_id              = models.ForeignKey(Address,on_delete=models.CASCADE,related_name=None)
+    address_id              = models.ForeignKey(seller_model.Address,on_delete=models.CASCADE,related_name=None)
     payment_info            = JSONField()
     shipping_name           = models.TextField()
     shipping_address_line   = models.TextField()
@@ -55,8 +56,8 @@ class Order(models.Model):
 
 class CartProduct(models.Model):
     cart_id             = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
-    #product_id         = models.ForeignKey(Product,on_delete=models.CASCADE,related_name=None)
-    #seller_id          = models.ForeignKey(Seller,on_delete=models.CASCADE,related_name=None)
+    product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
+    seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
     is_order_generated  = models.BooleanField()
     created_at          = models.DateTimeField()
@@ -70,8 +71,8 @@ class CartProduct(models.Model):
 
 class Lineitem(models.Model):
     order_id            = models.ForeignKey(Order,on_delete=models.CASCADE,related_name=None)
-    #product_id         = models.ForeignKey(Product,on_delete=models.CASCADE,related_name=None)
-    #seller_id          = models.ForeignKey(Seller,on_delete=models.CASCADE,related_name=None)
+    product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
+    seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
     status              = models.CharField(max_length=20)
     quantity            = models.IntegerField()
     base_price          = models.DecimalField( max_digits=19, decimal_places=2)

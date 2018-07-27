@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'order',
     'return',
+    'user',
+    'seller',
+    'product',
 ]
 
 MIDDLEWARE = [
@@ -87,7 +90,7 @@ DATABASES = {
         'USER': 'supriya',
         'PASSWORD': 'amazatic9',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '',
     }
 }
 

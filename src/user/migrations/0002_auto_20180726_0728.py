@@ -20,9 +20,4 @@ class Migration(migrations.Migration):
             name='updated_at',
             field=models.DateTimeField(auto_now=True),
         ),
-        migrations.AlterField(
-            model_name='wishlist',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True),
-        ),
     ]

@@ -35,14 +35,3 @@ class User(models.Model):
         ]
 
 
-class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    class Meta():
-        db_table = 'wishlist'
-        indexes = [
-            models.Index(fields=['created_at', 'updated_at'], name = 'wishlist_index')
-        ]
-

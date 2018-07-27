@@ -144,3 +144,4 @@ class LineitemTax(models.Model):
         indexes = [
             models.Index(fields=['created_at', 'updated_at','tax_name'], name='lineitem_tax_index')
         ]
+

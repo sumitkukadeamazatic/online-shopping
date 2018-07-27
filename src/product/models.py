@@ -2,6 +2,7 @@ from django.db import models
 from user.models import User
 from seller.models import Seller
 from django.contrib.postgres.fields import ArrayField
+from seller.models import Product
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -11,10 +12,10 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'catgory'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='category_index'),
                   ]
-        db_table = 'catgory'
 
 class Feature(models.Model):
     category_id = models.ForeignKey(Category,on_delete=models.CASCADE)
@@ -24,10 +25,10 @@ class Feature(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'feature' 
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='feature_index'),
                   ]
-        db_table = 'feature' 
 
 class Tax(models.Model):
     name = models.CharField(max_length=20)
@@ -38,10 +39,10 @@ class Tax(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'tax'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='tax_index'),
                   ]
-        db_table = 'tax'
 
 class CategoryTax(models.Model):
     tax_id = models.ForeignKey(Tax,on_delete=models.CASCADE)
@@ -51,10 +52,10 @@ class CategoryTax(models.Model):
     percentage = models.DecimalField(max_digits=4, decimal_places=2)
 
     class Meta:
+        db_table = 'category_tax'
         indexes = [
                     models.Index(fields=['created_at','updated_at'], name='category_tax_index'),
                   ]
-        db_table = 'category_tax'
 
 
 
@@ -65,10 +66,10 @@ class Brand(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table='brand'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='brand_index'),
                   ]
-        db_table='brand'
  
     
 
@@ -86,10 +87,10 @@ class Product(models.Model):
     
 
     class Meta: 
+        db_table = 'product'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='product_index'),
                   ]
-        db_table = 'product'
 
 
 class ProductFeature(models.Model):
@@ -101,10 +102,10 @@ class ProductFeature(models.Model):
 
 
     class Meta:
+        db_table='product_feature'
         indexes = [
                     models.Index(fields=['value','created_at','updated_at'], name='product_feature_index'),
                   ]
-        db_table='product_feature'
 
        
 
@@ -122,10 +123,10 @@ class ProductSeller(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'product_seller'
         indexes = [
                     models.Index(fields=['discount','max_delivery_days','min_delivery_days','created_at','updated_at'], name='product_seller_index'),
                   ]
-        db_table = 'product_seller'
 
 
 

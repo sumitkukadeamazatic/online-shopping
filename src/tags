@@ -1,0 +1,258 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALLOWED_HOSTS	core/settings.py	/^ALLOWED_HOSTS = []$/;"	v
+AUTH_PASSWORD_VALIDATORS	core/settings.py	/^AUTH_PASSWORD_VALIDATORS = [$/;"	v
+Address	seller/models.py	/^class Address(models.Model):$/;"	c
+BASE_DIR	core/settings.py	/^BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))$/;"	v
+Brand	product/models.py	/^class Brand(models.Model):$/;"	c
+Category	product/models.py	/^class Category(models.Model):$/;"	c
+CategoryTax	product/models.py	/^class CategoryTax(models.Model):$/;"	c
+DATABASES	core/settings.py	/^DATABASES = {$/;"	v
+DEBUG	core/settings.py	/^DEBUG = True$/;"	v
+Feature	product/models.py	/^class Feature(models.Model):$/;"	c
+INSTALLED_APPS	core/settings.py	/^INSTALLED_APPS = [$/;"	v
+LANGUAGE_CODE	core/settings.py	/^LANGUAGE_CODE = 'en-us'$/;"	v
+MIDDLEWARE	core/settings.py	/^MIDDLEWARE = [$/;"	v
+Meta	product/models.py	/^    class Meta: $/;"	c	class:Product
+Meta	product/models.py	/^    class Meta:$/;"	c	class:Brand
+Meta	product/models.py	/^    class Meta:$/;"	c	class:Category
+Meta	product/models.py	/^    class Meta:$/;"	c	class:CategoryTax
+Meta	product/models.py	/^    class Meta:$/;"	c	class:Feature
+Meta	product/models.py	/^    class Meta:$/;"	c	class:ProductFeature
+Meta	product/models.py	/^    class Meta:$/;"	c	class:ProductSeller
+Meta	product/models.py	/^    class Meta:$/;"	c	class:Tax
+Meta	seller/models.py	/^    class Meta():$/;"	c	class:Address
+Meta	seller/models.py	/^    class Meta():$/;"	c	class:Review
+Meta	seller/models.py	/^    class Meta():$/;"	c	class:Seller
+Meta	user/models.py	/^    class Meta():$/;"	c	class:Role
+Meta	user/models.py	/^    class Meta():$/;"	c	class:User
+Meta	user/models.py	/^    class Meta():$/;"	c	class:Wishlist
+Migration	product/migrations/0001_initial.py	/^class Migration(migrations.Migration):$/;"	c
+Migration	seller/migrations/0001_initial.py	/^class Migration(migrations.Migration):$/;"	c
+Migration	user/migrations/0001_initial.py	/^class Migration(migrations.Migration):$/;"	c
+Migration	user/migrations/0002_auto_20180726_0728.py	/^class Migration(migrations.Migration):$/;"	c
+Product	product/models.py	/^class Product(models.Model):$/;"	c
+ProductConfig	product/apps.py	/^class ProductConfig(AppConfig):$/;"	c
+ProductFeature	product/models.py	/^class ProductFeature(models.Model):$/;"	c
+ProductSeller	product/models.py	/^class ProductSeller(models.Model):$/;"	c
+ROOT_URLCONF	core/settings.py	/^ROOT_URLCONF = 'core.urls'$/;"	v
+Review	seller/models.py	/^class Review(models.Model):$/;"	c
+Role	user/models.py	/^class Role(models.Model):$/;"	c
+SECRET_KEY	core/settings.py	/^SECRET_KEY = 'e_-$d9u-^(%$)7mxeo-&q7i&&q6s!519j%o_8l1to68dorx8pa'$/;"	v
+STATIC_URL	core/settings.py	/^STATIC_URL = '\/static\/'$/;"	v
+Seller	seller/models.py	/^class Seller(models.Model):$/;"	c
+SellerConfig	seller/apps.py	/^class SellerConfig(AppConfig):$/;"	c
+TEMPLATES	core/settings.py	/^TEMPLATES = [$/;"	v
+TIME_ZONE	core/settings.py	/^TIME_ZONE = 'UTC'$/;"	v
+Tax	product/models.py	/^class Tax(models.Model):$/;"	c
+USE_I18N	core/settings.py	/^USE_I18N = True$/;"	v
+USE_L10N	core/settings.py	/^USE_L10N = True$/;"	v
+USE_TZ	core/settings.py	/^USE_TZ = True$/;"	v
+User	user/models.py	/^class User(models.Model):$/;"	c
+UserConfig	user/apps.py	/^class UserConfig(AppConfig):$/;"	c
+WSGI_APPLICATION	core/settings.py	/^WSGI_APPLICATION = 'core.wsgi.application'$/;"	v
+Wishlist	user/models.py	/^class Wishlist(models.Model):$/;"	c
+address_line	seller/models.py	/^    address_line = models.TextField()$/;"	v	class:Address
+application	core/wsgi.py	/^application = get_wsgi_application()$/;"	v
+available_pin_codes	product/models.py	/^    available_pin_codes = ArrayField(models.CharField(max_length=10))$/;"	v	class:ProductSeller
+base_price	product/models.py	/^    base_price = models.DecimalField(max_digits=19, decimal_places=2)$/;"	v	class:Product
+brand_id	product/models.py	/^    brand_id = models.ForeignKey(Brand,on_delete=models.CASCADE)$/;"	v	class:Product
+category_id	product/models.py	/^    category_id  = models.ForeignKey(Category,on_delete=models.CASCADE)$/;"	v	class:CategoryTax
+category_id	product/models.py	/^    category_id  = models.ForeignKey(Category,on_delete=models.CASCADE)$/;"	v	class:Product
+category_id	product/models.py	/^    category_id = models.ForeignKey(Category,on_delete=models.CASCADE)$/;"	v	class:Feature
+city	seller/models.py	/^    city = models.CharField(max_length = 60)$/;"	v	class:Address
+company_name	seller/models.py	/^    company_name = models.CharField(max_length = 50)$/;"	v	class:Seller
+contact_no	user/models.py	/^    contact_no = models.CharField(max_length = 20, null = True)$/;"	v	class:User
+contact_number	seller/models.py	/^    contact_number = models.CharField(max_length = 20)$/;"	v	class:Seller
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:Brand
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:Category
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:CategoryTax
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:Feature
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:Product
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:ProductFeature
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:ProductSeller
+created_at	product/models.py	/^    created_at = models.DateTimeField(auto_now_add=True)$/;"	v	class:Tax
+created_at	seller/models.py	/^    created_at = models.DateTimeField(auto_now_add = True)$/;"	v	class:Address
+created_at	seller/models.py	/^    created_at = models.DateTimeField(auto_now_add = True)$/;"	v	class:Review
+created_at	seller/models.py	/^    created_at = models.DateTimeField(auto_now_add = True)$/;"	v	class:Seller
+created_at	user/models.py	/^    created_at = models.DateTimeField(auto_now_add = True)$/;"	v	class:Role
+created_at	user/models.py	/^    created_at = models.DateTimeField(auto_now_add = True)$/;"	v	class:User
+created_at	user/models.py	/^    created_at = models.DateTimeField(auto_now_add = True)$/;"	v	class:Wishlist
+db_table	product/models.py	/^        db_table = 'category_tax'$/;"	v	class:CategoryTax.Meta
+db_table	product/models.py	/^        db_table = 'catgory'$/;"	v	class:Category.Meta
+db_table	product/models.py	/^        db_table = 'feature' $/;"	v	class:Feature.Meta
+db_table	product/models.py	/^        db_table = 'product'$/;"	v	class:Product.Meta
+db_table	product/models.py	/^        db_table = 'product_seller'$/;"	v	class:ProductSeller.Meta
+db_table	product/models.py	/^        db_table = 'tax'$/;"	v	class:Tax.Meta
+db_table	product/models.py	/^        db_table='brand'$/;"	v	class:Brand.Meta
+db_table	product/models.py	/^        db_table='product_feature'$/;"	v	class:ProductFeature.Meta
+db_table	seller/models.py	/^        db_table = 'address'$/;"	v	class:Address.Meta
+db_table	seller/models.py	/^        db_table = 'review'$/;"	v	class:Review.Meta
+db_table	seller/models.py	/^        db_table = 'seller'$/;"	v	class:Seller.Meta
+db_table	user/models.py	/^        db_table = 'role'$/;"	v	class:Role.Meta
+db_table	user/models.py	/^        db_table = 'user'$/;"	v	class:User.Meta
+db_table	user/models.py	/^        db_table = 'wishlist'$/;"	v	class:Wishlist.Meta
+dependencies	product/migrations/0001_initial.py	/^    dependencies = [$/;"	v	class:Migration
+dependencies	seller/migrations/0001_initial.py	/^    dependencies = [$/;"	v	class:Migration
+dependencies	user/migrations/0001_initial.py	/^    dependencies = [$/;"	v	class:Migration
+dependencies	user/migrations/0002_auto_20180726_0728.py	/^    dependencies = [$/;"	v	class:Migration
+description	product/models.py	/^    description = models.TimeField()$/;"	v	class:Product
+description	seller/models.py	/^    description = models.TextField(null = True)$/;"	v	class:Review
+discount	product/models.py	/^    discount = models.DecimalField(max_digits=5, decimal_places=2)$/;"	v	class:ProductSeller
+dob	user/models.py	/^    dob = models.DateField(null = True)$/;"	v	class:User
+email	user/models.py	/^    email = models.CharField(max_length = 255)$/;"	v	class:User
+feature_id	product/models.py	/^    feature_id = models.ForeignKey(Feature,on_delete=models.CASCADE)$/;"	v	class:ProductFeature
+field	product/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Brand'),$/;"	v	class:Migration
+field	product/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Category'),$/;"	v	class:Migration
+field	product/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Feature'),$/;"	v	class:Migration
+field	product/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Product'),$/;"	v	class:Migration
+field	product/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Tax'),$/;"	v	class:Migration
+field	seller/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),$/;"	v	class:Migration
+field	seller/migrations/0001_initial.py	/^            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User'),$/;"	v	class:Migration
+field	user/migrations/0002_auto_20180726_0728.py	/^            field=models.DateTimeField(auto_now=True),$/;"	v	class:Migration
+fields	product/migrations/0001_initial.py	/^            fields=[$/;"	v	class:Migration
+fields	seller/migrations/0001_initial.py	/^            fields=[$/;"	v	class:Migration
+fields	user/migrations/0001_initial.py	/^            fields=[$/;"	v	class:Migration
+first_name	user/models.py	/^    first_name = models.CharField(max_length = 255)$/;"	v	class:User
+gender	user/models.py	/^    gender = models.CharField(max_length = 1, null = True)$/;"	v	class:User
+images	product/models.py	/^    images = ArrayField(models.TextField())$/;"	v	class:Product
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['created_at', 'updated_at'], name='category_tax_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['discount', 'max_delivery_days', 'min_delivery_days', 'created_at', 'updated_at'], name='product_seller_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['name', 'created_at', 'updated_at'], name='brand_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['name', 'created_at', 'updated_at'], name='category_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['name', 'created_at', 'updated_at'], name='feature_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['name', 'created_at', 'updated_at'], name='product_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['name', 'created_at', 'updated_at'], name='tax_index'),$/;"	v	class:Migration
+index	product/migrations/0001_initial.py	/^            index=models.Index(fields=['value', 'created_at', 'updated_at'], name='product_feature_index'),$/;"	v	class:Migration
+index	seller/migrations/0001_initial.py	/^            index=models.Index(fields=['company_name', 'created_at', 'updated_at'], name='seller_index'),$/;"	v	class:Migration
+index	seller/migrations/0001_initial.py	/^            index=models.Index(fields=['pincode', 'state', 'city', 'created_at', 'updated_at'], name='address_index'),$/;"	v	class:Migration
+index	seller/migrations/0001_initial.py	/^            index=models.Index(fields=['rating', 'created_at', 'updated_at'], name='review_index'),$/;"	v	class:Migration
+index	user/migrations/0001_initial.py	/^            index=models.Index(fields=['created_at', 'updated_at'], name='wishlist_index'),$/;"	v	class:Migration
+index	user/migrations/0001_initial.py	/^            index=models.Index(fields=['first_name', 'last_name', 'gender', 'dob', 'created_at', 'updated_at'], name='user_index'),$/;"	v	class:Migration
+indexes	product/models.py	/^        indexes = [$/;"	v	class:Brand.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:Category.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:CategoryTax.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:Feature.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:Product.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:ProductFeature.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:ProductSeller.Meta
+indexes	product/models.py	/^        indexes = [$/;"	v	class:Tax.Meta
+indexes	seller/models.py	/^        indexes = [$/;"	v	class:Address.Meta
+indexes	seller/models.py	/^        indexes = [$/;"	v	class:Review.Meta
+indexes	seller/models.py	/^        indexes = [$/;"	v	class:Seller.Meta
+indexes	user/models.py	/^        indexes = [$/;"	v	class:User.Meta
+indexes	user/models.py	/^        indexes = [$/;"	v	class:Wishlist.Meta
+initial	product/migrations/0001_initial.py	/^    initial = True$/;"	v	class:Migration
+initial	seller/migrations/0001_initial.py	/^    initial = True$/;"	v	class:Migration
+initial	user/migrations/0001_initial.py	/^    initial = True$/;"	v	class:Migration
+is_active	product/models.py	/^    is_active = models.BooleanField()$/;"	v	class:Tax
+is_default	product/models.py	/^    is_default = models.BooleanField()$/;"	v	class:ProductSeller
+is_home	seller/models.py	/^    is_home = models.BooleanField(default = False)$/;"	v	class:Address
+last_name	user/models.py	/^    last_name = models.CharField(max_length = 255, null = True)$/;"	v	class:User
+max_delivery_days	product/models.py	/^    max_delivery_days = models.PositiveSmallIntegerField()$/;"	v	class:ProductSeller
+middle_name	user/models.py	/^    middle_name = models.CharField(max_length = 255, null = True)$/;"	v	class:User
+min_delivery_days	product/models.py	/^    min_delivery_days = models.PositiveSmallIntegerField()$/;"	v	class:ProductSeller
+model_name	product/migrations/0001_initial.py	/^            model_name='brand',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='category',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='categorytax',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='feature',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='product',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='productfeature',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='productseller',$/;"	v	class:Migration
+model_name	product/migrations/0001_initial.py	/^            model_name='tax',$/;"	v	class:Migration
+model_name	seller/migrations/0001_initial.py	/^            model_name='address',$/;"	v	class:Migration
+model_name	seller/migrations/0001_initial.py	/^            model_name='review',$/;"	v	class:Migration
+model_name	seller/migrations/0001_initial.py	/^            model_name='seller',$/;"	v	class:Migration
+model_name	user/migrations/0001_initial.py	/^            model_name='user',$/;"	v	class:Migration
+model_name	user/migrations/0001_initial.py	/^            model_name='wishlist',$/;"	v	class:Migration
+model_name	user/migrations/0002_auto_20180726_0728.py	/^            model_name='role',$/;"	v	class:Migration
+model_name	user/migrations/0002_auto_20180726_0728.py	/^            model_name='user',$/;"	v	class:Migration
+model_name	user/migrations/0002_auto_20180726_0728.py	/^            model_name='wishlist',$/;"	v	class:Migration
+name	product/apps.py	/^    name = 'product'$/;"	v	class:ProductConfig
+name	product/migrations/0001_initial.py	/^            name='Brand',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='Category',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='CategoryTax',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='Feature',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='Product',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='ProductFeature',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='ProductSeller',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='Tax',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='brand_id',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='category_id',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='feature_id',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='product_id',$/;"	v	class:Migration
+name	product/migrations/0001_initial.py	/^            name='tax_id',$/;"	v	class:Migration
+name	product/models.py	/^    name = models.CharField(max_length=20)$/;"	v	class:Tax
+name	product/models.py	/^    name = models.CharField(max_length=50)$/;"	v	class:Brand
+name	product/models.py	/^    name = models.CharField(max_length=50)$/;"	v	class:Category
+name	product/models.py	/^    name = models.CharField(max_length=50)$/;"	v	class:Feature
+name	product/models.py	/^    name = models.CharField(max_length=50)$/;"	v	class:Product
+name	seller/apps.py	/^    name = 'seller'$/;"	v	class:SellerConfig
+name	seller/migrations/0001_initial.py	/^            name='Address',$/;"	v	class:Migration
+name	seller/migrations/0001_initial.py	/^            name='Review',$/;"	v	class:Migration
+name	seller/migrations/0001_initial.py	/^            name='Seller',$/;"	v	class:Migration
+name	seller/migrations/0001_initial.py	/^            name='seller',$/;"	v	class:Migration
+name	seller/migrations/0001_initial.py	/^            name='user',$/;"	v	class:Migration
+name	seller/models.py	/^    name = models.TextField()$/;"	v	class:Address
+name	user/apps.py	/^    name = 'user'$/;"	v	class:UserConfig
+name	user/migrations/0001_initial.py	/^            name='Role',$/;"	v	class:Migration
+name	user/migrations/0001_initial.py	/^            name='User',$/;"	v	class:Migration
+name	user/migrations/0001_initial.py	/^            name='Wishlist',$/;"	v	class:Migration
+name	user/migrations/0002_auto_20180726_0728.py	/^            name='updated_at',$/;"	v	class:Migration
+name	user/models.py	/^    name = models.CharField(max_length = 20)$/;"	v	class:Role
+operations	product/migrations/0001_initial.py	/^    operations = [$/;"	v	class:Migration
+operations	seller/migrations/0001_initial.py	/^    operations = [$/;"	v	class:Migration
+operations	user/migrations/0001_initial.py	/^    operations = [$/;"	v	class:Migration
+operations	user/migrations/0002_auto_20180726_0728.py	/^    operations = [$/;"	v	class:Migration
+options	product/migrations/0001_initial.py	/^            options={$/;"	v	class:Migration
+options	seller/migrations/0001_initial.py	/^            options={$/;"	v	class:Migration
+options	user/migrations/0001_initial.py	/^            options={$/;"	v	class:Migration
+parent_id	product/models.py	/^    parent_id = models.BigIntegerField(null=True)$/;"	v	class:Category
+password	user/models.py	/^    password = models.TextField()$/;"	v	class:User
+percent	product/models.py	/^    percent = ArrayField(models.DecimalField(max_digits=5, decimal_places=2))$/;"	v	class:Tax
+percentage	product/models.py	/^    percentage = models.DecimalField(max_digits=4, decimal_places=2)$/;"	v	class:CategoryTax
+pincode	seller/models.py	/^    pincode = models.CharField(max_length = 10)$/;"	v	class:Address
+product_id	product/models.py	/^    product_id = models.ForeignKey(Product,on_delete=models.CASCADE)$/;"	v	class:ProductFeature
+product_id	product/models.py	/^    product_id = models.ForeignKey(Product,on_delete=models.CASCADE)$/;"	v	class:ProductSeller
+product_id	seller/models.py	/^    product_id = models.ForeignKey(Product,on_delete=models.CASCADE, null=True)$/;"	v	class:Review
+profile_pic	user/models.py	/^    profile_pic = models.TextField(null = True)$/;"	v	class:User
+quentity	product/models.py	/^    quentity = models.IntegerField()$/;"	v	class:ProductSeller
+rating	seller/models.py	/^    rating = models.DecimalField(max_digits = 3, decimal_places = 2)$/;"	v	class:Review
+role	user/models.py	/^    role = models.ForeignKey(Role, on_delete = models.CASCADE)$/;"	v	class:User
+seller	seller/models.py	/^    seller = models.ForeignKey(Seller, on_delete = models.CASCADE)$/;"	v	class:Address
+seller	seller/models.py	/^    seller = models.ForeignKey(Seller, on_delete = models.CASCADE, null=True)$/;"	v	class:Review
+seller_id	product/models.py	/^    seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)$/;"	v	class:ProductSeller
+selling_price	product/models.py	/^    selling_price = models.DecimalField(max_digits=19, decimal_places=2)$/;"	v	class:Product
+slug	product/models.py	/^    slug = models.CharField(max_length=50)$/;"	v	class:Brand
+slug	product/models.py	/^    slug = models.CharField(max_length=50)$/;"	v	class:Category
+slug	product/models.py	/^    slug = models.CharField(max_length=50)$/;"	v	class:Feature
+slug	product/models.py	/^    slug = models.CharField(max_length=50)$/;"	v	class:Product
+slug	product/models.py	/^    slug = models.CharField(max_length=50)$/;"	v	class:Tax
+slug	user/models.py	/^    slug = models.SlugField()$/;"	v	class:Role
+state	seller/models.py	/^    state = models.CharField(max_length = 60)$/;"	v	class:Address
+tax_id	product/models.py	/^    tax_id = models.ForeignKey(Tax,on_delete=models.CASCADE)$/;"	v	class:CategoryTax
+title	seller/models.py	/^    title = models.CharField(max_length = 50, null = True)$/;"	v	class:Review
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:Brand
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:Category
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:CategoryTax
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:Feature
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:Product
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:ProductFeature
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:ProductSeller
+updated_at	product/models.py	/^    updated_at = models.DateTimeField(auto_now=True)$/;"	v	class:Tax
+updated_at	seller/models.py	/^    updated_at = models.DateTimeField(auto_now = True)$/;"	v	class:Address
+updated_at	seller/models.py	/^    updated_at = models.DateTimeField(auto_now = True)$/;"	v	class:Review
+updated_at	seller/models.py	/^    updated_at = models.DateTimeField(auto_now = True)$/;"	v	class:Seller
+updated_at	user/models.py	/^    updated_at = models.DateTimeField(auto_now = True)$/;"	v	class:Role
+updated_at	user/models.py	/^    updated_at = models.DateTimeField(auto_now = True)$/;"	v	class:User
+updated_at	user/models.py	/^    updated_at = models.DateTimeField(auto_now = True)$/;"	v	class:Wishlist
+urlpatterns	core/urls.py	/^urlpatterns = [$/;"	v
+user	seller/models.py	/^    user = models.ForeignKey(User, on_delete = models.CASCADE)$/;"	v	class:Address
+user	seller/models.py	/^    user = models.ForeignKey(User, on_delete = models.CASCADE)$/;"	v	class:Review
+user	seller/models.py	/^    user = models.ForeignKey(User, on_delete = models.CASCADE)$/;"	v	class:Seller
+user	user/models.py	/^    user = models.ForeignKey(User, on_delete = models.CASCADE)$/;"	v	class:Wishlist
+value	product/models.py	/^    value = models.CharField(max_length=50)$/;"	v	class:ProductFeature

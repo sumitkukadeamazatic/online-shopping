@@ -68,3 +68,16 @@ class UserOffer(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='user_offer_index')
         ]
 
+class OfferLineitem(models.Model):
+    order_id    = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
+    lineitem_id   = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE,related_name=None)
+    is_redeemed = models.BooleanField()
+    created_at  = models.DateTimeField(auto_now_add = True)
+    updated_at  = models.DateTimeField(auto_now = True)
+
+    class Meta():
+        db_table = 'user_offer'
+        indexes = [
+            models.Index(fields=['created_at', 'updated_at'], name='user_offer_index')
+        ]
+

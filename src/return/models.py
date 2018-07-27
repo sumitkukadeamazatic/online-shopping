@@ -2,10 +2,8 @@ from django.db import models
 from django.utils import timezone
 from order import models as order_model
 
-# Create your models here.
 
 class ReturnOrder(models.Model):
-#    id = models.BigAutoField(primary_key=True)
     order_id = models.ForeignKey(order_model.Order,on_delete=models.CASCADE)
     status = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)

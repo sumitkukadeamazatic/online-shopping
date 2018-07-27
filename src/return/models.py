@@ -18,7 +18,7 @@ class ReturnOrder(models.Model):
 
 class ReturnLineitem(models.Model):
     return_order_id = models.ForeignKey(ReturnOrder,on_delete=models.CASCADE)
-#    lineitem_id = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE)
+    lineitem_id = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE)
     quantity = models.IntegerField()
     reason = models.CharField(max_length=50)
     description = models.TextField(null=True,blank=True)
@@ -43,7 +43,7 @@ class ReturnOrderLog(models.Model):
         indexes = [models.Index(fields=['created_at','updated_at'],name='return_order_log_index'),]
 
 class ReturnLineitemShippingDetail(models.Model):
-#    shipping_detail_id = models.ForeignKey(order_model.ShippingDetail,on_delete=models.CASCADE)
+    shipping_detail_id = models.ForeignKey(order_model.ShippingDetails,on_delete=models.CASCADE)
     return_lineitem_id = models.ForeignKey(ReturnLineitem,on_delete=models.CASCADE)
     quantity = models.IntegerField()
     description = models.TextField(null=True,blank=True)

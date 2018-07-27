@@ -10,12 +10,11 @@ class Cart(models.Model):
 
     class Meta:
         db_table = 'cart'
-        #managed  = False
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='cart_index')
         ]
 
-class Payment_method(models.Model):
+class PaymentMethod(models.Model):
     mode                = models.CharField(max_length=20)
     slug                = models.CharField(max_length=50)
     created_at          = models.DateTimeField()
@@ -29,7 +28,7 @@ class Payment_method(models.Model):
 
 
 class Order(models.Model):
-    payment_method_id       = models.ForeignKey(Payment_method,on_delete=models.CASCADE,related_name=None)
+    payment_method_id       = models.ForeignKey(PaymentMethod,on_delete=models.CASCADE,related_name=None)
     cart_id                 = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     #address_id              = models.ForeignKey(Address,on_delete=models.CASCADE,related_name=None)
     payment_info            = JSONField()
@@ -90,7 +89,7 @@ class Lineitem(models.Model):
         ]
 
 
-class Order_log(models.Model):
+class OrderLog(models.Model):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     status              = models.CharField(max_length=20)
     description         = models.TextField(blank=True, null=True)
@@ -103,7 +102,7 @@ class Order_log(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='order_log_index')
         ]
 
-class Shiping_details(models.Model):
+class ShippingDetails(models.Model):
     courior_name        = models.CharField(max_length=50)
     tracking_number     = models.CharField(max_length=50)
     deliverd_date       = models.DateField(blank=True, null=True)
@@ -112,14 +111,14 @@ class Shiping_details(models.Model):
     updated_at          = models.DateTimeField()
 
     class Meta:
-        db_table = 'shiping_details'
+        db_table = 'shipping_details'
         indexes = [
             models.Index(fields=['created_at', 'updated_at','tracking_number','deliverd_date','courior_name'], name='shiping_details_index')
         ]
 
-class Line_shiping_details(models.Model):
+class LineShippingDetails(models.Model):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
-    shiping_details_id  = models.ForeignKey(Shiping_details,on_delete=models.CASCADE,related_name=None)
+    shiping_details_id  = models.ForeignKey(ShippingDetails,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
     description         = models.TextField(blank=True, null=True)
     created_at          = models.DateTimeField()
@@ -131,7 +130,7 @@ class Line_shiping_details(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='line_shiping_details_index')
         ]
 
-class Lineitem_tax(models.Model):
+class LineitemTax(models.Model):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     tax_name            = models.CharField(max_length=20)
     discount            = models.DecimalField( max_digits=4, decimal_places=2)

@@ -48,22 +48,6 @@ class Migration(migrations.Migration):
                 'db_table': 'user',
             },
         ),
-        migrations.CreateModel(
-            name='Wishlist',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(default=datetime.datetime(2018, 7, 26, 7, 12, 56, 329165, tzinfo=utc))),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User')),
-            ],
-            options={
-                'db_table': 'wishlist',
-            },
-        ),
-        migrations.AddIndex(
-            model_name='wishlist',
-            index=models.Index(fields=['created_at', 'updated_at'], name='wishlist_index'),
-        ),
         migrations.AddIndex(
             model_name='user',
             index=models.Index(fields=['first_name', 'last_name', 'gender', 'dob', 'created_at', 'updated_at'], name='user_index'),

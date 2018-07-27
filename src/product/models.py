@@ -1,4 +1,6 @@
 from django.db import models
+from user.models import User
+from seller.models import Seller
 from django.contrib.postgres.fields import ArrayField
 
 class Category(models.Model):
@@ -108,7 +110,7 @@ class ProductFeature(models.Model):
 
 
 class ProductSeller(models.Model):
-    #seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)
+    seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
     quentity = models.IntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2)
@@ -126,4 +128,33 @@ class ProductSeller(models.Model):
         db_table = 'product_seller'
 
 
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    seller = models.ForeignKey(Seller, on_delete = models.CASCADE, null = True)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = True)
+    rating = models.DecimalField(max_digits = 3, decimal_places = 2)
+    title = models.CharField(max_length = 50, null = True)
+    description = models.TextField(null = True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    class Meta():
+        db_table = 'review'
+        indexes = [
+            models.Index(fields = ['rating', 'created_at', 'updated_at'], name = 'review_index')
+        ]
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    class Meta():
+        db_table = 'wishlist'
+        indexes = [
+            models.Index(fields=['created_at', 'updated_at'], name = 'wishlist_index')
+        ]
 

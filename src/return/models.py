@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils import timezone
+from order import models as order_model
 
 # Create your models here.
 
 class ReturnOrder(models.Model):
 #    id = models.BigAutoField(primary_key=True)
-#    order_id = models.ForeignKey(Order)
+    order_id = models.ForeignKey(order_model.Order,on_delete=models.CASCADE)
     status = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,8 +17,8 @@ class ReturnOrder(models.Model):
 
 
 class ReturnLineitem(models.Model):
-#    return_order_id = models.ForeignKey(ReturnOrder)
-#    lineitem_id = models.ForeignKey(Lineitem)
+    return_order_id = models.ForeignKey(ReturnOrder,on_delete=models.CASCADE)
+#    lineitem_id = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE)
     quantity = models.IntegerField()
     reason = models.CharField(max_length=50)
     description = models.TextField(null=True,blank=True)
@@ -31,7 +32,7 @@ class ReturnLineitem(models.Model):
 
 
 class ReturnOrderLog(models.Model):
-#    return_lineitem_id = models.ForeignKey(ReturnLineitem)
+    return_lineitem_id = models.ForeignKey(ReturnLineitem,on_delete=models.CASCADE)
     status = models.CharField(max_length=20)
     description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -42,8 +43,8 @@ class ReturnOrderLog(models.Model):
         indexes = [models.Index(fields=['created_at','updated_at'],name='return_order_log_index'),]
 
 class ReturnLineitemShippingDetail(models.Model):
-#    shipping_detail_id = models.ForeignKey(ShippingDetail)
-#    return_lineitem_id = models.ForeignKey(Lineitem)
+#    shipping_detail_id = models.ForeignKey(order_model.ShippingDetail,on_delete=models.CASCADE)
+    return_lineitem_id = models.ForeignKey(ReturnLineitem,on_delete=models.CASCADE)
     quantity = models.IntegerField()
     description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

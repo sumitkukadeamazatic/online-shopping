@@ -31,20 +31,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Review',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rating', models.DecimalField(decimal_places=2, max_digits=3)),
-                ('title', models.CharField(max_length=50, null=True)),
-                ('description', models.TextField(null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-            ],
-            options={
-                'db_table': 'review',
-            },
-        ),
-        migrations.CreateModel(
             name='Seller',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -59,16 +45,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='review',
-            name='seller',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),
-        ),
-        migrations.AddField(
-            model_name='review',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User'),
-        ),
-        migrations.AddField(
             model_name='address',
             name='seller',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),
@@ -81,10 +57,6 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name='seller',
             index=models.Index(fields=['company_name', 'created_at', 'updated_at'], name='seller_index'),
-        ),
-        migrations.AddIndex(
-            model_name='review',
-            index=models.Index(fields=['rating', 'created_at', 'updated_at'], name='review_index'),
         ),
         migrations.AddIndex(
             model_name='address',

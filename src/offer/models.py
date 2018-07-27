@@ -76,8 +76,8 @@ class OfferLineitem(models.Model):
     updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta():
-        db_table = 'user_offer'
+        db_table = 'offer_lineitem'
         indexes = [
-            models.Index(fields=['created_at', 'updated_at'], name='user_offer_index')
+            models.Index(fields=['created_at', 'updated_at'], name='offer_lineitem_index')
         ]
 

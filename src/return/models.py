@@ -6,7 +6,6 @@ from user import models as user_model
 from utils.models import TimestampsAbstract
 
 
-
 class ReturnOrder(TimestampsAbstract):
     order_id = models.ForeignKey(order_model.Order,on_delete=models.CASCADE)
     status = models.CharField(max_length=20)

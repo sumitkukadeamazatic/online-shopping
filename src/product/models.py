@@ -1,87 +1,87 @@
 from django.db import models
 from user.models import User
-from user import models as user_model
+from utils.models import TimestampsAbstract
 from seller.models import Seller
 from django.contrib.postgres.fields import ArrayField
 
-class Category(user_model.Create_update_date):
-    name = models.CharField(max_length=50)
-    slug = models.CharField(max_length=50)
+class Category(TimestampsAbstract):
+    name = models.CharField(max_length=50, unique = True)
+    slug = models.CharField(max_length=50, unique = True)
     parent_id = models.BigIntegerField(null=True)
 
     class Meta:
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='category_index'),
-                  ]
+        ]
         db_table = 'catgory'
 
-class Feature(user_model.Create_update_date):
+class Feature(TimestampsAbstract):
     category_id = models.ForeignKey(Category,on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    slug = models.CharField(max_length=50)
+    slug = models.CharField(max_length=50, unique = True)
 
     class Meta:
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='feature_index'),
-                  ]
+        ]
         db_table = 'feature' 
 
-class Tax(user_model.Create_update_date):
+class Tax(TimestampsAbstract):
     name = models.CharField(max_length=20)
-    slug = models.CharField(max_length=50)
+    slug = models.CharField(max_length=50, unique = True)
     percent = ArrayField(models.DecimalField(max_digits=5, decimal_places=2))
     is_active = models.BooleanField()
 
     class Meta:
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='tax_index'),
-                  ]
+        ]
         db_table = 'tax'
 
-class CategoryTax(user_model.Create_update_date):
+class CategoryTax(TimestampsAbstract):
     tax_id = models.ForeignKey(Tax,on_delete=models.CASCADE)
     category_id  = models.ForeignKey(Category,on_delete=models.CASCADE)
-    percentage = models.DecimalField(max_digits=4, decimal_places=2, default="")
+    percentage = models.DecimalField(max_digits=4, decimal_places=2, default=0.0)
 
     class Meta:
         indexes = [
                     models.Index(fields=['created_at','updated_at'], name='category_tax_index'),
-                  ]
+        ]
         db_table = 'category_tax'
 
 
 
-class Brand(user_model.Create_update_date):
+class Brand(TimestampsAbstract):
     name = models.CharField(max_length=50)
-    slug = models.CharField(max_length=50)
+    slug = models.SlugField(unique = True)
 
     class Meta:
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='brand_index'),
-                  ]
+        ]
         db_table='brand'
  
     
 
-class Product(user_model.Create_update_date):
+class Product(TimestampsAbstract):
     brand_id = models.ForeignKey(Brand,on_delete=models.CASCADE)
     category_id  = models.ForeignKey(Category,on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique = True)
     description = models.TimeField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
     selling_price = models.DecimalField(max_digits=19, decimal_places=2)
-    slug = models.CharField(max_length=50)
+    slug = models.SlugField(unique = True)
     images = ArrayField(models.TextField())
     
 
     class Meta: 
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='product_index'),
-                  ]
+        ]
         db_table = 'product'
 
 
-class ProductFeature(user_model.Create_update_date):
+class ProductFeature(TimestampsAbstract):
     feature_id = models.ForeignKey(Feature,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
     value = models.CharField(max_length=50)
@@ -90,13 +90,13 @@ class ProductFeature(user_model.Create_update_date):
     class Meta:
         indexes = [
                     models.Index(fields=['value','created_at','updated_at'], name='product_feature_index'),
-                  ]
+        ]
         db_table='product_feature'
 
        
 
 
-class ProductSeller(user_model.Create_update_date):
+class ProductSeller(TimestampsAbstract):
     seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
     quentity = models.PositiveIntegerField()
@@ -109,12 +109,12 @@ class ProductSeller(user_model.Create_update_date):
     class Meta:
         indexes = [
                     models.Index(fields=['discount','max_delivery_days','min_delivery_days','created_at','updated_at'], name='product_seller_index'),
-                  ]
+        ]
         db_table = 'product_seller'
 
 
 
-class Review(user_model.Create_update_date):
+class Review(TimestampsAbstract):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete = models.CASCADE, null = True)
     product = models.ForeignKey(Product, on_delete = models.CASCADE, null = True)
@@ -129,7 +129,7 @@ class Review(user_model.Create_update_date):
         ]
 
 
-class Wishlist(user_model.Create_update_date):
+class Wishlist(TimestampsAbstract):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     product = models.ForeignKey(Product, on_delete = models.CASCADE)
 

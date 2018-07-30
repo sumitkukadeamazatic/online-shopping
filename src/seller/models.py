@@ -1,12 +1,12 @@
 from django.db import models
-from user import models as user_model
+from utils.models import TimestampsAbstract
 from user.models import User
 
 
 # Create your models here.
 
 
-class Seller(user_model.Create_update_date):
+class Seller(TimestampsAbstract):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     company_name = models.CharField(max_length = 50)
     contact_number = models.CharField(max_length = 20)
@@ -18,7 +18,7 @@ class Seller(user_model.Create_update_date):
         ]
 
         
-class Address(user_model.Create_update_date):
+class Address(TimestampsAbstract):
     name = models.TextField()
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete = models.CASCADE)

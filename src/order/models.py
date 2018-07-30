@@ -52,7 +52,7 @@ class CartProduct(user_model.Create_update_date):
     cart_id             = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
-    quantity            = models.IntegerField()
+    quantity            = models.PositiveIntegerField()
     is_order_generated  = models.BooleanField()
 
     class Meta:
@@ -66,7 +66,7 @@ class Lineitem(user_model.Create_update_date):
     product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
     status              = models.CharField(max_length=20)
-    quantity            = models.IntegerField()
+    quantity            = models.PositiveIntegerField()
     base_price          = models.DecimalField( max_digits=19, decimal_places=2)
     discount            = models.DecimalField( max_digits=5, decimal_places=2,blank=True, null=True)
     shiping_cost        = models.DecimalField( max_digits=19, decimal_places=2,blank=True, null=True)
@@ -106,7 +106,7 @@ class ShippingDetails(user_model.Create_update_date):
 class LineShippingDetails(user_model.Create_update_date):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     shiping_details_id  = models.ForeignKey(ShippingDetails,on_delete=models.CASCADE,related_name=None)
-    quantity            = models.IntegerField()
+    quantity            = models.PositiveIntegerField()
     description         = models.TextField(blank=True, null=True)
 
     class Meta:

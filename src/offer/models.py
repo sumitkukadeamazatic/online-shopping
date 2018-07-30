@@ -21,8 +21,8 @@ class Offer(TimestampsAbstract):
     valid_upto      = models.DateTimeField(blank=True,null=True)
     start_time      = models.TimeField(blank=True,null=True)
     end_time        = models.TimeField(blank=True,null=True)
-    days            = ArrayField(models.IntegerField(),blank=True,null=True)
-    max_count       = models.IntegerField(blank=True,null=True)
+    days            = ArrayField(models.PositiveIntegerField(),blank=True,null=True)
+    max_count       = models.PositiveIntegerField(blank=True,null=True)
 
     class Meta():
         db_table = 'offer'

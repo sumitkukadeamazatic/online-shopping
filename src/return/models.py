@@ -18,7 +18,7 @@ class ReturnOrder(TimestampsAbstract):
 class ReturnLineitem(TimestampsAbstract):
     return_order_id = models.ForeignKey(ReturnOrder,on_delete=models.CASCADE)
     lineitem_id = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     reason = models.CharField(max_length=50)
     description = models.TextField(null=True,blank=True)
     status = models.CharField(max_length=50)
@@ -40,7 +40,7 @@ class ReturnOrderLog(TimestampsAbstract):
 class ReturnLineitemShippingDetail(TimestampsAbstract):
     shipping_detail_id = models.ForeignKey(order_model.ShippingDetails,on_delete=models.CASCADE)
     return_lineitem_id = models.ForeignKey(ReturnLineitem,on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     description = models.TextField(null=True,blank=True)
 
     class Meta:

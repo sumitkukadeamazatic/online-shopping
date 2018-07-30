@@ -3,18 +3,22 @@ from django.utils import timezone
 # Create your models here.
 
 
-class Role(models.Model):
-    name = models.CharField(max_length = 20)
-    slug = models.SlugField()
+class Create_update_date(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    class Meta():
+        abstract = True
+
+class Role(Create_update_date):
+    name = models.CharField(max_length = 20)
+    slug = models.SlugField()
 
     class Meta():
         db_table = 'role'
 
 
 
-class User(models.Model):
+class User(Create_update_date):
     first_name = models.CharField(max_length = 255)
     middle_name = models.CharField(max_length = 255, null = True)
     last_name = models.CharField(max_length = 255, null = True)
@@ -25,8 +29,6 @@ class User(models.Model):
     profile_pic = models.TextField(null = True)
     email = models.CharField(max_length = 255)
     password = models.TextField()
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'user'

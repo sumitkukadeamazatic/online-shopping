@@ -5,7 +5,7 @@ from product import models as product_model
 from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
-class Offer(models.Model):
+class Offer(user_model.Create_update_date):
     name            = models.CharField(max_length = 50)
     slug            = models.SlugField()
     description     = models.TextField()
@@ -22,8 +22,6 @@ class Offer(models.Model):
     end_time        = models.TimeField(blank=True,null=True)
     days            = ArrayField(models.IntegerField(),blank=True,null=True)
     max_count       = models.IntegerField(blank=True,null=True)
-    created_at      = models.DateTimeField(auto_now_add = True)
-    updated_at      = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'offer'
@@ -31,11 +29,9 @@ class Offer(models.Model):
             models.Index(fields=['created_at', 'updated_at','valid_from','valid_upto','name'], name='offer_index')
         ]
 
-class ProductOffer(models.Model):
+class ProductOffer(user_model.Create_update_date):
     product_id  = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     offers_id   = models.ForeignKey(Offer,on_delete=models.CASCADE,related_name=None)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'product_offer'
@@ -43,11 +39,9 @@ class ProductOffer(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='product_offer_index')
         ]
 
-class OrderOffer(models.Model):
+class OrderOffer(user_model.Create_update_date):
     order_id    = models.ForeignKey(order_model.Order,on_delete=models.CASCADE,related_name=None)
     offers_id   = models.ForeignKey(Offer,on_delete=models.CASCADE,related_name=None)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'order_offer'
@@ -55,29 +49,14 @@ class OrderOffer(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='order_offer_index')
         ]
 
-class UserOffer(models.Model):
+class UserOffer(user_model.Create_update_date):
     order_id    = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
     offers_id   = models.ForeignKey(Offer,on_delete=models.CASCADE,related_name=None)
     is_redeemed = models.BooleanField()
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'user_offer'
         indexes = [
             models.Index(fields=['created_at', 'updated_at'], name='user_offer_index')
-        ]
-
-class OfferLineitem(models.Model):
-    order_id    = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
-    lineitem_id   = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE,related_name=None)
-    is_redeemed = models.BooleanField()
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
-
-    class Meta():
-        db_table = 'offer_lineitem'
-        indexes = [
-            models.Index(fields=['created_at', 'updated_at'], name='offer_lineitem_index')
         ]
 

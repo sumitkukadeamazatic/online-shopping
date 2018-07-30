@@ -1,16 +1,15 @@
 from django.db import models
+from user import models as user_model
 from user.models import User
 
 
 # Create your models here.
 
 
-class Seller(models.Model):
+class Seller(user_model.Create_update_date):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     company_name = models.CharField(max_length = 50)
     contact_number = models.CharField(max_length = 20)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'seller'
@@ -19,7 +18,7 @@ class Seller(models.Model):
         ]
 
         
-class Address(models.Model):
+class Address(user_model.Create_update_date):
     name = models.TextField()
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete = models.CASCADE)
@@ -28,8 +27,6 @@ class Address(models.Model):
     state = models.CharField(max_length = 60)
     pincode = models.CharField(max_length = 10)
     is_home = models.BooleanField(default = False)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta():
         db_table = 'address'

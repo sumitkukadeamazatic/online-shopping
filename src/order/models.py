@@ -4,11 +4,9 @@ from user import models as user_model
 from seller import models as seller_model
 from product import models as product_model
 
-class Cart(models.Model):
+class Cart(user_model.Create_update_date):
     user_id             = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
     is_cart_processed   = models.BooleanField()
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'cart'
@@ -16,11 +14,9 @@ class Cart(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='cart_index')
         ]
 
-class PaymentMethod(models.Model):
+class PaymentMethod(user_model.Create_update_date):
     mode                = models.CharField(max_length=20)
     slug                = models.CharField(max_length=50)
-    created_at          = models.DateTimeField()
-    updated_at          = models.DateTimeField()
     class Meta:
         db_table = 'payment_method'
         indexes = [
@@ -28,7 +24,7 @@ class PaymentMethod(models.Model):
         ]
 
 
-class Order(models.Model):
+class Order(user_model.Create_update_date):
     payment_method_id       = models.ForeignKey(PaymentMethod,on_delete=models.CASCADE,related_name=None)
     cart_id                 = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     address_id              = models.ForeignKey(seller_model.Address,on_delete=models.CASCADE,related_name=None)
@@ -45,8 +41,6 @@ class Order(models.Model):
     billing_pincode         = models.CharField(max_length=10)
     totoal_shipping_cost    = models.DecimalField( max_digits=19, decimal_places=2)    
     status                  = models.CharField(max_length=20)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'order'
@@ -54,14 +48,12 @@ class Order(models.Model):
             models.Index(fields=['created_at', 'updated_at','shipping_pincode','billing_pincode','shipping_city','shipping_state','billing_city','billing_state'], name='order_index')
         ]
 
-class CartProduct(models.Model):
+class CartProduct(user_model.Create_update_date):
     cart_id             = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
     is_order_generated  = models.BooleanField()
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'cart_product'
@@ -69,7 +61,7 @@ class CartProduct(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='cart_product_index')
         ]
 
-class Lineitem(models.Model):
+class Lineitem(user_model.Create_update_date):
     order_id            = models.ForeignKey(Order,on_delete=models.CASCADE,related_name=None)
     product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
@@ -80,8 +72,6 @@ class Lineitem(models.Model):
     shiping_cost        = models.DecimalField( max_digits=19, decimal_places=2,blank=True, null=True)
     selling_price       = models.DecimalField( max_digits=19, decimal_places=2)
     gift_wrap_charges   = models.DecimalField( max_digits=19, decimal_places=2,blank=True, null=True)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'lineitem'
@@ -90,12 +80,10 @@ class Lineitem(models.Model):
         ]
 
 
-class OrderLog(models.Model):
+class OrderLog(user_model.Create_update_date):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     status              = models.CharField(max_length=20)
     description         = models.TextField(blank=True, null=True)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'order_log'
@@ -103,13 +91,11 @@ class OrderLog(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='order_log_index')
         ]
 
-class ShippingDetails(models.Model):
+class ShippingDetails(user_model.Create_update_date):
     courior_name        = models.CharField(max_length=50)
     tracking_number     = models.CharField(max_length=50)
     deliverd_date       = models.DateField(blank=True, null=True)
     tracking_url         = models.TextField(blank=True, null=True)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'shipping_details'
@@ -117,13 +103,11 @@ class ShippingDetails(models.Model):
             models.Index(fields=['created_at', 'updated_at','tracking_number','deliverd_date','courior_name'], name='shiping_details_index')
         ]
 
-class LineShippingDetails(models.Model):
+class LineShippingDetails(user_model.Create_update_date):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     shiping_details_id  = models.ForeignKey(ShippingDetails,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
     description         = models.TextField(blank=True, null=True)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'line_shiping_details'
@@ -131,13 +115,11 @@ class LineShippingDetails(models.Model):
             models.Index(fields=['created_at', 'updated_at'], name='line_shiping_details_index')
         ]
 
-class LineitemTax(models.Model):
+class LineitemTax(user_model.Create_update_date):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     tax_name            = models.CharField(max_length=20)
     discount            = models.DecimalField( max_digits=4, decimal_places=2)
     tax_amount         = models.DecimalField( max_digits=19, decimal_places=2)
-    created_at  = models.DateTimeField(auto_now_add = True)
-    updated_at  = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'lineitem_tax'

@@ -1,24 +1,19 @@
 from django.db import models
 from django.utils import timezone
+from utils.models import TimestampsAbstract
 # Create your models here.
 
-
-class Create_update_date(models.Model):
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-    class Meta():
-        abstract = True
-
-class Role(Create_update_date):
-    name = models.CharField(max_length = 20)
-    slug = models.SlugField()
+   
+class Role(TimestampsAbstract):
+    name = models.CharField(max_length = 20, unique = True)
+    slug = models.SlugField(unique = True)
 
     class Meta():
         db_table = 'role'
 
 
 
-class User(Create_update_date):
+class User(TimestampsAbstract):
     first_name = models.CharField(max_length = 255)
     middle_name = models.CharField(max_length = 255, null = True)
     last_name = models.CharField(max_length = 255, null = True)
@@ -27,7 +22,7 @@ class User(Create_update_date):
     contact_no = models.CharField(max_length = 20, null = True)
     dob = models.DateField(null = True)
     profile_pic = models.TextField(null = True)
-    email = models.CharField(max_length = 255)
+    email = models.CharField(max_length = 255, unique = True)
     password = models.TextField()
 
     class Meta():

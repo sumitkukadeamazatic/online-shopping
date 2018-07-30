@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from utils.models import TimestampsAbstract
 from user import models as user_model
 from seller import models as seller_model
 from product import models as product_model
 
-class Cart(user_model.Create_update_date):
+class Cart(TimestampsAbstract):
     user_id             = models.ForeignKey(user_model.User,on_delete=models.CASCADE,related_name=None)
     is_cart_processed   = models.BooleanField()
 
@@ -14,7 +15,8 @@ class Cart(user_model.Create_update_date):
             models.Index(fields=['created_at', 'updated_at'], name='cart_index')
         ]
 
-class PaymentMethod(user_model.Create_update_date):
+        
+class PaymentMethod(TimestampsAbstract):
     mode                = models.CharField(max_length=20)
     slug                = models.CharField(max_length=50)
     class Meta:
@@ -24,7 +26,7 @@ class PaymentMethod(user_model.Create_update_date):
         ]
 
 
-class Order(user_model.Create_update_date):
+class Order(TimestampsAbstract):
     payment_method_id       = models.ForeignKey(PaymentMethod,on_delete=models.CASCADE,related_name=None)
     cart_id                 = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     address_id              = models.ForeignKey(seller_model.Address,on_delete=models.CASCADE,related_name=None)
@@ -48,7 +50,7 @@ class Order(user_model.Create_update_date):
             models.Index(fields=['created_at', 'updated_at','shipping_pincode','billing_pincode','shipping_city','shipping_state','billing_city','billing_state'], name='order_index')
         ]
 
-class CartProduct(user_model.Create_update_date):
+class CartProduct(TimestampsAbstract):
     cart_id             = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name=None)
     product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
@@ -61,7 +63,7 @@ class CartProduct(user_model.Create_update_date):
             models.Index(fields=['created_at', 'updated_at'], name='cart_product_index')
         ]
 
-class Lineitem(user_model.Create_update_date):
+class Lineitem(TimestampsAbstract):
     order_id            = models.ForeignKey(Order,on_delete=models.CASCADE,related_name=None)
     product_id          = models.ForeignKey(product_model.Product,on_delete=models.CASCADE,related_name=None)
     seller_id           = models.ForeignKey(seller_model.Seller,on_delete=models.CASCADE,related_name=None)
@@ -80,7 +82,7 @@ class Lineitem(user_model.Create_update_date):
         ]
 
 
-class OrderLog(user_model.Create_update_date):
+class OrderLog(TimestampsAbstract):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     status              = models.CharField(max_length=20)
     description         = models.TextField(blank=True, null=True)
@@ -91,7 +93,7 @@ class OrderLog(user_model.Create_update_date):
             models.Index(fields=['created_at', 'updated_at'], name='order_log_index')
         ]
 
-class ShippingDetails(user_model.Create_update_date):
+class ShippingDetails(TimestampsAbstract):
     courior_name        = models.CharField(max_length=50)
     tracking_number     = models.CharField(max_length=50)
     deliverd_date       = models.DateField(blank=True, null=True)
@@ -103,7 +105,7 @@ class ShippingDetails(user_model.Create_update_date):
             models.Index(fields=['created_at', 'updated_at','tracking_number','deliverd_date','courior_name'], name='shiping_details_index')
         ]
 
-class LineShippingDetails(user_model.Create_update_date):
+class LineShippingDetails(TimestampsAbstract):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     shiping_details_id  = models.ForeignKey(ShippingDetails,on_delete=models.CASCADE,related_name=None)
     quantity            = models.IntegerField()
@@ -115,7 +117,7 @@ class LineShippingDetails(user_model.Create_update_date):
             models.Index(fields=['created_at', 'updated_at'], name='line_shiping_details_index')
         ]
 
-class LineitemTax(user_model.Create_update_date):
+class LineitemTax(TimestampsAbstract):
     lineitem_id         = models.ForeignKey(Lineitem,on_delete=models.CASCADE,related_name=None)
     tax_name            = models.CharField(max_length=20)
     discount            = models.DecimalField( max_digits=4, decimal_places=2)

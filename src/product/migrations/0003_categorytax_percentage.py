@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='categorytax',
             name='percentage',
-            field=models.DecimalField(decimal_places=2, default='', max_digits=4),
+            field=models.DecimalField(decimal_places=2, default=0.0, max_digits=4),
         ),
     ]

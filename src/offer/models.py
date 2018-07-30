@@ -1,4 +1,4 @@
-#from django.db import models
+from django.db import models
 from user import models as user_model
 from order import models as order_model
 from product import models as product_model
@@ -40,7 +40,7 @@ class ProductOffer(TimestampsAbstract):
             models.Index(fields=['created_at', 'updated_at'], name='product_offer_index')
         ]
 
-class OrderOffer(user_model.Create_update_date):
+class OrderOffer(TimestampsAbstract):
     order_id    = models.ForeignKey(order_model.Order,on_delete=models.CASCADE,related_name=None)
     offers_id   = models.ForeignKey(Offer,on_delete=models.CASCADE,related_name=None)
 

@@ -15,13 +15,13 @@ class Role(TimestampsAbstract):
 
 class User(TimestampsAbstract):
     first_name = models.CharField(max_length = 255)
-    middle_name = models.CharField(max_length = 255, null = True)
-    last_name = models.CharField(max_length = 255, null = True)
+    middle_name = models.CharField(max_length = 255, null = True, blank = True)
+    last_name = models.CharField(max_length = 255, null = True, blank = True)
     role = models.ForeignKey(Role, on_delete = models.CASCADE)
-    gender = models.CharField(max_length = 1, null = True)
-    contact_no = models.CharField(max_length = 20, null = True)
-    dob = models.DateField(null = True)
-    profile_pic = models.TextField(null = True)
+    gender = models.CharField(max_length = 1, null = True, blank=True)
+    contact_no = models.CharField(max_length = 20, null = True, blank = True)
+    dob = models.DateField(null = True, blank = True)
+    profile_pic = models.TextField(null = True, blank = True)
     email = models.CharField(max_length = 255, unique = True)
     password = models.TextField()
 

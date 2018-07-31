@@ -10,10 +10,10 @@ class Category(TimestampsAbstract):
     parent_id = models.BigIntegerField(null=True)
 
     class Meta:
+        db_table = 'catgory'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='category_index'),
         ]
-        db_table = 'catgory'
 
 class Feature(TimestampsAbstract):
     category_id = models.ForeignKey(Category,on_delete=models.CASCADE)
@@ -21,10 +21,10 @@ class Feature(TimestampsAbstract):
     slug = models.CharField(max_length=50, unique = True)
 
     class Meta:
+        db_table = 'feature' 
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='feature_index'),
         ]
-        db_table = 'feature' 
 
 class Tax(TimestampsAbstract):
     name = models.CharField(max_length=20)
@@ -33,10 +33,10 @@ class Tax(TimestampsAbstract):
     is_active = models.BooleanField()
 
     class Meta:
+        db_table = 'tax'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='tax_index'),
         ]
-        db_table = 'tax'
 
 class CategoryTax(TimestampsAbstract):
     tax_id = models.ForeignKey(Tax,on_delete=models.CASCADE)
@@ -44,10 +44,10 @@ class CategoryTax(TimestampsAbstract):
     percentage = models.DecimalField(max_digits=4, decimal_places=2, default=0.0)
 
     class Meta:
+        db_table = 'category_tax'
         indexes = [
                     models.Index(fields=['created_at','updated_at'], name='category_tax_index'),
         ]
-        db_table = 'category_tax'
 
 
 
@@ -56,10 +56,10 @@ class Brand(TimestampsAbstract):
     slug = models.SlugField(unique = True)
 
     class Meta:
+        db_table='brand'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='brand_index'),
         ]
-        db_table='brand'
  
     
 
@@ -75,10 +75,10 @@ class Product(TimestampsAbstract):
     
 
     class Meta: 
+        db_table = 'product'
         indexes = [
                     models.Index(fields=['name','created_at','updated_at'], name='product_index'),
         ]
-        db_table = 'product'
 
 
 class ProductFeature(TimestampsAbstract):
@@ -88,10 +88,10 @@ class ProductFeature(TimestampsAbstract):
 
 
     class Meta:
+        db_table='product_feature'
         indexes = [
                     models.Index(fields=['value','created_at','updated_at'], name='product_feature_index'),
         ]
-        db_table='product_feature'
 
        
 
@@ -107,10 +107,10 @@ class ProductSeller(TimestampsAbstract):
     is_default = models.BooleanField()
 
     class Meta:
+        db_table = 'product_seller'
         indexes = [
                     models.Index(fields=['discount','max_delivery_days','min_delivery_days','created_at','updated_at'], name='product_seller_index'),
         ]
-        db_table = 'product_seller'
 
 
 

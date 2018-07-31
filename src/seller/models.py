@@ -8,7 +8,7 @@ from user.models import User
 
 class Seller(TimestampsAbstract):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    company_name = models.CharField(max_length = 50)
+    company_name = models.CharField(max_length = 50, unique=True)
     contact_number = models.CharField(max_length = 20)
 
     class Meta():

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from core.secret_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'e_-$d9u-^(%$)7mxeo-&q7i&&q6s!519j%o_8l1to68dorx8pa'
+#SECRET_KEY = 'e_-$d9u-^(%$)7mxeo-&q7i&&q6s!519j%o_8l1to68dorx8pa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,21 +81,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    #}
+#DATABASES = {
+    ##'default': {
+    ##    'ENGINE': 'django.db.backends.sqlite3',
+    ##    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    ##}
 
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'online_shopping',
-        'USER': 'sumit',
-        'PASSWORD': 's',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
+    #'default': {
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME': 'online_shopping',
+        #'USER': 'sumit',
+        #'PASSWORD': 's',
+        #'HOST': 'localhost',
+        #'PORT': '',
+    #}
+#}
 
 
 # Password validation
@@ -121,7 +122,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+#TIME_ZONE = 'UTC'
+TIME_ZONE =  'Asia/Kolkata'
 
 USE_I18N = True
 

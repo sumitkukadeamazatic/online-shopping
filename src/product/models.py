@@ -67,7 +67,7 @@ class Product(TimestampsAbstract):
     brand_id = models.ForeignKey(Brand,on_delete=models.CASCADE)
     category_id  = models.ForeignKey(Category,on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique = True)
-    description = models.TimeField()
+    description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
     selling_price = models.DecimalField(max_digits=19, decimal_places=2)
     slug = models.SlugField(unique = True)
@@ -99,7 +99,7 @@ class ProductFeature(TimestampsAbstract):
 class ProductSeller(TimestampsAbstract):
     seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
-    quentity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2)
     min_delivery_days = models.PositiveSmallIntegerField()
     max_delivery_days = models.PositiveSmallIntegerField()

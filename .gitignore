@@ -105,4 +105,3 @@ venv.bak/
 my_virtual_environment/
 myvenv
 src/core/secret_settings.py
-src/core/secret_settings.py

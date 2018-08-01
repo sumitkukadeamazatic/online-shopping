@@ -61,3 +61,11 @@ class UserOffer(TimestampsAbstract):
             models.Index(fields=['created_at', 'updated_at'], name='user_offer_index')
         ]
 
+class OfferLineitem(TimestampsAbstract):
+    lineitem_id = models.ForeignKey(order_model.Lineitem,on_delete=models.CASCADE,related_name=None)
+    offers_id = models.ForeignKey(Offer,on_delete=models.CASCADE,related_name=None)
+    class Meta():
+        db_table = 'offer_lineitem'
+        indexes = [
+            models.Index(fields=['created_at', 'updated_at'], name='offer_lineitem_index')
+        ]

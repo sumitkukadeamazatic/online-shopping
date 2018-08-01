@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from utils.models import TimestampsAbstract
+from .managers import UserManager
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.base_user import AbstractBaseUser
+
 # Create your models here.
 
    
@@ -13,7 +17,7 @@ class Role(TimestampsAbstract):
 
 
 
-class User(TimestampsAbstract):
+class User(TimestampsAbstract, AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length = 255)
     middle_name = models.CharField(max_length = 255, null = True, blank = True)
     last_name = models.CharField(max_length = 255, null = True, blank = True)
@@ -24,6 +28,11 @@ class User(TimestampsAbstract):
     profile_pic = models.TextField(null = True, blank = True)
     email = models.CharField(max_length = 255, unique = True)
     password = models.TextField()
+    is_active = models.BooleanField(default = True)
+    is_staff = models.BooleanField(default = False)
+    objects = UserManager()
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     class Meta():
         db_table = 'user'

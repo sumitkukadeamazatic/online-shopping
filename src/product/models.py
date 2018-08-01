@@ -99,7 +99,7 @@ class ProductFeature(TimestampsAbstract):
 class ProductSeller(TimestampsAbstract):
     seller_id = models.ForeignKey(Seller,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
-    quentity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2)
     min_delivery_days = models.PositiveSmallIntegerField()
     max_delivery_days = models.PositiveSmallIntegerField()

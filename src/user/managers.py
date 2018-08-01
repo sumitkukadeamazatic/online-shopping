@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
             cursor.execute("SELECT * FROM role WHERE slug = 'superuser'")
             result = cursor.fetchall()
             if len(result) == 0:
-                print('in if')
+                now = timezone.now()
                 cursor.execute("INSERT INTO role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
                 result = cursor.fetchall()
             for item in result:

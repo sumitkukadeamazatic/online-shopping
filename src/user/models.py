@@ -24,6 +24,11 @@ class User(TimestampsAbstract):
     profile_pic = models.TextField(null = True, blank = True)
     email = models.CharField(max_length = 255, unique = True)
     password = models.TextField()
+    is_active = models.BooleanField(default = True)
+    is_staff = models.BooleanField(default = False)
+    objects = UserManager()
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     class Meta():
         db_table = 'user'

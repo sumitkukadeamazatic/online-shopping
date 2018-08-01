@@ -1,4 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.db import connection
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -20,8 +22,19 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault('is_superuser', True)
-
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM role WHERE slug = 'superuser'")
+            result = cursor.fetchall()
+            if len(result) == 0:
+                print('in if')
+                cursor.execute("INSERT INTO role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
+                result = cursor.fetchall()
+            for item in result:
+                superUserRoleId = item[0]
+                break;
+        extra_fields.setdefault('role_id', superUserRoleId)
+        extra_fields.setdefault('is_superuser', True)        
+        extra_fields.setdefault('is_staff', True)
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 

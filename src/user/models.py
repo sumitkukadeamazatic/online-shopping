@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from utils.models import TimestampsAbstract
+from .managers import UserManager
 # Create your models here.
 
    

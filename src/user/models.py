@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from utils.models import TimestampsAbstract
 from .managers import UserManager
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.base_user import AbstractBaseUser
+
 # Create your models here.
 
    
@@ -14,7 +17,7 @@ class Role(TimestampsAbstract):
 
 
 
-class User(TimestampsAbstract):
+class User(TimestampsAbstract, AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length = 255)
     middle_name = models.CharField(max_length = 255, null = True, blank = True)
     last_name = models.CharField(max_length = 255, null = True, blank = True)

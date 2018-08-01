@@ -67,7 +67,7 @@ class Product(TimestampsAbstract):
     brand_id = models.ForeignKey(Brand,on_delete=models.CASCADE)
     category_id  = models.ForeignKey(Category,on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique = True)
-    description = models.TimeField()
+    description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
     selling_price = models.DecimalField(max_digits=19, decimal_places=2)
     slug = models.SlugField(unique = True)

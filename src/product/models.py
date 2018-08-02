@@ -1,5 +1,5 @@
-from django.db import models
 from user.models import User
+from django.db import models
 from utils.models import TimestampsAbstract
 from seller.models import Seller
 from django.contrib.postgres.fields import ArrayField

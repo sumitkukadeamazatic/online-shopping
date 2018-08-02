@@ -5,6 +5,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.db import connection
 from django.utils import timezone
 
+
 class UserManager(BaseUserManager):
     """
         Custom Database Manager for 'user' table
@@ -37,9 +38,10 @@ class UserManager(BaseUserManager):
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM role WHERE slug = 'superuser'")
             result = cursor.fetchall()
-            if len(result) == 0:
+            if not result:
                 now = timezone.now()
-                cursor.execute("INSERT INTO role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
+                cursor.execute(
+                    "INSERT INTO role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
                 result = cursor.fetchall()
             for item in result:
                 super_user_role_id = item[0]

@@ -1,3 +1,6 @@
+"""
+    Utils App Models.
+"""
 from django.db import models
 
 # Create your models here.
@@ -11,7 +14,4 @@ class TimestampsAbstract(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta():
-        """
-         Configuration class
-        """
         abstract = True

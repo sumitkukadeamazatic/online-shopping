@@ -1,9 +1,4 @@
 import os
-## All the secret envornment settings 
-## will be here like secret keys and passwords
-## SECURITY WARNING: keep this file used in production secret!
-
-
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 

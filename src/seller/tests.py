@@ -1,3 +1,6 @@
-from django.test import TestCase
+"""
+    Seller Module Test
+"""
+#from django.test import TestCase
 
 # Create your tests here.

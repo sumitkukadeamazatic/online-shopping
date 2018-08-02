@@ -3,10 +3,10 @@
 """
 
 from django.db import models
-from .managers import UserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from utils.models import TimestampsAbstract
+from .managers import UserManager
 # Create your models here.
 
 
@@ -18,9 +18,6 @@ class Role(TimestampsAbstract):
     slug = models.SlugField(unique=True)
 
     class Meta():
-        """
-         Configuration class
-        """
         db_table = 'role'
 
 
@@ -45,9 +42,6 @@ class User(TimestampsAbstract, AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     class Meta():
-        """
-         Configuration class
-        """
         db_table = 'user'
         indexes = [
             models.Index(

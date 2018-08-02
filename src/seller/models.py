@@ -1,3 +1,6 @@
+"""
+    Seller App Models
+"""
 from django.db import models
 from utils.models import TimestampsAbstract
 from user.models import User
@@ -25,6 +28,9 @@ class Seller(TimestampsAbstract):
                 name='seller_index')]
 
     def get_user_name(self):
+        """
+            Returns first_name and last_name from user table
+        """
         return '%s %s' % (self.user.first_name, self.user.last_name)
 
 
@@ -52,6 +58,9 @@ class Address(TimestampsAbstract):
     is_home = models.BooleanField(default=False)
 
     def original_name(self):
+        """
+            Returns the name of owner of that address, because address can be of user's or a seller's
+        """
         if self.user_id is None:
             return self.seller.company_name
         else:

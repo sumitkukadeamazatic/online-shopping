@@ -1,13 +1,20 @@
-from django.db import models
+"""
+        Configuration of Models
+"""
+from django.contrib.postgres.fields import ArrayField
 from user import models as user_model
 from order import models as order_model
 from product import models as product_model
-from django.contrib.postgres.fields import ArrayField
 from utils.models import TimestampsAbstract
+from django.db import models
+
 # Create your models here.
 
 
 class Offer(TimestampsAbstract):
+    """
+        Configuration of OfferModel
+    """
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
     description = models.TextField()
@@ -52,6 +59,9 @@ class Offer(TimestampsAbstract):
 
 
 class ProductOffer(TimestampsAbstract):
+    """
+        Configuration of ProductOfferModel
+    """
     product_id = models.ForeignKey(
         product_model.Product,
         on_delete=models.CASCADE,
@@ -72,6 +82,9 @@ class ProductOffer(TimestampsAbstract):
 
 
 class OrderOffer(TimestampsAbstract):
+    """
+        Configuration of OrderOfferModel
+    """
     order_id = models.ForeignKey(
         order_model.Order,
         on_delete=models.CASCADE,
@@ -92,6 +105,9 @@ class OrderOffer(TimestampsAbstract):
 
 
 class UserOffer(TimestampsAbstract):
+    """
+        Configuration of UserOfferModel
+    """
     order_id = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
@@ -113,6 +129,9 @@ class UserOffer(TimestampsAbstract):
 
 
 class OfferLineitem(TimestampsAbstract):
+    """
+        Configuration of OfferLineitemModel
+    """
     lineitem_id = models.ForeignKey(
         order_model.Lineitem,
         on_delete=models.CASCADE,

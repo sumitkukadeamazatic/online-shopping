@@ -1,12 +1,18 @@
-from django.db import models
+"""
+        Configuration of Modules
+"""
 from django.contrib.postgres.fields import JSONField
 from utils.models import TimestampsAbstract
 from user import models as user_model
 from seller import models as seller_model
 from product import models as product_model
+from django.db import models
 
 
 class Cart(TimestampsAbstract):
+    """
+        Configuration of CartModules
+    """
     user_id = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
@@ -24,6 +30,9 @@ class Cart(TimestampsAbstract):
 
 
 class PaymentMethod(TimestampsAbstract):
+    """
+        Configuration of PaymentMethodModules
+    """
     mode = models.CharField(max_length=20)
     slug = models.CharField(max_length=50, unique=True)
 
@@ -38,6 +47,9 @@ class PaymentMethod(TimestampsAbstract):
 
 
 class Order(TimestampsAbstract):
+    """
+        Configuration of OrderModules
+    """
     payment_method_id = models.ForeignKey(
         PaymentMethod,
         on_delete=models.CASCADE,
@@ -81,6 +93,9 @@ class Order(TimestampsAbstract):
 
 
 class CartProduct(TimestampsAbstract):
+    """
+        Configuration of CartProductModules
+    """
     cart_id = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,
@@ -107,6 +122,9 @@ class CartProduct(TimestampsAbstract):
 
 
 class Lineitem(TimestampsAbstract):
+    """
+        Configuration of LineitemModules
+    """
     order_id = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
@@ -145,6 +163,9 @@ class Lineitem(TimestampsAbstract):
 
 
 class OrderLog(TimestampsAbstract):
+    """
+        Configuration of OrderLogModules
+    """
     lineitem_id = models.ForeignKey(
         Lineitem,
         on_delete=models.CASCADE,
@@ -163,6 +184,9 @@ class OrderLog(TimestampsAbstract):
 
 
 class ShippingDetails(TimestampsAbstract):
+    """
+        Configuration of ShippingDetailsModules
+    """
     courior_name = models.CharField(max_length=50)
     tracking_number = models.CharField(max_length=50)
     deliverd_date = models.DateField(blank=True, null=True)
@@ -182,6 +206,9 @@ class ShippingDetails(TimestampsAbstract):
 
 
 class LineShippingDetails(TimestampsAbstract):
+    """
+        Configuration of LineShippingDetailsModules
+    """
     lineitem_id = models.ForeignKey(
         Lineitem,
         on_delete=models.CASCADE,
@@ -204,6 +231,9 @@ class LineShippingDetails(TimestampsAbstract):
 
 
 class LineitemTax(TimestampsAbstract):
+    """
+        Configuration of LineitemTaxModules
+    """
     lineitem_id = models.ForeignKey(
         Lineitem,
         on_delete=models.CASCADE,

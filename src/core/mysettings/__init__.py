@@ -1,3 +1,7 @@
+"""
+     Base Settings
+"""
+
 try:
     from core.mysettings.local_settings import *
 except ImportError:

@@ -1,9 +1,9 @@
 """
     Seller App Models
 """
+from user.models import User
 from django.db import models
 from utils.models import TimestampsAbstract
-from user.models import User
 
 
 # Create your models here.

@@ -1,7 +1,7 @@
 try:
     from core.mysettings.local_settings import *
 except ImportError as e:
-    exit(0)
+    from core.mysettings.production_settings import *
     #pass
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

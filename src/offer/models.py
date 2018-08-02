@@ -1,12 +1,12 @@
 """
         Configuration of Models
 """
-from django.contrib.postgres.fields import ArrayField
 from user import models as user_model
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
 from order import models as order_model
 from product import models as product_model
 from utils.models import TimestampsAbstract
-from django.db import models
 
 # Create your models here.
 

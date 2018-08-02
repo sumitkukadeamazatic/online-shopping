@@ -1,12 +1,12 @@
 """
         Configuration of Modules
 """
-from django.contrib.postgres.fields import JSONField
-from utils.models import TimestampsAbstract
 from user import models as user_model
+from django.contrib.postgres.fields import JSONField
+from django.db import models
+from utils.models import TimestampsAbstract
 from seller import models as seller_model
 from product import models as product_model
-from django.db import models
 
 
 class Cart(TimestampsAbstract):

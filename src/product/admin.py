@@ -13,16 +13,30 @@ class FeatureAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'slug', 'description', 'base_price',
-                    'selling_price', 'created_at', 'updated_at', 'images']
+    list_display = [
+        'id',
+        'name',
+        'slug',
+        'description',
+        'base_price',
+        'selling_price',
+        'created_at',
+        'updated_at',
+        'images']
     list_filter = ['created_at', 'updated_at']
     list_editable = ['base_price', 'selling_price', 'images']
     prepopulated_fields = {'slug': ('name',)}
 
 
 class TaxAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'slug', 'percent',
-                    'is_active', 'created_at', 'updated_at']
+    list_display = [
+        'id',
+        'name',
+        'slug',
+        'percent',
+        'is_active',
+        'created_at',
+        'updated_at']
     list_filter = ['percent', 'is_active', 'created_at', 'updated_at']
     list_editable = ['name', 'percent']
     prepopulated_fields = {'slug': ('name',)}
@@ -35,17 +49,39 @@ class BrandAdmin(admin.ModelAdmin):
 
 
 class ProductSellerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'quantity', 'discount', 'min_delivery_days',
-                    'max_delivery_days', 'available_pin_codes', 'is_default', 'created_at', 'updated_at']
-    list_filter = ['quantity', 'discount', 'min_delivery_days',
-                   'max_delivery_days', 'created_at', 'updated_at']
-    list_editable = ['quantity', 'discount',
-                     'min_delivery_days', 'max_delivery_days']
+    list_display = [
+        'id',
+        'quantity',
+        'discount',
+        'min_delivery_days',
+        'max_delivery_days',
+        'available_pin_codes',
+        'is_default',
+        'created_at',
+        'updated_at']
+    list_filter = [
+        'quantity',
+        'discount',
+        'min_delivery_days',
+        'max_delivery_days',
+        'created_at',
+        'updated_at']
+    list_editable = [
+        'quantity',
+        'discount',
+        'min_delivery_days',
+        'max_delivery_days']
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'seller',
-                    'product', 'rating', 'title', 'description']
+    list_display = [
+        'id',
+        'user',
+        'seller',
+        'product',
+        'rating',
+        'title',
+        'description']
     list_filter = ['rating', 'created_at', 'updated_at']
 
 

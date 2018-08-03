@@ -5,11 +5,11 @@ product app models
 from user.models import User
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from utils.models import TimestampsAbstract
+from utils.models import CustomBaseModelMixin
 from seller.models import Seller
 
 
-class Category(TimestampsAbstract):
+class Category(CustomBaseModelMixin):
     """
        This represents catgory table in database.
     """
@@ -18,7 +18,6 @@ class Category(TimestampsAbstract):
     parent_id = models.BigIntegerField(null=True)
 
     class Meta:
-        db_table = 'catgory'
         indexes = [
             models.Index(
                 fields=[
@@ -29,7 +28,7 @@ class Category(TimestampsAbstract):
         ]
 
 
-class Feature(TimestampsAbstract):
+class Feature(CustomBaseModelMixin):
     """
        This represents feature table in database.
     """
@@ -38,7 +37,6 @@ class Feature(TimestampsAbstract):
     slug = models.CharField(max_length=50, unique=True)
 
     class Meta:
-        db_table = 'feature'
         indexes = [
             models.Index(
                 fields=[
@@ -49,7 +47,7 @@ class Feature(TimestampsAbstract):
         ]
 
 
-class Tax(TimestampsAbstract):
+class Tax(CustomBaseModelMixin):
     """
        This represents tax table in database.
     """
@@ -59,7 +57,6 @@ class Tax(TimestampsAbstract):
     is_active = models.BooleanField()
 
     class Meta:
-        db_table = 'tax'
         indexes = [
             models.Index(
                 fields=[
@@ -70,7 +67,7 @@ class Tax(TimestampsAbstract):
         ]
 
 
-class CategoryTax(TimestampsAbstract):
+class CategoryTax(CustomBaseModelMixin):
     """
        This represents category_tax table in database.
     """
@@ -80,7 +77,6 @@ class CategoryTax(TimestampsAbstract):
         max_digits=4, decimal_places=2, default=0.0)
 
     class Meta:
-        db_table = 'category_tax'
         indexes = [
             models.Index(
                 fields=[
@@ -90,7 +86,7 @@ class CategoryTax(TimestampsAbstract):
         ]
 
 
-class Brand(TimestampsAbstract):
+class Brand(CustomBaseModelMixin):
     """
        This represents brand table in database.
     """
@@ -98,7 +94,6 @@ class Brand(TimestampsAbstract):
     slug = models.SlugField(unique=True)
 
     class Meta:
-        db_table = 'brand'
         indexes = [
             models.Index(
                 fields=[
@@ -109,7 +104,7 @@ class Brand(TimestampsAbstract):
         ]
 
 
-class Product(TimestampsAbstract):
+class Product(CustomBaseModelMixin):
     """
        This represents product table in database.
     """
@@ -123,7 +118,6 @@ class Product(TimestampsAbstract):
     images = ArrayField(models.TextField())
 
     class Meta:
-        db_table = 'product'
         indexes = [
             models.Index(
                 fields=[
@@ -134,7 +128,7 @@ class Product(TimestampsAbstract):
         ]
 
 
-class ProductFeature(TimestampsAbstract):
+class ProductFeature(CustomBaseModelMixin):
     """
        This represents product_feature table in database.
     """
@@ -143,7 +137,6 @@ class ProductFeature(TimestampsAbstract):
     value = models.CharField(max_length=50)
 
     class Meta:
-        db_table = 'product_feature'
         indexes = [
             models.Index(
                 fields=[
@@ -154,7 +147,7 @@ class ProductFeature(TimestampsAbstract):
         ]
 
 
-class ProductSeller(TimestampsAbstract):
+class ProductSeller(CustomBaseModelMixin):
     """
        This represents product_seller table in database.
     """
@@ -168,7 +161,6 @@ class ProductSeller(TimestampsAbstract):
     is_default = models.BooleanField()
 
     class Meta:
-        db_table = 'product_seller'
         indexes = [
             models.Index(
                 fields=[
@@ -181,7 +173,7 @@ class ProductSeller(TimestampsAbstract):
         ]
 
 
-class Review(TimestampsAbstract):
+class Review(CustomBaseModelMixin):
     """
        This represents review table in database.
     """
@@ -193,7 +185,6 @@ class Review(TimestampsAbstract):
     description = models.TextField(null=True, blank=True)
 
     class Meta:
-        db_table = 'review'
         indexes = [
             models.Index(
                 fields=[
@@ -203,7 +194,7 @@ class Review(TimestampsAbstract):
                 name='review_index')]
 
 
-class Wishlist(TimestampsAbstract):
+class Wishlist(CustomBaseModelMixin):
     """
        This represents wishlist table in database.
     """
@@ -211,7 +202,6 @@ class Wishlist(TimestampsAbstract):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'wishlist'
         indexes = [
             models.Index(
                 fields=[

@@ -4,12 +4,12 @@
 from user import models as user_model
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from utils.models import TimestampsAbstract
+from utils.models import CustomBaseModelMixin
 from seller import models as seller_model
 from product import models as product_model
 
 
-class Cart(TimestampsAbstract):
+class Cart(CustomBaseModelMixin):
     """
         Configuration of CartModules
     """
@@ -20,7 +20,6 @@ class Cart(TimestampsAbstract):
     is_cart_processed = models.BooleanField()
 
     class Meta:
-        db_table = 'cart'
         indexes = [
             models.Index(
                 fields=[
@@ -29,7 +28,7 @@ class Cart(TimestampsAbstract):
                 name='cart_index')]
 
 
-class PaymentMethod(TimestampsAbstract):
+class PaymentMethod(CustomBaseModelMixin):
     """
         Configuration of PaymentMethodModules
     """
@@ -37,7 +36,6 @@ class PaymentMethod(TimestampsAbstract):
     slug = models.CharField(max_length=50, unique=True)
 
     class Meta:
-        db_table = 'payment_method'
         indexes = [
             models.Index(
                 fields=[
@@ -46,7 +44,7 @@ class PaymentMethod(TimestampsAbstract):
                 name='payment_method_index')]
 
 
-class Order(TimestampsAbstract):
+class Order(CustomBaseModelMixin):
     """
         Configuration of OrderModules
     """
@@ -77,7 +75,6 @@ class Order(TimestampsAbstract):
     status = models.CharField(max_length=20)
 
     class Meta:
-        db_table = 'order'
         indexes = [
             models.Index(
                 fields=[
@@ -92,7 +89,7 @@ class Order(TimestampsAbstract):
                 name='order_index')]
 
 
-class CartProduct(TimestampsAbstract):
+class CartProduct(CustomBaseModelMixin):
     """
         Configuration of CartProductModules
     """
@@ -112,7 +109,6 @@ class CartProduct(TimestampsAbstract):
     is_order_generated = models.BooleanField()
 
     class Meta:
-        db_table = 'cart_product'
         indexes = [
             models.Index(
                 fields=[
@@ -121,7 +117,7 @@ class CartProduct(TimestampsAbstract):
                 name='cart_product_index')]
 
 
-class Lineitem(TimestampsAbstract):
+class Lineitem(CustomBaseModelMixin):
     """
         Configuration of LineitemModules
     """
@@ -152,7 +148,6 @@ class Lineitem(TimestampsAbstract):
         max_digits=19, decimal_places=2, blank=True, null=True)
 
     class Meta:
-        db_table = 'lineitem'
         indexes = [
             models.Index(
                 fields=[
@@ -162,7 +157,7 @@ class Lineitem(TimestampsAbstract):
                 name='lineitem_index')]
 
 
-class OrderLog(TimestampsAbstract):
+class OrderLog(CustomBaseModelMixin):
     """
         Configuration of OrderLogModules
     """
@@ -174,7 +169,6 @@ class OrderLog(TimestampsAbstract):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = 'order_log'
         indexes = [
             models.Index(
                 fields=[
@@ -183,7 +177,7 @@ class OrderLog(TimestampsAbstract):
                 name='order_log_index')]
 
 
-class ShippingDetails(TimestampsAbstract):
+class ShippingDetails(CustomBaseModelMixin):
     """
         Configuration of ShippingDetailsModules
     """
@@ -193,7 +187,6 @@ class ShippingDetails(TimestampsAbstract):
     tracking_url = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = 'shipping_details'
         indexes = [
             models.Index(
                 fields=[
@@ -205,7 +198,7 @@ class ShippingDetails(TimestampsAbstract):
                 name='shiping_details_index')]
 
 
-class LineShippingDetails(TimestampsAbstract):
+class LineShippingDetails(CustomBaseModelMixin):
     """
         Configuration of LineShippingDetailsModules
     """
@@ -221,7 +214,6 @@ class LineShippingDetails(TimestampsAbstract):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = 'line_shiping_details'
         indexes = [
             models.Index(
                 fields=[
@@ -230,7 +222,7 @@ class LineShippingDetails(TimestampsAbstract):
                 name='line_shiping_details_index')]
 
 
-class LineitemTax(TimestampsAbstract):
+class LineitemTax(CustomBaseModelMixin):
     """
         Configuration of LineitemTaxModules
     """
@@ -243,7 +235,6 @@ class LineitemTax(TimestampsAbstract):
     tax_amount = models.DecimalField(max_digits=19, decimal_places=2)
 
     class Meta:
-        db_table = 'lineitem_tax'
         indexes = [
             models.Index(
                 fields=[

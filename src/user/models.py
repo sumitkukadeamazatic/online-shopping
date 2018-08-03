@@ -5,23 +5,21 @@
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
-from utils.models import TimestampsAbstract
+from utils.models import CustomBaseModelMixin
+
 from .managers import UserManager
 # Create your models here.
 
 
-class Role(TimestampsAbstract):
+class Role(CustomBaseModelMixin):
     """
        This represents role table in database
     """
     name = models.CharField(max_length=20, unique=True)
     slug = models.SlugField(unique=True)
 
-    class Meta():
-        db_table = 'role'
 
-
-class User(TimestampsAbstract, AbstractBaseUser, PermissionsMixin):
+class User(CustomBaseModelMixin, AbstractBaseUser, PermissionsMixin):
     """
        This represents 'user' table in database.
     """
@@ -41,8 +39,7 @@ class User(TimestampsAbstract, AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    class Meta():
-        db_table = 'user'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[

@@ -16,9 +16,9 @@ class CategoryAdmin(admin.ModelAdmin):
 class FeatureAdmin(admin.ModelAdmin):
     """
      Feature Model Admin
-     """
-        list_display = ['id', 'name', 'slug', 'created_at', 'updated_at']
-        prepopulated_fields = {'slug': ('name',)}
+    """
+    list_display = ['id', 'name', 'slug', 'created_at', 'updated_at']
+    prepopulated_fields = {'slug': ('name',)}
 
 
 class ProductAdmin(admin.ModelAdmin):

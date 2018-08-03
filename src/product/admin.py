@@ -1,18 +1,30 @@
+"""
+admin registration and views
+"""
 from django.contrib import admin
 from . import models
 
 
 class CategoryAdmin(admin.ModelAdmin):
+    """
+    Category Model Admin
+    """
     list_display = ['id', 'name', 'slug', 'created_at', 'updated_at']
     prepopulated_fields = {'slug': ('name',)}
 
 
 class FeatureAdmin(admin.ModelAdmin):
+    """
+    Feature Model Admin
+    """
     list_display = ['id', 'name', 'slug', 'created_at', 'updated_at']
     prepopulated_fields = {'slug': ('name',)}
 
 
 class ProductAdmin(admin.ModelAdmin):
+    """
+    Product Model Admin
+    """
     list_display = [
         'id',
         'name',
@@ -29,6 +41,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class TaxAdmin(admin.ModelAdmin):
+    """
+    Tax Model Admin
+    """
     list_display = [
         'id',
         'name',
@@ -43,12 +58,18 @@ class TaxAdmin(admin.ModelAdmin):
 
 
 class BrandAdmin(admin.ModelAdmin):
+    """
+    Brand Model Admin
+    """
     list_display = ['id', 'name', 'slug', 'created_at', 'updated_at']
     list_editable = ['name']
     prepopulated_fields = {'slug': ('name',)}
 
 
 class ProductSellerAdmin(admin.ModelAdmin):
+    """
+    product_seller Model Admin
+    """
     list_display = [
         'id',
         'quantity',
@@ -74,6 +95,9 @@ class ProductSellerAdmin(admin.ModelAdmin):
 
 
 class ReviewAdmin(admin.ModelAdmin):
+    """
+    Review Model Admin
+    """
     list_display = [
         'id',
         'user',
@@ -86,6 +110,9 @@ class ReviewAdmin(admin.ModelAdmin):
 
 
 class WishlistAdmin(admin.ModelAdmin):
+    """
+    Wishlist Model Admin
+    """
     list_display = ['id', 'user', 'product']
 
 

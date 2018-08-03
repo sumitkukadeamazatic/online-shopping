@@ -104,7 +104,4 @@ venv.bak/
 .mypy_cache/
 my_virtual_environment/
 myvenv
-<<<<<<< HEAD
-=======
 settings.py
->>>>>>> 593dd797b5bbc3cf052b59392215b7b68fd2f7eb

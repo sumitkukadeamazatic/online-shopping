@@ -18,7 +18,6 @@ class ReturnOrder(TimestampsAbstract):
     status = models.CharField(max_length=20)
 
     class Meta:
-        db_table = 'return_order'
         indexes = [
             models.Index(
                 fields=[
@@ -42,7 +41,6 @@ class ReturnLineitem(TimestampsAbstract):
     status = models.CharField(max_length=50)
 
     class Meta:
-        db_table = 'return_lineitem'
         indexes = [
             models.Index(
                 fields=[
@@ -64,7 +62,6 @@ class ReturnOrderLog(TimestampsAbstract):
     description = models.TextField(null=True, blank=True)
 
     class Meta:
-        db_table = 'return_order_log'
         indexes = [
             models.Index(
                 fields=[
@@ -87,7 +84,6 @@ class ReturnLineitemShippingDetail(TimestampsAbstract):
     description = models.TextField(null=True, blank=True)
 
     class Meta:
-        db_table = 'return_lineitem_shipping_detail'
         indexes = [
             models.Index(
                 fields=[

@@ -1,11 +1,15 @@
 """
      Base Settings
 """
-
+import os
 try:
-    from core.settings.local import *
+    from .local import (SECRET_KEY,
+                        DEBUG,
+                        DATABASES)
 except ImportError:
-    from core.settings.production import *
+    from .production import (SECRET_KEY,
+                             DEBUG,
+                             DATABASES)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -17,7 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -69,18 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-# DATABASES = {
-# 'default': {
-#    'ENGINE': 'django.db.backends.sqlite3',
-#    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-# }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -105,7 +96,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+#TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

@@ -1,9 +1,7 @@
 """
     Production Environment Settings
 """
-
 import os
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DATABASES = {
@@ -16,3 +14,5 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
+
+DEBUG = False

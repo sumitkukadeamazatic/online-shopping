@@ -1,11 +1,18 @@
+"""
+product app models
+"""
+
 from user.models import User
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from utils.models import TimestampsAbstract
 from seller.models import Seller
-from django.contrib.postgres.fields import ArrayField
 
 
 class Category(TimestampsAbstract):
+    """
+       This represents catgory table in database.
+    """
     name = models.CharField(max_length=50, unique=True)
     slug = models.CharField(max_length=50, unique=True)
     parent_id = models.BigIntegerField(null=True)
@@ -23,6 +30,9 @@ class Category(TimestampsAbstract):
 
 
 class Feature(TimestampsAbstract):
+    """
+       This represents feature table in database.
+    """
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     slug = models.CharField(max_length=50, unique=True)
@@ -40,6 +50,9 @@ class Feature(TimestampsAbstract):
 
 
 class Tax(TimestampsAbstract):
+    """
+       This represents tax table in database.
+    """
     name = models.CharField(max_length=20)
     slug = models.CharField(max_length=50, unique=True)
     percent = ArrayField(models.DecimalField(max_digits=5, decimal_places=2))
@@ -58,6 +71,9 @@ class Tax(TimestampsAbstract):
 
 
 class CategoryTax(TimestampsAbstract):
+    """
+       This represents category_tax table in database.
+    """
     tax_id = models.ForeignKey(Tax, on_delete=models.CASCADE)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     percentage = models.DecimalField(
@@ -75,6 +91,9 @@ class CategoryTax(TimestampsAbstract):
 
 
 class Brand(TimestampsAbstract):
+    """
+       This represents brand table in database.
+    """
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True)
 
@@ -91,6 +110,9 @@ class Brand(TimestampsAbstract):
 
 
 class Product(TimestampsAbstract):
+    """
+       This represents product table in database.
+    """
     brand_id = models.ForeignKey(Brand, on_delete=models.CASCADE)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
@@ -113,6 +135,9 @@ class Product(TimestampsAbstract):
 
 
 class ProductFeature(TimestampsAbstract):
+    """
+       This represents product_feature table in database.
+    """
     feature_id = models.ForeignKey(Feature, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     value = models.CharField(max_length=50)
@@ -130,6 +155,9 @@ class ProductFeature(TimestampsAbstract):
 
 
 class ProductSeller(TimestampsAbstract):
+    """
+       This represents product_seller table in database.
+    """
     seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
@@ -154,6 +182,9 @@ class ProductSeller(TimestampsAbstract):
 
 
 class Review(TimestampsAbstract):
+    """
+       This represents review table in database.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
@@ -161,7 +192,7 @@ class Review(TimestampsAbstract):
     title = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
-    class Meta():
+    class Meta:
         db_table = 'review'
         indexes = [
             models.Index(
@@ -173,10 +204,13 @@ class Review(TimestampsAbstract):
 
 
 class Wishlist(TimestampsAbstract):
+    """
+       This represents wishlist table in database.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
-    class Meta():
+    class Meta:
         db_table = 'wishlist'
         indexes = [
             models.Index(

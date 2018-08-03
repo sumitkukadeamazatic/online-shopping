@@ -1,0 +1,20 @@
+"""
+    Local Environment Settings
+	edit this file if needed
+	rename 'local.py.template' to 'local.py' if you havent already
+"""
+
+import os
+
+SECRET_KEY = 'very_secret_key'
+
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': 'myproject',
+       'USER': 'myprojectuser',
+       'PASSWORD': 'password',
+       'HOST': 'localhost',
+       'PORT': '',
+   }
+}

@@ -7,10 +7,10 @@ from django.db import models
 # from seller import models as seller_model
 # from user import models as user_model
 from order import models as order_model
-from utils.models import TimestampsAbstract
+from utils.models import CustomBaseModelMixin
 
 
-class ReturnOrder(TimestampsAbstract):
+class ReturnOrder(CustomBaseModelMixin):
     """ Model
         return_order model
     """
@@ -27,7 +27,7 @@ class ReturnOrder(TimestampsAbstract):
         ]
 
 
-class ReturnLineitem(TimestampsAbstract):
+class ReturnLineitem(CustomBaseModelMixin):
     """ Model
         return_lineitem model
     """
@@ -52,7 +52,7 @@ class ReturnLineitem(TimestampsAbstract):
         ]
 
 
-class ReturnOrderLog(TimestampsAbstract):
+class ReturnOrderLog(CustomBaseModelMixin):
     """ Model
         return_order_log model
     """
@@ -71,7 +71,7 @@ class ReturnOrderLog(TimestampsAbstract):
         ]
 
 
-class ReturnLineitemShippingDetail(TimestampsAbstract):
+class ReturnLineitemShippingDetail(CustomBaseModelMixin):
     """ Model
         return_lineitem_shipping detail model
     """

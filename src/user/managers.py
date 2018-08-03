@@ -36,12 +36,12 @@ class UserManager(BaseUserManager):
            Custom create superuser Method
         """
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM role WHERE slug = 'superuser'")
+            cursor.execute("SELECT * FROM user_role WHERE slug = 'superuser'")
             result = cursor.fetchall()
             if not result:
                 now = timezone.now()
                 cursor.execute(
-                    "INSERT INTO role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
+                    "INSERT INTO user_role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
                 result = cursor.fetchall()
             for item in result:
                 super_user_role_id = item[0]

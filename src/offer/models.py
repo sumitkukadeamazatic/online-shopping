@@ -6,12 +6,12 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from order import models as order_model
 from product import models as product_model
-from utils.models import TimestampsAbstract
+from utils.models import CustomBaseModelMixin
 
 # Create your models here.
 
 
-class Offer(TimestampsAbstract):
+class Offer(CustomBaseModelMixin):
     """
         Configuration of OfferModel
     """
@@ -45,8 +45,7 @@ class Offer(TimestampsAbstract):
     days = ArrayField(models.PositiveIntegerField(), blank=True, null=True)
     max_count = models.PositiveIntegerField(blank=True, null=True)
 
-    class Meta():
-        db_table = 'offer'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[
@@ -58,7 +57,7 @@ class Offer(TimestampsAbstract):
                 name='offer_index')]
 
 
-class ProductOffer(TimestampsAbstract):
+class ProductOffer(CustomBaseModelMixin):
     """
         Configuration of ProductOfferModel
     """
@@ -71,8 +70,7 @@ class ProductOffer(TimestampsAbstract):
         on_delete=models.CASCADE,
         related_name=None)
 
-    class Meta():
-        db_table = 'product_offer'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[
@@ -81,7 +79,7 @@ class ProductOffer(TimestampsAbstract):
                 name='product_offer_index')]
 
 
-class OrderOffer(TimestampsAbstract):
+class OrderOffer(CustomBaseModelMixin):
     """
         Configuration of OrderOfferModel
     """
@@ -94,8 +92,7 @@ class OrderOffer(TimestampsAbstract):
         on_delete=models.CASCADE,
         related_name=None)
 
-    class Meta():
-        db_table = 'order_offer'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[
@@ -104,7 +101,7 @@ class OrderOffer(TimestampsAbstract):
                 name='order_offer_index')]
 
 
-class UserOffer(TimestampsAbstract):
+class UserOffer(CustomBaseModelMixin):
     """
         Configuration of UserOfferModel
     """
@@ -118,8 +115,7 @@ class UserOffer(TimestampsAbstract):
         related_name=None)
     is_redeemed = models.BooleanField()
 
-    class Meta():
-        db_table = 'user_offer'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[
@@ -128,7 +124,7 @@ class UserOffer(TimestampsAbstract):
                 name='user_offer_index')]
 
 
-class OfferLineitem(TimestampsAbstract):
+class OfferLineitem(CustomBaseModelMixin):
     """
         Configuration of OfferLineitemModel
     """
@@ -141,8 +137,7 @@ class OfferLineitem(TimestampsAbstract):
         on_delete=models.CASCADE,
         related_name=None)
 
-    class Meta():
-        db_table = 'offer_lineitem'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[

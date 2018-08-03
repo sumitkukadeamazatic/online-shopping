@@ -3,13 +3,13 @@
 """
 from user.models import User
 from django.db import models
-from utils.models import TimestampsAbstract
+from utils.models import CustomBaseModelMixin
 
 
 # Create your models here.
 
 
-class Seller(TimestampsAbstract):
+class Seller(CustomBaseModelMixin):
     """
        Represents table 'seller'
     """
@@ -17,8 +17,7 @@ class Seller(TimestampsAbstract):
     company_name = models.CharField(max_length=50, unique=True)
     contact_number = models.CharField(max_length=20)
 
-    class Meta():
-        db_table = 'seller'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[
@@ -34,7 +33,7 @@ class Seller(TimestampsAbstract):
         return '%s %s' % (self.user.first_name, self.user.last_name)
 
 
-class Address(TimestampsAbstract):
+class Address(CustomBaseModelMixin):
     """
        Represents table 'address'. This table is for storing addresses of both 'user' and 'seller'
     """
@@ -57,17 +56,7 @@ class Address(TimestampsAbstract):
     pincode = models.CharField(max_length=10)
     is_home = models.BooleanField(default=False)
 
-    def original_name(self):
-        """
-            Returns the name of owner of that address, because address can be of user's or a seller's
-        """
-        if self.user_id is None:
-            return self.seller.company_name
-        else:
-            return '%s %s' % (self.user.first_name, self.user.last_name)
-
-    class Meta():
-        db_table = 'address'
+    class Meta:
         indexes = [
             models.Index(
                 fields=[
@@ -77,3 +66,12 @@ class Address(TimestampsAbstract):
                     'created_at',
                     'updated_at'],
                 name='address_index')]
+
+    def original_name(self):
+        """
+            Returns the name of owner of that address, because address can be of user's or a seller's
+        """
+        if self.user_id is None:
+            return self.seller.company_name
+        else:
+            return '%s %s' % (self.user.first_name, self.user.last_name)

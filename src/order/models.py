@@ -13,19 +13,11 @@ class Cart(CustomBaseModelMixin):
     """
         Configuration of CartModules
     """
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
         related_name=None)
     is_cart_processed = models.BooleanField()
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='cart_index')]
 
 
 class PaymentMethod(CustomBaseModelMixin):
@@ -35,28 +27,20 @@ class PaymentMethod(CustomBaseModelMixin):
     mode = models.CharField(max_length=20)
     slug = models.CharField(max_length=50, unique=True)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='payment_method_index')]
-
 
 class Order(CustomBaseModelMixin):
     """
         Configuration of OrderModules
     """
-    payment_method_id = models.ForeignKey(
+    payment_method = models.ForeignKey(
         PaymentMethod,
         on_delete=models.CASCADE,
         related_name=None)
-    cart_id = models.ForeignKey(
+    cart = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,
         related_name=None)
-    address_id = models.ForeignKey(
+    address = models.ForeignKey(
         seller_model.Address,
         on_delete=models.CASCADE,
         related_name=None)
@@ -78,8 +62,6 @@ class Order(CustomBaseModelMixin):
         indexes = [
             models.Index(
                 fields=[
-                    'created_at',
-                    'updated_at',
                     'shipping_pincode',
                     'billing_pincode',
                     'shipping_city',
@@ -93,43 +75,35 @@ class CartProduct(CustomBaseModelMixin):
     """
         Configuration of CartProductModules
     """
-    cart_id = models.ForeignKey(
+    cart = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,
         related_name=None)
-    product_id = models.ForeignKey(
+    product = models.ForeignKey(
         product_model.Product,
         on_delete=models.CASCADE,
         related_name=None)
-    seller_id = models.ForeignKey(
+    seller = models.ForeignKey(
         seller_model.Seller,
         on_delete=models.CASCADE,
         related_name=None)
     quantity = models.PositiveIntegerField()
     is_order_generated = models.BooleanField()
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='cart_product_index')]
-
 
 class Lineitem(CustomBaseModelMixin):
     """
         Configuration of LineitemModules
     """
-    order_id = models.ForeignKey(
+    order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
         related_name=None)
-    product_id = models.ForeignKey(
+    product = models.ForeignKey(
         product_model.Product,
         on_delete=models.CASCADE,
         related_name=None)
-    seller_id = models.ForeignKey(
+    seller = models.ForeignKey(
         seller_model.Seller,
         on_delete=models.CASCADE,
         related_name=None)
@@ -147,34 +121,17 @@ class Lineitem(CustomBaseModelMixin):
     gift_wrap_charges = models.DecimalField(
         max_digits=19, decimal_places=2, blank=True, null=True)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at',
-                    'status'],
-                name='lineitem_index')]
-
 
 class OrderLog(CustomBaseModelMixin):
     """
         Configuration of OrderLogModules
     """
-    lineitem_id = models.ForeignKey(
+    lineitem = models.ForeignKey(
         Lineitem,
         on_delete=models.CASCADE,
         related_name=None)
     status = models.CharField(max_length=20)
     description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='order_log_index')]
 
 
 class ShippingDetails(CustomBaseModelMixin):
@@ -190,8 +147,6 @@ class ShippingDetails(CustomBaseModelMixin):
         indexes = [
             models.Index(
                 fields=[
-                    'created_at',
-                    'updated_at',
                     'tracking_number',
                     'deliverd_date',
                     'courior_name'],
@@ -202,31 +157,23 @@ class LineShippingDetails(CustomBaseModelMixin):
     """
         Configuration of LineShippingDetailsModules
     """
-    lineitem_id = models.ForeignKey(
+    lineitem = models.ForeignKey(
         Lineitem,
         on_delete=models.CASCADE,
         related_name=None)
-    shiping_details_id = models.ForeignKey(
+    shipping_details = models.ForeignKey(
         ShippingDetails,
         on_delete=models.CASCADE,
         related_name=None)
     quantity = models.PositiveIntegerField()
     description = models.TextField(blank=True, null=True)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='line_shiping_details_index')]
-
 
 class LineitemTax(CustomBaseModelMixin):
     """
         Configuration of LineitemTaxModules
     """
-    lineitem_id = models.ForeignKey(
+    lineitem = models.ForeignKey(
         Lineitem,
         on_delete=models.CASCADE,
         related_name=None)
@@ -238,7 +185,5 @@ class LineitemTax(CustomBaseModelMixin):
         indexes = [
             models.Index(
                 fields=[
-                    'created_at',
-                    'updated_at',
                     'tax_name'],
                 name='lineitem_tax_index')]

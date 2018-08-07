@@ -46,8 +46,6 @@ class User(CustomBaseModelMixin, AbstractBaseUser, PermissionsMixin):
                     'first_name',
                     'last_name',
                     'gender',
-                    'dob',
-                    'created_at',
-                    'updated_at'],
+                    'dob'],
                 name='user_index'),
         ]

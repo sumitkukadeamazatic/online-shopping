@@ -49,8 +49,6 @@ class Offer(CustomBaseModelMixin):
         indexes = [
             models.Index(
                 fields=[
-                    'created_at',
-                    'updated_at',
                     'valid_from',
                     'valid_upto',
                     'name'],
@@ -61,86 +59,54 @@ class ProductOffer(CustomBaseModelMixin):
     """
         Configuration of ProductOfferModel
     """
-    product_id = models.ForeignKey(
+    product = models.ForeignKey(
         product_model.Product,
         on_delete=models.CASCADE,
         related_name=None)
-    offers_id = models.ForeignKey(
+    offers = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='product_offer_index')]
 
 
 class OrderOffer(CustomBaseModelMixin):
     """
         Configuration of OrderOfferModel
     """
-    order_id = models.ForeignKey(
+    order = models.ForeignKey(
         order_model.Order,
         on_delete=models.CASCADE,
         related_name=None)
-    offers_id = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='order_offer_index')]
 
 
 class UserOffer(CustomBaseModelMixin):
     """
         Configuration of UserOfferModel
     """
-    order_id = models.ForeignKey(
+    order = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
         related_name=None)
-    offers_id = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
     is_redeemed = models.BooleanField()
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='user_offer_index')]
 
 
 class OfferLineitem(CustomBaseModelMixin):
     """
         Configuration of OfferLineitemModel
     """
-    lineitem_id = models.ForeignKey(
+    lineitem = models.ForeignKey(
         order_model.Lineitem,
         on_delete=models.CASCADE,
         related_name=None)
-    offers_id = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='offer_lineitem_index')]

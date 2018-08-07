@@ -23,7 +23,7 @@ class OrderOfferAdmin(admin.ModelAdmin):
     """
         Configuration of OrderOfferAdmin
     """
-    list_display = ['id', 'order_id', 'offers_id', 'created_at', 'updated_at']
+    list_display = ['id', 'order', 'offer', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at']
 
 
@@ -40,7 +40,7 @@ class UserOfferAdmin(admin.ModelAdmin):
     """
         Configuration of UserOfferAdmin
     """
-    list_display = ['id', 'order_id', 'offers_id', 'created_at', 'updated_at']
+    list_display = ['id', 'order', 'offer', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at']
 
 
@@ -48,8 +48,8 @@ class OfferLineitemAdmin(admin.ModelAdmin):
     """
         Configuration of OfferLineitemAdmin
     """
-    list_display = ['id', 'lineitem_id',
-                    'offers_id', 'created_at', 'updated_at']
+    list_display = ['id', 'lineitem',
+                    'offer', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at']
 
 

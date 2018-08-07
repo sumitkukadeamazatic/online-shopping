@@ -41,8 +41,7 @@ class Feature(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'name',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='feature_index'),
         ]
 
@@ -61,8 +60,7 @@ class Tax(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'name',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='tax_index'),
         ]
 
@@ -71,19 +69,10 @@ class CategoryTax(CustomBaseModelMixin):
     """
        This represents category_tax table in database.
     """
-    tax_id = models.ForeignKey(Tax, on_delete=models.CASCADE)
+    tax = models.ForeignKey(Tax, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     percentage = models.DecimalField(
         max_digits=4, decimal_places=2, default=0.0)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='category_tax_index'),
-        ]
 
 
 class Brand(CustomBaseModelMixin):
@@ -98,8 +87,7 @@ class Brand(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'name',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='brand_index'),
         ]
 
@@ -108,7 +96,7 @@ class Product(CustomBaseModelMixin):
     """
        This represents product table in database.
     """
-    brand_id = models.ForeignKey(Brand, on_delete=models.CASCADE)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
@@ -122,8 +110,7 @@ class Product(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'name',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='product_index'),
         ]
 
@@ -141,8 +128,7 @@ class ProductFeature(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'value',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='product_feature_index'),
         ]
 
@@ -167,8 +153,7 @@ class ProductSeller(CustomBaseModelMixin):
                     'discount',
                     'max_delivery_days',
                     'min_delivery_days',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='product_seller_index'),
         ]
 
@@ -189,8 +174,7 @@ class Review(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'rating',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='review_index')]
 
 
@@ -200,11 +184,3 @@ class Wishlist(CustomBaseModelMixin):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='wishlist_index')]

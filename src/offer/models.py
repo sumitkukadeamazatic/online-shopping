@@ -49,8 +49,6 @@ class Offer(CustomBaseModelMixin):
         indexes = [
             models.Index(
                 fields=[
-                    'created_at',
-                    'updated_at',
                     'valid_from',
                     'valid_upto',
                     'name'],
@@ -70,14 +68,6 @@ class ProductOffer(CustomBaseModelMixin):
         on_delete=models.CASCADE,
         related_name=None)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='product_offer_index')]
-
 
 class OrderOffer(CustomBaseModelMixin):
     """
@@ -87,18 +77,10 @@ class OrderOffer(CustomBaseModelMixin):
         order_model.Order,
         on_delete=models.CASCADE,
         related_name=None)
-    offers = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='order_offer_index')]
 
 
 class UserOffer(CustomBaseModelMixin):
@@ -109,19 +91,11 @@ class UserOffer(CustomBaseModelMixin):
         user_model.User,
         on_delete=models.CASCADE,
         related_name=None)
-    offers = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
     is_redeemed = models.BooleanField()
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='user_offer_index')]
 
 
 class OfferLineitem(CustomBaseModelMixin):
@@ -132,15 +106,7 @@ class OfferLineitem(CustomBaseModelMixin):
         order_model.Lineitem,
         on_delete=models.CASCADE,
         related_name=None)
-    offers = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='offer_lineitem_index')]

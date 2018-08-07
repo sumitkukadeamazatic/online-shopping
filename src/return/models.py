@@ -17,15 +17,6 @@ class ReturnOrder(CustomBaseModelMixin):
     order = models.ForeignKey(order_model.Order, on_delete=models.CASCADE)
     status = models.CharField(max_length=20)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='return_order_index'),
-        ]
-
 
 class ReturnLineitem(CustomBaseModelMixin):
     """ Model
@@ -45,9 +36,8 @@ class ReturnLineitem(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'status',
-                    'reason',
-                    'created_at',
-                    'updated_at'],
+                    'reason'
+                ],
                 name='return_lineitem_index'),
         ]
 
@@ -61,15 +51,6 @@ class ReturnOrderLog(CustomBaseModelMixin):
     status = models.CharField(max_length=20)
     description = models.TextField(null=True, blank=True)
 
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='return_order_log_index'),
-        ]
-
 
 class ReturnLineitemShippingDetail(CustomBaseModelMixin):
     """ Model
@@ -82,12 +63,3 @@ class ReturnLineitemShippingDetail(CustomBaseModelMixin):
         ReturnLineitem, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     description = models.TextField(null=True, blank=True)
-
-    class Meta:
-        indexes = [
-            models.Index(
-                fields=[
-                    'created_at',
-                    'updated_at'],
-                name='return_lineitem_shipp_dtl_idx'),
-        ]

@@ -22,8 +22,7 @@ class Seller(CustomBaseModelMixin):
             models.Index(
                 fields=[
                     'company_name',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='seller_index')]
 
     def get_user_name(self):
@@ -63,8 +62,7 @@ class Address(CustomBaseModelMixin):
                     'pincode',
                     'state',
                     'city',
-                    'created_at',
-                    'updated_at'],
+                ],
                 name='address_index')]
 
     def original_name(self):
@@ -73,5 +71,4 @@ class Address(CustomBaseModelMixin):
         """
         if self.user_id is None:
             return self.seller.company_name
-        else:
-            return '%s %s' % (self.user.first_name, self.user.last_name)
+        return '%s %s' % (self.user.first_name, self.user.last_name)

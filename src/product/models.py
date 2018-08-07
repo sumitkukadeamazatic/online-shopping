@@ -32,7 +32,7 @@ class Feature(CustomBaseModelMixin):
     """
        This represents feature table in database.
     """
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     slug = models.CharField(max_length=50, unique=True)
 
@@ -72,7 +72,7 @@ class CategoryTax(CustomBaseModelMixin):
        This represents category_tax table in database.
     """
     tax_id = models.ForeignKey(Tax, on_delete=models.CASCADE)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     percentage = models.DecimalField(
         max_digits=4, decimal_places=2, default=0.0)
 
@@ -109,7 +109,7 @@ class Product(CustomBaseModelMixin):
        This represents product table in database.
     """
     brand_id = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
@@ -132,8 +132,8 @@ class ProductFeature(CustomBaseModelMixin):
     """
        This represents product_feature table in database.
     """
-    feature_id = models.ForeignKey(Feature, on_delete=models.CASCADE)
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     value = models.CharField(max_length=50)
 
     class Meta:
@@ -151,8 +151,8 @@ class ProductSeller(CustomBaseModelMixin):
     """
        This represents product_seller table in database.
     """
-    seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2)
     min_delivery_days = models.PositiveSmallIntegerField()

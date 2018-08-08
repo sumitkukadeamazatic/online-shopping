@@ -40,10 +40,6 @@ class Order(CustomBaseModelMixin):
         Cart,
         on_delete=models.CASCADE,
         related_name=None)
-    address = models.ForeignKey(
-        seller_model.Address,
-        on_delete=models.CASCADE,
-        related_name=None)
     payment_info = JSONField()
     shipping_name = models.TextField()
     shipping_address_line = models.TextField()

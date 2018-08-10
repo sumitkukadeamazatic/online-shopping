@@ -23,13 +23,8 @@ class Seller(CustomBaseModelMixin):
                 fields=[
                     'company_name',
                 ],
-                name='seller_index')]
-
-    def get_user_name(self):
-        """
-            Returns first_name and last_name from user table
-        """
-        return '%s %s' % (self.user.first_name, self.user.last_name)
+                name='seller_index')
+        ]
 
 
 class SellerUser(CustomBaseModelMixin):

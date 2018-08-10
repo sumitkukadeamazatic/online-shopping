@@ -11,7 +11,7 @@ class SellerAdmin(admin.ModelAdmin):
     """
         Seller Model admin
     """
-    list_display = ['company_name', 'contact_number', 'get_user_name']
+    list_display = ['company_name', 'contact_number']
 
 
 admin.site.register(models.Seller, SellerAdmin)

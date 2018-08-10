@@ -10,7 +10,7 @@ from order import models as order_model
 from utils.models import CustomBaseModelMixin
 
 
-class ReturnOrder(CustomBaseModelMixin):
+class Order(CustomBaseModelMixin):
     """ Model
         return_order model
     """
@@ -18,11 +18,11 @@ class ReturnOrder(CustomBaseModelMixin):
     status = models.CharField(max_length=20)
 
 
-class ReturnLineitem(CustomBaseModelMixin):
+class Lineitem(CustomBaseModelMixin):
     """ Model
         return_lineitem model
     """
-    return_order = models.ForeignKey(ReturnOrder, on_delete=models.CASCADE)
+    return_order = models.ForeignKey(Order, on_delete=models.CASCADE)
     lineitem = models.ForeignKey(
         order_model.Lineitem,
         on_delete=models.CASCADE)
@@ -42,17 +42,17 @@ class ReturnLineitem(CustomBaseModelMixin):
         ]
 
 
-class ReturnOrderLog(CustomBaseModelMixin):
+class OrderLog(CustomBaseModelMixin):
     """ Model
         return_order_log model
     """
     return_lineitem = models.ForeignKey(
-        ReturnLineitem, on_delete=models.CASCADE)
+        Lineitem, on_delete=models.CASCADE)
     status = models.CharField(max_length=20)
     description = models.TextField(null=True, blank=True)
 
 
-class ReturnLineitemShippingDetail(CustomBaseModelMixin):
+class LineitemShippingDetail(CustomBaseModelMixin):
     """ Model
         return_lineitem_shipping detail model
     """
@@ -60,6 +60,6 @@ class ReturnLineitemShippingDetail(CustomBaseModelMixin):
         order_model.ShippingDetails,
         on_delete=models.CASCADE)
     return_lineitem = models.ForeignKey(
-        ReturnLineitem, on_delete=models.CASCADE)
+        Lineitem, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     description = models.TextField(null=True, blank=True)

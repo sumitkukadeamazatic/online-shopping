@@ -8,5 +8,5 @@ from .views import *
 
 urlpatterns = [
     path('login', login),
-    path('authorization-test', auth_test)
+    path('authorization-test', AuthenticateTest.as_view())
 ]

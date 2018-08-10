@@ -2,17 +2,17 @@
     User App Views
 """
 
-from django.shortcuts import render
+# from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 # from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from .serializers import LoginSerializer
+from rest_framework import generics
 
 
-@csrf_exempt
 def login(request):
     """
            Login and generate token
@@ -31,6 +31,8 @@ def login(request):
     return JsonResponse(loginResponse.data)
 
 
-def auth_test(request):
-    print(request.REQUEST)
-    pass
+class AuthenticateTest(generics.GenericAPIView):
+
+    def post(self, request):
+        print(request.POST.get('test1'))
+        return JsonResponse({'message': 'Working'})

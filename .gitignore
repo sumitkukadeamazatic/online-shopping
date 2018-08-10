@@ -53,7 +53,11 @@ coverage.xml
 
 # Django stuff:
 *.log
+<<<<<<< HEAD
 local_settings.py
+=======
+local.py
+>>>>>>> 8612706ccbd04507f0f401d3f819ff4f8d44be10
 db.sqlite3
 
 # Flask stuff:
@@ -104,3 +108,4 @@ venv.bak/
 .mypy_cache/
 my_virtual_environment/
 myvenv
+settings.py

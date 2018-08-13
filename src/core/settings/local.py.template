@@ -1,10 +1,10 @@
 """
-	Local Environment Settings
-	edit this file if needed
-	rename 'local.py.template' to 'local.py' if you havent already
+        Local Environment Settings
+        edit this file if needed
+        rename 'local.py.template' to 'local.py' if you havent already
 """
 
-import os
+DEBUG = True
 
 SECRET_KEY = 'very_secret_key'
 

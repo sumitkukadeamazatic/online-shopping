@@ -7,7 +7,7 @@ from . import models
 # Register your models here.
 
 
-class ReturnOrderAdmin(admin.ModelAdmin):
+class OrderAdmin(admin.ModelAdmin):
     """ Admin Model
         return_order_admin model
     """
@@ -16,10 +16,10 @@ class ReturnOrderAdmin(admin.ModelAdmin):
     list_editable = ['status']
 
 
-admin.site.register(models.ReturnOrder, ReturnOrderAdmin)
+admin.site.register(models.Order, OrderAdmin)
 
 
-class ReturnLineitemAdmin(admin.ModelAdmin):
+class LineitemAdmin(admin.ModelAdmin):
     """ Admin Model
         return_lineitem_admin model
     """
@@ -30,10 +30,10 @@ class ReturnLineitemAdmin(admin.ModelAdmin):
     list_editable = ['status', 'reason']
 
 
-admin.site.register(models.ReturnLineitem, ReturnLineitemAdmin)
+admin.site.register(models.Lineitem, LineitemAdmin)
 
 
-class ReturnOrderLogAdmin(admin.ModelAdmin):
+class OrderLogAdmin(admin.ModelAdmin):
     """ Admin Model
         return_order_log_admin model
     """
@@ -43,10 +43,10 @@ class ReturnOrderLogAdmin(admin.ModelAdmin):
     list_editable = ['status']
 
 
-admin.site.register(models.ReturnOrderLog, ReturnOrderLogAdmin)
+admin.site.register(models.OrderLog, OrderLogAdmin)
 
 
-class ReturnLineitemShippingDetailAdmin(admin.ModelAdmin):
+class LineitemShippingDetailAdmin(admin.ModelAdmin):
     """ Admin Model
         return_lineitem_shipping_detail_admin model
     """
@@ -57,5 +57,5 @@ class ReturnLineitemShippingDetailAdmin(admin.ModelAdmin):
     list_editable = ['quantity']
 
 
-admin.site.register(models.ReturnLineitemShippingDetail,
-                    ReturnLineitemShippingDetailAdmin)
+admin.site.register(models.LineitemShippingDetail,
+                    LineitemShippingDetailAdmin)

@@ -1,6 +1,4 @@
-\1
-5202
-0c"""
+"""
      Base Settings
 """
 import os

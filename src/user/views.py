@@ -20,6 +20,7 @@ def login(request):
     email = request.POST['email']
     password = request.POST['password']
     user = authenticate(email=email, password=password)
+    print(user)
     if user is None:
         pass
     token = Token.objects.get_or_create(user=user)

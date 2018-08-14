@@ -43,6 +43,7 @@ class UserManager(BaseUserManager):
                 cursor.execute(
                     "INSERT INTO user_role(name, slug, created_at, updated_at) VALUES ('Super User', 'superuser','%s' ,'%s') RETURNING id" % (now, now))
                 result = cursor.fetchall()
+            print(result)
             for item in result:
                 super_user_role_id = item[0]
                 break

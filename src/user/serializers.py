@@ -66,7 +66,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('first_name', 'middle_name', 'last_name', 'email',
+        fields = ('id', 'first_name', 'middle_name', 'last_name', 'email',
                   'dob', 'contact_no', 'password', 'profile_pic', 'gender')
         extra_kwargs = {
             'password': {
@@ -84,9 +84,3 @@ class UserSerializer(serializers.ModelSerializer):
         valid_data.update({'role_id': customer_role.id})
         user = User.objects.create_user(password=password, **valid_data)
         return user
-
-    def update(self, user, validated_data):
-        print('user')
-        print(user)
-        print('validated_data')
-        print(validated_data)

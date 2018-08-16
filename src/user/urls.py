@@ -3,10 +3,10 @@
 """
 
 from django.urls import path, re_path
-from .views import (LoginView, UserView)
+from rest_framework import routers
+from .views import (UserViewSet)
 
-urlpatterns = [
-    path('', UserView.as_view()),
-    path('<int:id>', UserView.as_view()),
-    path('auth', LoginView.as_view()),
-]
+
+router = routers.SimpleRouter()
+router.register(r'', UserViewSet)
+urlpatterns = router.urls

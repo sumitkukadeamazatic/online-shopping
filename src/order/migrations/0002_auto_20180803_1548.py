@@ -18,61 +18,73 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='address_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.Address'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='contact.Address'),
         ),
         migrations.AddField(
             model_name='order',
             name='cart_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.Cart'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.Cart'),
         ),
         migrations.AddField(
             model_name='order',
             name='payment_method_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.PaymentMethod'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.PaymentMethod'),
         ),
         migrations.AddField(
             model_name='lineshippingdetails',
             name='lineitem_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.Lineitem'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.Lineitem'),
         ),
         migrations.AddField(
             model_name='lineshippingdetails',
             name='shiping_details_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.ShippingDetails'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.ShippingDetails'),
         ),
         migrations.AddField(
             model_name='lineitemtax',
             name='lineitem_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.Lineitem'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.Lineitem'),
         ),
         migrations.AddField(
             model_name='lineitem',
             name='order_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.Order'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.Order'),
         ),
         migrations.AddField(
             model_name='lineitem',
             name='product_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Product'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='product.Product'),
         ),
         migrations.AddField(
             model_name='lineitem',
             name='seller_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),
         ),
         migrations.AddField(
             model_name='cartproduct',
             name='cart_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.Cart'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='order.Cart'),
         ),
         migrations.AddField(
             model_name='cartproduct',
             name='product_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Product'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='product.Product'),
         ),
         migrations.AddField(
             model_name='cartproduct',
             name='seller_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='seller.Seller'),
         ),
     ]

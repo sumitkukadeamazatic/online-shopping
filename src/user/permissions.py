@@ -12,17 +12,19 @@ class UserAccessPermission(BasePermission):
     message = "Access Denied."
 
     def has_permission(self, request, view):
+
         if view.action in ['auth', 'create']:
-            return True
+            is_allowed = True
         elif view.action == 'list':
             if request.user.is_superuser:
-                return True
+                is_allowed = True
             else:
-                return False
+                is_allowed = False
         elif request.auth and view.action != 'destroy':
             if str(request.user.id) == view.kwargs['pk'] or request.user.is_superuser:
-                return True
+                is_allowed = True
             else:
-                return False
+                is_allowed = False
         else:
-            return False
+            is_allowed = False
+        return is_allowed

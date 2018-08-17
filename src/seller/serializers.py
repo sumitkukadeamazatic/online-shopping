@@ -6,15 +6,15 @@ class SellerSerializer(serializers.Serializer):
 
 
 class SellerDetailSerializer(serializers.Serializer):
-    seller_id = serializers.BigIntegerField()
+    seller_id = serializers.IntegerField()
     company_name = serializers.CharField(max_length=50)
-    user_id = serializers.BigIntegerField()
-    average_rating = serializers.DecimalField(max_digits=3, decimal_place=2)
+    user_id = serializers.IntegerField()
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
     ''' review = 
         following fields tobe placed in array of JSON.
     '''
     user_name = serializers.CharField(max_length=50)
-    rating = serializers.DecimalField(max_digits=3, decimal_place=2)
+    rating = serializers.DecimalField(max_digits=3, decimal_places=2)
     title = serializers.CharField(max_length=50)
-    description = serializers.TextField()
+    description = serializers.CharField(max_length=200)
     review_date = serializers.DateTimeField()

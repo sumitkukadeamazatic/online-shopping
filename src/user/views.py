@@ -2,38 +2,46 @@
     User App Views
 """
 
-# from django.shortcuts import render
-from django.contrib.auth import authenticate
-from django.http import JsonResponse
-# from rest_framework.decorators import api_view
-# from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authtoken.models import Token
+from rest_framework import exceptions, viewsets
+from rest_framework.decorators import action, detail_route
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import LoginSerializer
-from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+from .serializers import UserLoginSerializer, UserSerializer
+from .models import User
 
 
-def login(request):
+class UserViewSet(viewsets.ModelViewSet):
     """
-           Login and generate token
+        User Model Viewset
     """
-    email = request.POST['email']
-    password = request.POST['password']
-    user = authenticate(email=email, password=password)
-    print(user)
-    if user is None:
-        pass
-    token = Token.objects.get_or_create(user=user)
-    data = {
-        'message': 'Login successful',
-        'token': token[0]
-    }
-    loginResponse = LoginSerializer(data)
-    return JsonResponse(loginResponse.data)
 
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
 
-class AuthenticateTest(generics.GenericAPIView):
+    def get_queryset(self):
+        if self.action in ['list','auth']:
+            queryset = User.objects.all()
+        elif self.kwargs['pk'] == str(self.request.user.id):
+            queryset = User.objects.filter(pk=self.kwargs['pk'])
+        else:
+            queryset = []
+        return queryset
+    
+    def get_permissions(self, *args):
+        if self.action in ['auth','create']:
+            permission_classes = [AllowAny]
+        elif self.action is 'list':
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
-    def post(self, request):
-        print(request.POST.get('test1'))
-        return JsonResponse({'message': 'Working'})
+        
+    @action(detail=False, methods=['post'])
+    def auth(self, request):
+        data = request.data
+        user_login_serializer = UserLoginSerializer(data=data)
+        if user_login_serializer.is_valid(raise_exception=True):
+            return Response(user_login_serializer.data)
+

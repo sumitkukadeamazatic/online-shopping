@@ -84,3 +84,11 @@ class UserSerializer(serializers.ModelSerializer):
         valid_data.update({'role_id': customer_role.id})
         user = User.objects.create_user(password=password, **valid_data)
         return user
+
+    def update(self, user, valid_data):
+        if 'password' in valid_data.keys():
+            password = valid_data.pop('password')
+            user.set_password(password)
+            user.save()
+        User.objects.filter(pk=user.id).update(**valid_data)
+        return User.objects.get(pk=user.id)

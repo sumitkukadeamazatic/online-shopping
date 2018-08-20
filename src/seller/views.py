@@ -24,8 +24,8 @@ class SellerView(APIView):
 
     def post(self, request, format=None):
         print (request.data)
-        print (request.META)
-        print (request.META.get('HTTP_Token'))
+#        print (request.META)
+        print (request.META.get('HTTP_TOKEN'))
         data = {'message': 'Post method'}
         sellerResponse = SellerSerializer(data)
         return JsonResponse(sellerResponse.data)

@@ -6,11 +6,29 @@ try:
     from .local import (SECRET_KEY,
                         DEBUG,
                         DATABASES)
+
 except ImportError:
     from .production import (SECRET_KEY,
                              DEBUG,
                              DATABASES,
                              AUTH_PASSWORD_VALIDATORS)
+
+'''
+try:
+    from .email_settings import (EMAIL_HOST,
+                                 EMAIL_USE_TLS,
+                                 EMAIL_HOST_PASSWORD,
+                                 EMAIL_HOST_USER,
+                                 EMAIL_PORT)
+
+
+except ImportError:
+    from .production import (EMAIL_HOST,
+                             EMAIL_USE_TLS,
+                             EMAIL_HOST_PASSWORD,
+                             EMAIL_HOST_USER,
+                             EMAIL_PORT)
+'''
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +41,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -35,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'utils',
@@ -51,7 +70,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -101,9 +119,11 @@ AUTH_USER_MODEL = 'user.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 APPEND_SLASH = True

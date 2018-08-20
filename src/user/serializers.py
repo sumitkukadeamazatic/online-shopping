@@ -53,7 +53,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
            Generating Token
         """
         token_object = Token.objects.update_or_create(user=user)
-        print (token.key)
         return str(token_object[0])
 
 
@@ -83,6 +82,13 @@ class UserSerializer(serializers.ModelSerializer):
             customer_role = Role.objects.create(
                 name='Customer', slug='customer', created_at=now, updated_at=now)
         valid_data.update({'role_id': customer_role.id})
-        print (token.key)
         user = User.objects.create_user(password=password, **valid_data)
         return user
+
+    def update(self, user, valid_data):
+        if 'password' in valid_data.keys():
+            password = valid_data.pop('password')
+            user.set_password(password)
+            user.save()
+        User.objects.filter(pk=user.id).update(**valid_data)
+        return User.objects.get(pk=user.id)

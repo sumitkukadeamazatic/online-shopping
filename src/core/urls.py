@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from user.views import request_forgot_password
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('user.urls')),
     path('seller/',include('seller.urls'))
+#    path('address/', include('contact.urls')),
+#    path('request-reset-password', request_forgot_password)
 ]

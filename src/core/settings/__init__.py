@@ -6,11 +6,29 @@ try:
     from .local import (SECRET_KEY,
                         DEBUG,
                         DATABASES)
+
 except ImportError:
     from .production import (SECRET_KEY,
                              DEBUG,
                              DATABASES,
                              AUTH_PASSWORD_VALIDATORS)
+
+
+try:
+    from .email_settings import (EMAIL_HOST,
+                                 EMAIL_USE_TLS,
+                                 EMAIL_HOST_PASSWORD,
+                                 EMAIL_HOST_USER,
+                                 EMAIL_PORT)
+
+
+except ImportError:
+    from .production import (EMAIL_HOST,
+                             EMAIL_USE_TLS,
+                             EMAIL_HOST_PASSWORD,
+                             EMAIL_HOST_USER,
+                             EMAIL_PORT)
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

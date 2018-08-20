@@ -3,7 +3,8 @@
 """
 
 from rest_framework import routers
-from .views import (UserViewSet)
+from django.urls import path
+from .views import (UserViewSet, request_forgot_password)
 
 
 router = routers.SimpleRouter()

@@ -13,7 +13,7 @@ class UserAccessPermission(BasePermission):
 
     def has_permission(self, request, view):
 
-        if view.action in ['auth', 'create']:
+        if view.action in ['auth', 'create', 'request_reset_password']:
             is_allowed = True
         elif view.action == 'list':
             if request.user.is_superuser:

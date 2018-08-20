@@ -92,3 +92,21 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
         User.objects.filter(pk=user.id).update(**valid_data)
         return User.objects.get(pk=user.id)
+
+
+class UserResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, allow_blank=False)
+    message = serializers.CharField(
+        max_length=100, required=False, allow_blank=True)
+
+    class Meta:
+        model = User
+
+    def validate(self, data):
+        """
+            User Reset Password validate
+        """
+        user = User.objects.filter(email=data['email']).first()
+        if not user:
+            raise exceptions.ParseError(detail='Email doesn\'t exists.')
+        return data

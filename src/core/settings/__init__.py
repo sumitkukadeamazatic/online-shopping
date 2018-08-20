@@ -5,12 +5,16 @@ import os
 try:
     from .local import (SECRET_KEY,
                         DEBUG,
-                        DATABASES)
+                        DATABASES,
+                        SENDGRID_API_KEY,
+                        DEFAULT_FROM_MAIL)
 except ImportError:
     from .production import (SECRET_KEY,
                              DEBUG,
                              DATABASES,
-                             AUTH_PASSWORD_VALIDATORS)
+                             AUTH_PASSWORD_VALIDATORS,
+                             SENDGRID_API_KEY,
+                             DEFAULT_FROM_MAIL)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

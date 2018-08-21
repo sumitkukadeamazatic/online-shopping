@@ -59,7 +59,6 @@ class AddressList(APIView):
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
         user_id , token = res
 
-        user_id, token = TokenAuthentication.authenticate(self, request)
         serializer = AddressSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -73,8 +72,7 @@ class AddressList(APIView):
         if len(res)!=2:
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
         user_id , token = res
-
-        user_id, token = TokenAuthentication.authenticate(self, request)
+        
         address = Address.objects.get(pk=request.data['id'])
         serializer = AddressSerializer(address, data=request.data)
         if serializer.is_valid():
@@ -90,7 +88,6 @@ class AddressList(APIView):
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
         user_id , token = res
 
-        user_id, token = TokenAuthentication.authenticate(self, request)
         address = Address.objects.get(pk=request.data['id'])
         address.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

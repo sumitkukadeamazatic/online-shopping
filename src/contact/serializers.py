@@ -3,12 +3,21 @@ from contact.models import Address
 import re
 
 def trigger_validator(value):
+    try:
         if not re.match(r'^([A-Za-z]+.?\s*)?[A-Za-z]+(\s*[A-Za-z]+){0,2}$',value['name']):
             raise serializers.ValidationError({'name':"Please provide a correct Name"})
+    except:
+        pass
+    try:
         if not re.match(r'^[A-Za-z][A-Za-z\s-]+[A-Za-z]$',value['city']):
             raise serializers.ValidationError({'city':"Please provide a correct City"})
+    except:
+        pass
+    try:
         if not re.match(r'^[A-Za-z][A-Za-z\s-]+[A-Za-z]$',value['state']):
             raise serializers.ValidationError({'name':"Please provide a correct State"})
+    except:
+        pass
     
 
 class AddressSerializer(serializers.ModelSerializer):

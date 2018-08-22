@@ -2,14 +2,8 @@
    Contact App Views
 """
 from contact.models import Address
-from rest_framework.authtoken.models import Token
 from contact.serializers import AddressSerializer
-#from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.authentication import BaseAuthentication
-from rest_framework import mixins
-from rest_framework import generics
+from rest_framework import generics, mixins
 
 
 

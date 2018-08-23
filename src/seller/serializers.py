@@ -18,6 +18,7 @@ class SellerSerializer(serializers.ModelSerializer):
             'message'
         )
 
+
     def get_msg(self, obj):
         return "Post Method"
 

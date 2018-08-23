@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import SellerSerializer
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+from .models import SellerUser, Seller, User
 
 
 class SellerView(APIView):
@@ -17,7 +19,12 @@ class SellerView(APIView):
         sellerResponse = SellerSerializer(data=request.data)
         if sellerResponse.is_valid():
             sellerResponse.save()
-            return Response(sellerResponse.data, status=status.HTTP_201_CREATED)
+            #sellerId = Seller.objects.get(id=sellerResponse.data['id'])
+            #userId = User.objects.get(id=request.user.id)
+            #SellerUser(seller=sellerId,user=userId).save()
+            SellerUser(seller_id=sellerResponse.data['id'],user_id=request.user.id).save()
+            #return Response({'token': request.META.get('HTTP_AUTHORIZATION')}, status=status.HTTP_201_CREATED)
+            return Response({'token': str(Token.objects.get(user_id=request.user.id))}, status=status.HTTP_201_CREATED)
         return Response(sellerResponse.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

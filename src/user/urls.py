@@ -2,14 +2,10 @@
     User App URLs
 """
 
+from rest_framework import routers
+from .views import (UserViewSet)
 
-from django.urls import path
-from .views import *
 
-urlpatterns = [
-    path('auth', LoginView.as_view()),
-    path('authorization-test', AuthenticateTest.as_view()),
-    path('second-test', SecondTestView.as_view()),
-    path('third-test', ThirdTestView.as_view())
-
-]
+router = routers.SimpleRouter()
+router.register(r'', UserViewSet)
+urlpatterns = router.urls

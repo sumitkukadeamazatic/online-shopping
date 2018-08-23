@@ -28,9 +28,8 @@ class CategoryView(APIView):
         requested_page_no = int(request.GET.get('page', False))
         requested_category_slug = request.GET.get('category_slug', None)
         items_per_page = 10
-        parentid = [x.id for x in Category.objects.all().filter(
-            slug=requested_category_slug)]
-        print(parentid)
+        parentid = list(Category.objects.values_list('id', flat=True).filter(
+            slug=requested_category_slug))
         parentid = parentid[0] if len(parentid) == 1 else None
 
         if not requested_category_slug:
@@ -67,3 +66,10 @@ class CategoryView(APIView):
         data['results'] = page_paginator.object_list
 
         return Response(data)
+
+
+class ProductView(APIView):
+    """
+    Product view
+    """
+    pass

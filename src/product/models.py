@@ -15,7 +15,7 @@ class Category(CustomBaseModelMixin):
     """
     name = models.CharField(max_length=50, unique=True)
     slug = models.CharField(max_length=50, unique=True)
-    parent_id = models.BigIntegerField(null=True)
+    parent_id = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
         indexes = [

@@ -10,7 +10,7 @@ from rest_framework import permissions, authentication#, status
 from django.core.paginator import Paginator
 #from django.http import JsonResponse
 #from .serializers import CategorySerializer
-from .models import Category
+from .models import Category,Product
 
 class CategoryView(APIView):
     '''
@@ -72,4 +72,40 @@ class ProductView(APIView):
     """
     Product view
     """
-    pass
+    def get(self, request):
+        pass
+
+    def post(self, request, format=None):
+        category_slug = request.data.get('category_slug', r'.*')
+        seller_id = request.data.get('seller_id', r'.*')
+        rating = request.data.get('rating', r'.*')
+        min_price = request.data.get('min_price', r'.*')
+        max_price = request.data.get('max_price', r'.*')
+        brand = request.data.get('brand', r'.*')
+        discount = request.data.get('discount', r'.*')
+        feature_slug = request.data.get('feature_slug', r'.*')
+        rating = request.data.get('rating', r'.*')
+        
+        # Fetching category id from category slug
+        category_id = list(Category.objects.values_list('id', flat=True).filter(
+            slug=category_slug))
+        category_id = category_id[0] if len(category_id) == 1 else None
+
+        # Fetching brand id from 
+
+        products = list(Product.objects.values(
+            "brand",
+            "category",
+            "name",
+            "description",
+            "base_price",
+            "selling_price",
+            "slug",
+            "images"
+            ).filter(id__regex))
+        #print(products[0])
+
+
+
+
+        return Response({"products":products})

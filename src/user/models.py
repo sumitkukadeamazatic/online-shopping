@@ -51,9 +51,13 @@ class User(CustomBaseModelMixin, AbstractBaseUser, PermissionsMixin):
 
 
 class ResetPassword(CustomBaseModelMixin):
+    """
+         Reset Password Model.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
     is_validated = models.BooleanField(default=False)
+    is_reset = models.BooleanField(default=False)
 
     class Meta:
         indexes = [

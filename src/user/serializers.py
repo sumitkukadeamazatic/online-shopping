@@ -2,11 +2,12 @@
    User App Serializers
 """
 from django.contrib.auth import authenticate
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ParseError, AuthenticationFailed
 from rest_framework.validators import UniqueValidator
-from .models import Role, User
 from django.utils import timezone
+from .models import Role, User, ResetPassword
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -45,7 +46,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
         """
         user = authenticate(email=data['email'], password=data['password'])
         if not user:
-            raise exceptions.AuthenticationFailed(detail='Invalid Credentials')
+            raise AuthenticationFailed(detail='Invalid Credentials')
         return user
 
     def generate_token(self, user):
@@ -94,13 +95,16 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.get(pk=user.id)
 
 
-class UserResetPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True, allow_blank=False)
+class RequestResetPasswordSerializer(serializers.Serializer):
+    """
+     User reset password request serializer
+    """
+    email = serializers.EmailField()
     message = serializers.CharField(
         max_length=100, required=False, allow_blank=True)
 
     class Meta:
-        model = User
+        model = ResetPassword
 
     def validate(self, data):
         """
@@ -108,5 +112,58 @@ class UserResetPasswordSerializer(serializers.Serializer):
         """
         user = User.objects.filter(email=data['email']).first()
         if not user:
-            raise exceptions.ParseError(detail='Email doesn\'t exists.')
+            raise ParseError(detail='Email doesn\'t exists.')
+        return data
+
+
+class ValidateResetPasswordSerializer(serializers.Serializer):
+    """
+        Validate Reset password request Serializer
+    """
+
+    otp = serializers.CharField()
+    email = serializers.EmailField()
+
+    class Meta:
+        model = ResetPassword
+
+    def validate(self, data):
+        """
+           Validate API for reset password validate
+        """
+
+        requested_user = ResetPassword.objects.filter(
+            user__email=data['email'], is_validated=False, otp=data['otp']).first()
+        if not requested_user:
+            raise ParseError(detail='Invalid data')
+        ResetPassword.objects.filter(id=requested_user.id).update(
+            is_validated=True)
+        now = timezone.now()
+        time_diff = (now - requested_user.created_at).total_seconds()
+        # OTP verification must be done in 5 mins
+        if time_diff > 300.0:
+            raise ParseError(detail='OTP verification timed out.')
+        return data
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    """
+        Reset Password Serializer
+    """
+    email = serializers.EmailField()
+    password = serializers.CharField()
+    confirm_password = serializers.CharField()
+    reset_password_id = serializers.IntegerField(required=False)
+
+    def validate(self, data):
+        """
+            Validate reset password data
+        """
+        reset_pending = ResetPassword.objects.filter(
+            user__email=data['email'], is_validated=True, is_reset=False).first()
+        if not reset_pending:
+            raise ParseError(detail='Invalid data.')
+        elif data['password'] != data['confirm_password']:
+            raise ParseError(detail='Invalid data.')
+        data['reset_password_id'] = reset_pending.id
         return data

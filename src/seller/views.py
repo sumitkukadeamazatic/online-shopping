@@ -7,7 +7,7 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import SellerSerializer
+from .serializers import *
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .models import SellerUser, Seller, User
@@ -15,8 +15,19 @@ from .models import SellerUser, Seller, User
 
 class SellerView(APIView):
 
+    def get(self, request, format=None):
+        seller_id = request.GET['seller_id']
+        print (seller_id)
+        result = Seller.objects.filter(id=seller_id)      #take seller_id and filter review table accordingly, refer bookmark for the same.
+        #result = Seller.objects.all()
+        #print (result.values())
+        sellerResponse = SellerDetailSerializer(result, many=True)
+        #sellerResponse = SellerDetailSerializer(request, context = {'request': 'req1'}, many=True)
+        return Response(sellerResponse.data)
+
     def post(self, request, format=None):
         sellerResponse = SellerSerializer(data=request.data)
+        #print (repr(sellerResponse))
         if sellerResponse.is_valid():
             sellerResponse.save()
             #sellerId = Seller.objects.get(id=sellerResponse.data['id'])

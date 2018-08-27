@@ -18,7 +18,6 @@ def add_peginator(results, requested_page_no, items_per_page):
     it will take list of json and return filterd result
     with pagination of json type
     '''
-    requested_page_no = int(requested_page_no)
     data = {}
     page = {}
     results_paginator = Paginator(results, items_per_page)
@@ -39,9 +38,6 @@ def add_peginator(results, requested_page_no, items_per_page):
         data['results'] = page_paginator.object_list
 
     return data
-
-
-
 
 
 class CategoryView(APIView):
@@ -83,25 +79,8 @@ class CategoryView(APIView):
             results = list(Category.objects.values('id',
                                                    'name',
                                                    'slug').filter(parent_id=parentid))
-        #return Response(add_peginator(results, requested_page_no, items_per_page))
-        results_paginator = Paginator(results, items_per_page)
-        page_paginator = results_paginator.get_page(requested_page_no)
-        no_of_pages = results_paginator.num_pages
-        if not requested_page_no:
-            results = results_paginator.object_list
-        else:
-            results = results_paginator.get_page(requested_page_no).object_list
-        page = {}
-        page['current_page'] = requested_page_no if requested_page_no <= no_of_pages and requested_page_no > 0 else "Invalid page number"
-        page['items_per_page'] = items_per_page
-        page['no_of_pages'] = no_of_pages
-        page['has_previous'] = page_paginator.has_previous()
-        page['has_next'] = page_paginator.has_next()
-        data = {}
-        data['page'] = page
-        data['results'] = page_paginator.object_list
+        return Response(add_peginator(results, requested_page_no, 1))
 
-        return Response(data)
 
 
 class ProductView(APIView):
@@ -133,7 +112,7 @@ class ProductView(APIView):
         for pro_id in product_id_list:
             if category_slug == r'.*':
                 pass
-        # Fetching brand id from 
+        # Fetching brand id from
         products = list(Product.objects.values(
             "brand",
             "category",
@@ -144,6 +123,7 @@ class ProductView(APIView):
             "slug",
             "images"
             ).filter())
+
         #print(products[0])
 
 

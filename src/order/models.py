@@ -21,8 +21,8 @@ class Cart(CustomBaseModelMixin):
 
 
 class PaymentMethod(CustomBaseModelMixin):
-    """
-        Configuration of PaymentMethodModules
+    """Address
+        Configuration oAddressf PAddressymentMethodModules
     """
     mode = models.CharField(max_length=20)
     slug = models.CharField(max_length=50, unique=True)
@@ -77,12 +77,8 @@ class CartProduct(CustomBaseModelMixin):
         Cart,
         on_delete=models.CASCADE,
         related_name=None)
-    product = models.ForeignKey(
-        product_model.Product,
-        on_delete=models.CASCADE,
-        related_name=None)
-    seller = models.ForeignKey(
-        seller_model.Seller,
+    product_seller = models.ForeignKey(
+        product_model.ProductSeller,
         on_delete=models.CASCADE,
         related_name=None)
     quantity = models.PositiveIntegerField()

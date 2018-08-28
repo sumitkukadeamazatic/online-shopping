@@ -18,3 +18,5 @@ DATABASES = {
        'PORT': '',
    }
 }
+
+DEFAULT_FROM_MAIL = ''

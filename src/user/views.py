@@ -15,6 +15,8 @@ from .models import User, ResetPassword
 from .permissions import UserAccessPermission
 from .serializers import UserLoginSerializer, UserSerializer, RequestResetPasswordSerializer, ValidateResetPasswordSerializer, ResetPasswordSerializer
 
+from datetime import datetime, timedelta
+
 
 class UserViewSet(ModelViewSet):
     """
@@ -42,12 +44,22 @@ class UserViewSet(ModelViewSet):
         """
         serializer = RequestResetPasswordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            while True:
-                otp = random.randint(111111, 999999)
-                otp_exists = ResetPassword.objects.filter(
-                    otp=otp, is_validated=True).first()
-                if otp_exists is None:
-                    break
+            user = User.objects.get(email=serializer.data['email'])
+            now = datetime.now()
+            possible_otp_time = now - timedelta(minutes=5)
+            reset_password = ResetPassword.objects.filter(
+                user_id=user.id, is_validated=False, is_reset=False, created_at__gte=possible_otp_time).first()
+            if reset_password:
+                otp = reset_password.otp
+            else:
+                while True:
+                    otp = random.randint(111111, 999999)
+                    otp_exists = ResetPassword.objects.filter(
+                        otp=otp, is_validated=True).first()
+                    if otp_exists is None:
+                        break
+                ResetPassword.objects.create(
+                    user=user, otp=otp)
             sendgrid_inst = sendgrid.SendGridAPIClient(
                 apikey=settings.SENDGRID_API_KEY)
             from_email = Email(settings.DEFAULT_FROM_MAIL)
@@ -60,20 +72,17 @@ class UserViewSet(ModelViewSet):
                 request_body=mail.get())
             if not mail_response.status_code in [200, 202]:
                 raise ParseError(detail='Not able to send email.')
-            user = User.objects.get(email=serializer.data['email'])
-            ResetPassword.objects.create(
-                user=user, otp=otp)
             response_serializer = RequestResetPasswordSerializer(
                 data={'message': 'OTP has been sent to your registered Email address', 'email': serializer.data['email']})
             if response_serializer.is_valid(raise_exception=True):
                 return Response(response_serializer.data, status=HTTP_200_OK)
 
     @action(methods=['post'], detail=False, url_path='reset-password/validate')
-    def reset_password_validate(self, request):
+    def validate_reset_password(self, request):
         validate_serializer = ValidateResetPasswordSerializer(
             data=request.POST)
         if validate_serializer.is_valid(raise_exception=True):
-            return Response({'message': 'Data validated successfully.'})
+            return Response({'message': 'Data validated successfully.'}, status=HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='reset-password/reset')
     def reset_password(self, request):
@@ -84,4 +93,4 @@ class UserViewSet(ModelViewSet):
             user.save()
             ResetPassword.objects.filter(
                 id=reset_serializer.data['reset_password_id']).update(is_reset=True)
-            return Response({'message': 'Password Reset successfull.'})
+            return Response({'message': 'Password Reset successfull.'}, status-HTTP_200_OK)

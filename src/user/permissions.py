@@ -12,7 +12,7 @@ class UserAccessPermission(BasePermission):
     message = "Access Denied."
 
     def has_permission(self, request, view):
-        if view.action in ['auth', 'create', 'request_reset_password', 'reset_password_validate', 'reset_password'] and request.method == 'POST':
+        if view.action in ['auth', 'create', 'request_reset_password', 'validate_reset_password', 'reset_password'] and request.method == 'POST':
             is_allowed = True
         elif view.action == 'list':
             if bool(request.user.is_superuser):

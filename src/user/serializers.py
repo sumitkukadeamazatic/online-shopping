@@ -123,26 +123,32 @@ class ValidateResetPasswordSerializer(serializers.Serializer):
 
     otp = serializers.CharField()
     email = serializers.EmailField()
+    message = serializers.CharField(required=False)
 
     class Meta:
         model = ResetPassword
+        fields = ['otp', 'email', 'message']
+        extra_kwargs = {
+            'message': {
+                'read_only': True
+            }
+        }
 
     def validate(self, data):
         """
            Validate API for reset password validate
         """
-
         requested_user = ResetPassword.objects.filter(
             user__email=data['email'], is_validated=False, otp=data['otp']).first()
         if not requested_user:
             raise ParseError(detail='Invalid data')
-        ResetPassword.objects.filter(id=requested_user.id).update(
-            is_validated=True)
         now = timezone.now()
         time_diff = (now - requested_user.created_at).total_seconds()
         # OTP verification must be done in 5 mins
         if time_diff > 300.0:
             raise ParseError(detail='OTP verification timed out.')
+        ResetPassword.objects.filter(id=requested_user.id).update(
+            is_validated=True)
         return data
 
 

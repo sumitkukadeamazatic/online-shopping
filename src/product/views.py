@@ -10,7 +10,7 @@ from rest_framework import permissions, authentication#, status
 from django.core.paginator import Paginator
 #from django.http import JsonResponse
 #from .serializers import CategorySerializer
-from .models import Category, Product
+from .models import Category, Product, ProductSeller, Review
 
 def add_peginator(results, requested_page_no, items_per_page):
     '''
@@ -89,6 +89,52 @@ class ProductView(APIView):
     """
     def get(self, request):
         pass
+    def filter_product_list(self,
+                            product_id,
+                            category_id,
+                            seller_id,
+                            min_price,
+                            max_price,
+                            brand_list,
+                            discount,
+                            feature_slug,
+                            rating):
+        if seller_id != r'.*':
+            if not ProductSeller.objects.filter(
+                    product_id=product_id,
+                    seller_id=seller_id).exists():
+                return False
+
+            if brand_list != r'.*':
+                is_exists = False
+                for brand_id in brand_list:
+                    if Product.objects.values().filter(brand_id=brand_id).exists():
+                        is_exists = True
+                        break
+                if not is_exists:
+                    return False
+
+        product_selling_price = Product.objects.values_list(
+            'selling_price', flat=True).filter(id=product_id).get()
+        if min_price != r'.*':
+            if product_selling_price < min_price:
+                return False
+        if max_price != r'.*':
+            if product_selling_price > max_price:
+                return False
+
+        total_ratings = list(Review.objects.values_list(
+            'rating', flat=True).filter(product_id=product_id))
+
+        if total_ratings < rating:
+            return False
+
+        price = Product.objects.values('base_price', 'selling_price').filter(id=product_id).get()
+        product_discount = (price['base_price']-price['selling_price']) /price['base_price'] * 100
+        if product_discount < float(discount):
+            return False
+
+        return True
 
     def post(self, request, format=None):
         category_slug = request.data.get('category_slug', r'.*')
@@ -106,7 +152,8 @@ class ProductView(APIView):
         category_id = category_id[0] if len(category_id) == 1 else None
         # product id list 
         #product_id_list = list(models.Product.objects.values_list("id",flat=True))
-        product_id_list = list(Product.objects.values_list('id',flat=True).filter(category_id=category_id))
+        product_id_list = list(Product.objects.values_list('id', flat=True).filter(
+            category_id=category_id))
         
         filter_flag = True
         for pro_id in product_id_list:

@@ -11,19 +11,23 @@ from .serializers import *
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .models import SellerUser, Seller, User
+from product.models import Review
 
 
 class SellerView(APIView):
 
     def get(self, request, format=None):
         seller_id = request.GET['seller_id']
-        print (seller_id)
-        result = Seller.objects.filter(id=seller_id)      #take seller_id and filter review table accordingly, refer bookmark for the same.
-        #result = Seller.objects.all()
-        #print (result.values())
-        sellerResponse = SellerDetailSerializer(result, many=True)
-        #sellerResponse = SellerDetailSerializer(request, context = {'request': 'req1'}, many=True)
-        return Response(sellerResponse.data)
+        seller_result = Seller.objects.get(id=seller_id) 
+        review_result = Review.objects.filter(seller=seller_id)
+        seller_response = SellerDetailSerializer(seller_result)
+        review_response = ReviewSerializer(review_result, many=True)
+        average_rating = '%.2f' % (Review.objects.filter(seller_id = seller_id).aggregate(Avg('rating'))['rating__avg'])
+        updated_seller_data={'average_rating' : average_rating}
+        updated_seller_data.update(seller_response.data)
+        updated_review_data={'review' : review_response.data}
+        updated_review_data.update(updated_seller_data)
+        return Response(updated_review_data)
 
     def post(self, request, format=None):
         sellerResponse = SellerSerializer(data=request.data)

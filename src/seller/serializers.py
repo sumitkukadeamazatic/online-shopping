@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from .models import Seller
+from .models import Seller, User
 from product.models import Review
 from django.db.models import Avg
 
 
 class SellerSerializer(serializers.ModelSerializer):
+
     message = serializers.SerializerMethodField('get_msg')
 
     class Meta:
@@ -27,24 +28,69 @@ class SellerSerializer(serializers.ModelSerializer):
 
 class SellerDetailSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Seller
+        fields = (
+            'id',
+            'company_name',
+        )
+
+class ReviewSerializer(serializers.ModelSerializer):
+
+    user_name = serializers.SerializerMethodField('get_userName')
+    user_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Review
+        
+        fields = (
+            'user_id',
+            'user_name',
+            'rating',
+            'title',
+            'description',
+            'created_at'
+        )
+
+    def get_userName(self,obj):
+        print(obj.rating)
+        user_name_dic = User.objects.values('first_name','middle_name','last_name').filter(id=obj.user_id).first()
+        user_name = ' '.join(filter(None,(map(lambda x:user_name_dic[x],user_name_dic))))
+        return user_name
+
+    #def to_representation(self,obj):
+        #serialized_data = super(ReviewSerializer, self).to_representation(obj)
+        #print (avg)
+        #print (serialized_data)
+        #a = [sum(float(serialized_data['rating'])) for serialized_data['rating'] in serialized_data]
+        #print(a)
+        #print (sum(float(serialized_data['rating'])))
+
+'''
+class SellerDetailSerializer(serializers.ModelSerializer):
+
     #current_user = serializers.SerializerMethodField('getUser')
-    average_rating = serializers.SerializerMethodField('getAverageRating')
+    #average_rating = serializers.SerializerMethodField('getAverageRating')
+
+    #seller_id = serializers.SerializerMethodField('getId')    
+    #result = Seller.objects.filter(id=11)
+#    review = ReviewSerializer(read_only=True)
 
     class Meta:
         model = Seller
         fields = (
             'id',
             'company_name',
-            'average_rating'
+#            'review'
+#            'average_rating',
+#            'review'
         )
 
-    def getAverageRating(self, obj):
-        print (Seller.id)
-        #print (Review.objects.filter(seller_id = 11))
-        #print (Review.objects.filter(seller_id = id).aggregate(Avg('rating')))
-        return (Review.objects.filter(seller_id = 11).aggregate(Avg('rating'))['rating__avg'])
+    def getId(self, validated_data):
+        print (validated_data.objects.filter(id=11))
+        #print (validated_data.pop('id'))
 
-'''
+
     def getUser(self, obj):
         request = getattr(self.context, 'request', None)
         print (request.user)

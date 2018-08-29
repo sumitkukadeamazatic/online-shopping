@@ -6,7 +6,6 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from utils.models import CustomBaseModelMixin
-
 from .managers import UserManager
 # Create your models here.
 
@@ -48,4 +47,19 @@ class User(CustomBaseModelMixin, AbstractBaseUser, PermissionsMixin):
                     'gender',
                     'dob'],
                 name='user_index'),
+        ]
+
+
+class ResetPassword(CustomBaseModelMixin):
+    """
+         Reset Password Model.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    is_validated = models.BooleanField(default=False)
+    is_reset = models.BooleanField(default=False)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['otp'], name='reset_password_index')
         ]

@@ -2,6 +2,7 @@
     User App Views
 """
 
+from datetime import datetime, timedelta
 from django.conf import settings
 from rest_framework.exceptions import ParseError
 from rest_framework.decorators import action
@@ -13,9 +14,7 @@ import random
 from sendgrid.helpers.mail import Email, Content, Mail
 from .models import User, ResetPassword
 from .permissions import UserAccessPermission
-from .serializers import UserLoginSerializer, UserSerializer, RequestResetPasswordSerializer, ValidateResetPasswordSerializer, ResetPasswordSerializer
-
-from datetime import datetime, timedelta
+from .serializers import UserLoginSerializer, UserSerializer, RequestResetPasswordSerializer, ValidateResetPasswordSerializer, ResetPasswordSerializer, ResponseResetPasswordSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -60,18 +59,19 @@ class UserViewSet(ModelViewSet):
                         break
                 ResetPassword.objects.create(
                     user=user, otp=otp)
-            sendgrid_inst = sendgrid.SendGridAPIClient(
-                apikey=settings.SENDGRID_API_KEY)
-            from_email = Email(settings.DEFAULT_FROM_MAIL)
-            to_email = Email(serializer.data['email'])
-            subject = "Amazatic Dummy E-commerce Site Reset password"
-            content = Content(
-                "text/plain", "Hello, Please use following OTP for resetting your password.\n\t %s" % otp)
-            mail = Mail(from_email, subject, to_email, content)
-            mail_response = sendgrid_inst.client.mail.send.post(
-                request_body=mail.get())
-            if not mail_response.status_code in [200, 202]:
-                raise ParseError(detail='Not able to send email.')
+            if setttings.APP_ENVIRONMENT == 'production':
+                sendgrid_inst = sendgrid.SendGridAPIClient(
+                    apikey=settings.SENDGRID_API_KEY)
+                from_email = Email(settings.DEFAULT_FROM_MAIL)
+                to_email = Email(serializer.data['email'])
+                subject = "Amazatic Dummy E-commerce Site Reset password"
+                content = Content(
+                    "text/plain", "Hello, Please use following OTP for resetting your password.\n\t %s" % otp)
+                mail = Mail(from_email, subject, to_email, content)
+                mail_response = sendgrid_inst.client.mail.send.post(
+                    request_body=mail.get())
+                if not mail_response.status_code in [200, 202]:
+                    raise ParseError(detail='Not able to send email.')
             response_serializer = RequestResetPasswordSerializer(
                 data={'message': 'OTP has been sent to your registered Email address', 'email': serializer.data['email']})
             if response_serializer.is_valid(raise_exception=True):
@@ -82,7 +82,10 @@ class UserViewSet(ModelViewSet):
         validate_serializer = ValidateResetPasswordSerializer(
             data=request.POST)
         if validate_serializer.is_valid(raise_exception=True):
-            return Response({'message': 'Data validated successfully.'}, status=HTTP_200_OK)
+            response_serializer = ResponseResetPasswordSerializer(
+                data={'message': 'Data validated successfully.'})
+            if response_serializer.is_valid(raise_exception=True):
+                return Response(response_serializer.data, status=HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='reset-password/reset')
     def reset_password(self, request):
@@ -93,4 +96,7 @@ class UserViewSet(ModelViewSet):
             user.save()
             ResetPassword.objects.filter(
                 id=reset_serializer.data['reset_password_id']).update(is_reset=True)
-            return Response({'message': 'Password Reset successfull.'}, status-HTTP_200_OK)
+            response_serializer = ResponseResetPasswordSerializer(
+                data={'message': 'Password Reset successfull.'})
+            if response_serializer.is_valid(raise_exception=True):
+                return Response(response_serializer, status-HTTP_200_OK)

@@ -19,4 +19,8 @@ DATABASES = {
    }
 }
 
-DEFAULT_FROM_MAIL = ''
+SENDGRID_API_key=''
+
+DEFAULT_FROM_MAIL=''
+
+APP_ENVIRONMENT = 'local'

@@ -124,6 +124,7 @@ class ValidateResetPasswordSerializer(serializers.Serializer):
     otp = serializers.CharField()
     email = serializers.EmailField()
     message = serializers.CharField(required=False)
+    is_ouput = serializers.BooleanField(required=False)
 
     class Meta:
         model = ResetPassword
@@ -165,11 +166,21 @@ class ResetPasswordSerializer(serializers.Serializer):
         """
             Validate reset password data
         """
+        user = User.objects.get(email=serializer.data['email'])
+        now = datetime.now()
+        possible_otp_time = now - timedelta(minutes=5)
         reset_pending = ResetPassword.objects.filter(
-            user__email=data['email'], is_validated=True, is_reset=False).first()
+            user__email=data['email'], is_validated=True, is_reset=False, created_at__gte=possible_otp_time).first()
         if not reset_pending:
             raise ParseError(detail='Invalid data.')
         elif data['password'] != data['confirm_password']:
             raise ParseError(detail='Invalid data.')
         data['reset_password_id'] = reset_pending.id
         return data
+
+
+class ResponseResetPasswordSerializer(serializers.Serializer):
+    """
+       Serializer for Response
+    """
+    message = serializers.CharField(required=True)

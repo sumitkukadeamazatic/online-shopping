@@ -1,6 +1,7 @@
 """
    User App Serializers
 """
+from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
@@ -166,7 +167,7 @@ class ResetPasswordSerializer(serializers.Serializer):
         """
             Validate reset password data
         """
-        user = User.objects.get(email=serializer.data['email'])
+        user = User.objects.get(email=data['email'])
         now = datetime.now()
         possible_otp_time = now - timedelta(minutes=5)
         reset_pending = ResetPassword.objects.filter(

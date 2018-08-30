@@ -22,7 +22,8 @@ class SellerView(APIView):
         review_result = Review.objects.filter(seller=seller_id)
         seller_response = SellerDetailSerializer(seller_result)
         review_response = ReviewSerializer(review_result, many=True)
-        average_rating = '%.2f' % (Review.objects.filter(seller_id = seller_id).aggregate(Avg('rating'))['rating__avg'])
+        average_rating = Review.objects.filter(seller_id = seller_id).aggregate(Avg('rating'))['rating__avg']
+        average_rating = '%.2f' % (0 if average_rating is None else average_rating)
         updated_seller_data={'average_rating' : average_rating}
         updated_seller_data.update(seller_response.data)
         updated_review_data={'review' : review_response.data}
@@ -47,53 +48,12 @@ class SellerView(APIView):
 
 
 
-
 '''
-from rest_framework.response import Response
-from django.http import JsonResponse
-from rest_framework import viewsets, permissions
-from rest_framework.views import APIView
-from .serializers import SellerSerializer
-from .models import User,Seller
-from rest_framework.authtoken.models import Token
-
-class SellerView(APIView):
-    """
-    Seller View
-    """
-
-    def get(self, request, format=None):
-        print ("-----")
-        #print (User.objects.values_list().filter(email='s'))
-        #print (User.objects.filter(email='s@gmail.com').first())
-        #print (request.data)
-        #data = {'message': 'Get method'}
-        #sellerResponse = SellerSerializer(data)
-        #return JsonResponse(sellerResponse.data)
-        SellerResponse = SellerSerializer()
-        return Response(SellerResponse.data)
-        return Response(SellerResponse.errors)
-
-    def post(self, request, format=None):
-        #print (request.data)
-        #print (request.META.get('HTTP_TOKEN'))
-        #print (Token.objects.get(key=request.META.get('HTTP_TOKEN')).user.id)
-        #data = {'message': 'Post method'}
-        #for i in request.data:
-        #    print (request.data[i])
-        #serializer = SellerSerializer(data)
-        #if serializer.is_valid():
-        #    serializer.save()
-        #print (serializer.data)
+        print (request.META.get('HTTP_TOKEN'))
+        print (Token.objects.get(key=request.META.get('HTTP_TOKEN')).user.id)
         #return JsonResponse(serializer.data)
         #request.POST = request.POST.copy()
         #request.POST.update({'message':'Post Method'})
-        serializer = SellerSerializer(data=request.data)
-        if serializer.is_valid():
-            #Seller.objects.create(request)
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
 
 class SellerViewSet(viewsets.ReadOnlyModelViewSet):
 

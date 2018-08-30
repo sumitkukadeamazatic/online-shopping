@@ -34,3 +34,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+
+DEFAULT_FROM_MAIL = os.environ.get('DEFAULT_FROM_MAIL')
+
+APP_ENVIRONMENT = 'production'

@@ -5,12 +5,18 @@ import os
 try:
     from .local import (SECRET_KEY,
                         DEBUG,
-                        DATABASES)
+                        DATABASES,
+                        SENDGRID_API_KEY,
+                        DEFAULT_FROM_MAIL,
+                        APP_ENVIRONMENT)
 except ImportError:
     from .production import (SECRET_KEY,
                              DEBUG,
                              DATABASES,
-                             AUTH_PASSWORD_VALIDATORS)
+                             AUTH_PASSWORD_VALIDATORS,
+                             SENDGRID_API_KEY,
+                             DEFAULT_FROM_MAIL,
+                             APP_ENVIRONMENT)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,7 +88,6 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 
-#TIME_ZONE = 'UTC'
 TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True

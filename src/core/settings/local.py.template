@@ -18,3 +18,5 @@ DATABASES = {
        'PORT': '',
    }
 }
+
+APP_ENVIRONMENT = 'local'

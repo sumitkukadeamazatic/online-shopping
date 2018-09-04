@@ -3,14 +3,13 @@ product app models
 """
 from rest_framework.views import APIView
 from rest_framework.response import Response
-#from django.http import Http404
 from rest_framework import permissions, authentication#, status
+from django.http import Http404#, JsonResponse
 # from django.shortcuts import render
 
 from django.core.paginator import Paginator
-#from django.http import JsonResponse
 #from .serializers import CategorySerializer
-from .models import Category, Product, ProductSeller, Review
+from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
 
 def add_peginator(results, requested_page_no, items_per_page):
     '''
@@ -83,14 +82,17 @@ class CategoryView(APIView):
                                                    'slug').filter(parent_id=parentid))
         return Response(add_peginator(results, requested_page_no, items_per_page))
 
+def product_view_get(request, id):
+    print('#################################')
+    return Response({"sdkvb":'ksv'})
+
 
 
 class ProductView(APIView):
     """
     Product view
     """
-    def get(self, request):
-        pass
+
     def filter_product_list(self, product_id, data_json):
         '''return false if any of the thing will not match'''
         if data_json['seller_ids'] != r'.*':
@@ -142,6 +144,56 @@ class ProductView(APIView):
 
         return True
 
+    def get(self, request, id):
+        '''
+        Get product detail using id
+        '''
+        try:
+            pro_details = Product.objects.values().filter(id=int(id)).get()
+        except Exception as e:
+            raise Http404("Product doesn't exist")
+            #return Response({"response" : "Product not found"})
+        response = {}
+        response['name'] = pro_details['name']
+
+        total_ratings = list(Review.objects.values_list(
+            'rating', flat=True).filter(product_id=id))
+        try:
+            response['average_rating'] = sum(total_ratings)/len(total_ratings)
+        except ZeroDivisionError:
+            response['average_rating'] = 'Not available'
+
+        response['base_price'] = pro_details['base_price']
+        response['selling_price'] = pro_details['selling_price']
+        response['img'] = pro_details['images']
+        response['description'] = pro_details['description']
+        feature_list = list(ProductFeature.objects.filter(product_id=id).values(
+            'value', 'feature_id'))
+        for feature in feature_list:
+            feature.update(Feature.objects.filter(id=feature['feature_id']).values('name').get())
+            feature.pop('feature_id')
+        response['feature'] = feature_list
+        response['in_stock'] = sum(list(ProductSeller.objects.filter(product_id=id).values_list(
+            'quantity', flat=True)))
+
+        ## fetching reviews
+        reviews = list(Review.objects.values().filter(product_id=1))
+        for review in reviews:
+            username = ""
+            full_name = list(User.objects.values_list(
+                'first_name', 'middle_name', 'last_name').filter(id=1).get())
+            for name in full_name:
+                if name:
+                    username += name + " "
+            review.update({'username': username})
+            review.pop('seller_id')
+            print(review['username'])
+        response['reviews'] = reviews
+
+
+
+        return Response(response)
+
     def post(self, request, format=None):
         data_json = {}
         data_json['category_slug'] = request.data.get('category_slug', r'.*')
@@ -172,4 +224,30 @@ class ProductView(APIView):
 
         return Response({"products":products})
 
+
+class ProductSellerView(APIView):
+    def get(self, request):
+        data = {}
+        product_slug = request.GET.get('product_slug', None)
+        product_id = list(Product.objects.values_list(
+            'id', flat=True).filter(slug=product_slug))
+        product_id = product_id[0] if len(product_id) == 1 else None
+        seller_list = list(ProductSeller.objects.values_list(
+            'seller_id', flat=True).filter(product_id=product_id))
+        seller_details = []
+        for sid in seller_list:
+            sd = Seller.objects.values().filter(id=sid).get()
+            seller_detail = {}
+            seller_detail['id'] = sid
+            seller_detail['name'] = sd['company_nae']
+            seller_details.append(seller_detail)
+
+
+
+
+
+        data['sellers'] = seller_details
+
+
+        return Response(data)
 

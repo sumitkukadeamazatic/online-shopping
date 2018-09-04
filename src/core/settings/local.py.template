@@ -19,7 +19,7 @@ DATABASES = {
    }
 }
 
-SENDGRID_API_key=''
+SENDGRID_API_KEY=''
 
 DEFAULT_FROM_MAIL=''
 

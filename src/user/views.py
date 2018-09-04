@@ -1,16 +1,15 @@
 """
     User App Views
 """
-
+import random
 from datetime import datetime, timedelta
+import sendgrid
 from django.conf import settings
 from rest_framework.exceptions import ParseError
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-import sendgrid
-import random
 from sendgrid.helpers.mail import Email, Content, Mail
 from .models import User, ResetPassword
 from .permissions import UserAccessPermission
@@ -59,7 +58,7 @@ class UserViewSet(ModelViewSet):
                         break
                 ResetPassword.objects.create(
                     user=user, otp=otp)
-            if setttings.APP_ENVIRONMENT == 'production':
+            if settings.APP_ENVIRONMENT == 'production':
                 sendgrid_inst = sendgrid.SendGridAPIClient(
                     apikey=settings.SENDGRID_API_KEY)
                 from_email = Email(settings.DEFAULT_FROM_MAIL)
@@ -79,6 +78,9 @@ class UserViewSet(ModelViewSet):
 
     @action(methods=['post'], detail=False, url_path='reset-password/validate')
     def validate_reset_password(self, request):
+        """
+            Validate Reset Password request using OTP
+        """
         validate_serializer = ValidateResetPasswordSerializer(
             data=request.POST)
         if validate_serializer.is_valid(raise_exception=True):
@@ -89,6 +91,9 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='reset-password/reset')
     def reset_password(self, request):
+        """
+            Reset Password
+        """
         reset_serializer = ResetPasswordSerializer(data=request.POST)
         if reset_serializer.is_valid(raise_exception=True):
             user = User.objects.get(email=reset_serializer.data['email'])
@@ -99,4 +104,4 @@ class UserViewSet(ModelViewSet):
             response_serializer = ResponseResetPasswordSerializer(
                 data={'message': 'Password Reset successfull.'})
             if response_serializer.is_valid(raise_exception=True):
-                return Response(response_serializer, status-HTTP_200_OK)
+                return Response(response_serializer.data, status=HTTP_200_OK)

@@ -6,10 +6,8 @@ try:
     from .local import (SECRET_KEY,
                         DEBUG,
                         DATABASES,
-                        SENDGRID_API_KEY,
-                        DEFAULT_FROM_MAIL,
                         APP_ENVIRONMENT)
-except ImportError as e:
+except ImportError:
     from .production import (SECRET_KEY,
                              DEBUG,
                              DATABASES,
@@ -17,7 +15,6 @@ except ImportError as e:
                              SENDGRID_API_KEY,
                              DEFAULT_FROM_MAIL,
                              APP_ENVIRONMENT)
-    print("\n####\n",e,"\n####\n")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

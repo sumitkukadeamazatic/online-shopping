@@ -15,12 +15,12 @@ class UserAccessPermission(BasePermission):
         if view.action in ['auth', 'create', 'request_reset_password', 'validate_reset_password', 'reset_password'] and request.method == 'POST':
             is_allowed = True
         elif view.action == 'list':
-            if bool(request.user.is_superuser):
+            if request.user.is_superuser:
                 is_allowed = True
             else:
                 is_allowed = False
         elif request.auth and view.action != 'destroy':
-            if str(request.user.id) == view.kwargs['pk'] or bool(request.user.is_superuser):
+            if str(request.user.id) == view.kwargs['pk'] or request.user.is_superuser:
                 is_allowed = True
             else:
                 is_allowed = False

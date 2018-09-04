@@ -7,4 +7,5 @@ urlpatterns = [
     path('product/', include('product.urls')),
     path('address/', include('contact.urls')),
     path('cart/', include('order.urls')),
+    path('wishlist/', include('product.wishlist-urls')),
 ]

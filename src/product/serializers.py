@@ -2,7 +2,7 @@
     serializers for product app
 """
 from rest_framework import serializers, exceptions
-from .models import Category
+from .models import Category, Wishlist
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -17,3 +17,13 @@ class CategorySerializer(serializers.ModelSerializer):
         '''meta'''
         model = 'Category'
         #fields = '__all__'
+
+class WishlistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = ('id','product')
+
+class WishlistPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = ('id','user','product')

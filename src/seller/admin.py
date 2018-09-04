@@ -15,3 +15,11 @@ class SellerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Seller, SellerAdmin)
+
+class SellerUserAdmin(admin.ModelAdmin):
+    """
+        SellerUser Model admin
+    """
+    list_display = ['seller_id', 'user_id']
+
+admin.site.register(models.SellerUser, SellerUserAdmin)

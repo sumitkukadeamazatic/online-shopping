@@ -6,8 +6,6 @@ try:
     from .local import (SECRET_KEY,
                         DEBUG,
                         DATABASES,
-                        SENDGRID_API_KEY,
-                        DEFAULT_FROM_MAIL,
                         APP_ENVIRONMENT)
 except ImportError:
     from .production import (SECRET_KEY,

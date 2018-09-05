@@ -15,21 +15,13 @@ class UserLoginSerializer(serializers.ModelSerializer):
     """
           User Authentication Serializer
     """
-    token = serializers.SerializerMethodField('generate_token')
     email = serializers.EmailField(required=True, allow_blank=False)
 
     class Meta:
         model = User
         fields = (
-            'id',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'dob',
-            'contact_no',
             'password',
             'email',
-            'token'
         )
         extra_kwargs = {
             'password': {
@@ -50,12 +42,15 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise AuthenticationFailed(detail='Invalid Credentials')
         return user
 
-    def generate_token(self, user):
-        """
-           Generating Token
-        """
-        token_object = Token.objects.update_or_create(user=user)
-        return str(token_object[0])
+
+class KnoxUserLoginSerializer(serializers.ModelSerializer):
+    """
+        Serializer used as default for knox login api
+    """
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'first_name', 'last_name',
+                  'middle_name', 'dob', 'contact_no', 'gender', 'profile_pic')
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,23 +1,34 @@
 from rest_framework import serializers
 from order.models import Cart, CartProduct
-from product.models import Product, ProductSeller
+  
 
+class CartProductSerializer(serializers.ModelSerializer):
+    slug = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    price =serializers.SerializerMethodField()
+    img = serializers.SerializerMethodField()
+    in_stock = serializers.SerializerMethodField()
 
-class ProductSerializers(serializers.ModelSerializer):
-    class Meta:
-        model  = Product
-        fields = ('slug', 'name', 'selling_price', 'images')
-    
-
-class ProductSellerSerializers(serializers.ModelSerializer):
-    product = ProductSerializers(read_only=True)
-    class Meta: 
-        model = ProductSeller
-        fields = ('quantity','product')
-
-
-class CartSerializer(serializers.ModelSerializer):
-    product_seller = ProductSellerSerializers(read_only=True)
     class Meta:
         model = CartProduct
-        fields = ('quantity','product_seller')
+        fields = ('id', 'slug', 'name', 'price', 'in_stock', 'quantity', 'img')
+   
+    def get_slug(self,obj):
+        return obj.product_seller.product.slug
+
+    def get_name(self,obj):
+        return obj.product_seller.product.name
+
+    def get_price(self,obj):
+        return obj.product_seller.product.selling_price
+
+    def get_img(self,obj):
+        return obj.product_seller.product.images 
+        
+    def get_in_stock(self,obj):
+        return obj.product_seller.quantity>0
+
+class CartProductPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartProduct
+        fields = ('id','quantity', 'product_seller', 'is_order_generated', 'cart')

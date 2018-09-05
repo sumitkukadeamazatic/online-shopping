@@ -4,6 +4,12 @@
 
 from django.urls import path
 from .views import *
+from rest_framework.routers import DefaultRouter
+
+
+router = DefaultRouter()
+router.register('/wishlist',WishlistViewset, base_name='wishlist')
+urlpatterns = router.urls
 
 urlpatterns = [
     #path('auth', LoginView.as_view()),

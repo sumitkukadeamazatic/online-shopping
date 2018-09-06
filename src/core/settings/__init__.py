@@ -2,6 +2,8 @@
      Base Settings
 """
 import os
+from datetime import timedelta
+
 try:
     from .local import (SECRET_KEY,
                         DEBUG,
@@ -41,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #'django_extensions',
     'rest_framework',
-    'rest_framework.authtoken',
+    'knox',
     'utils',
     'user',
     'seller',
@@ -103,12 +105,17 @@ AUTH_USER_MODEL = 'user.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'knox.auth.TokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
 
 APPEND_SLASH = True
+
+REST_KNOX = {
+    'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+    'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+    'TOKEN_TTL': timedelta(hours=10),
+    'USER_SERIALIZER': 'user.serializers.KnoxUserLoginSerializer',
+}

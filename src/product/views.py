@@ -12,6 +12,33 @@ from django.core.paginator import Paginator
 #from .serializers import CategorySerializer
 from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
 from seller.models import Seller, SellerUser
+from .models import Category, Wishlist
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from .serializers import WishlistSerializer, WishlistPostSerializer
+
+
+class WishlistViewset(viewsets.ViewSet):
+    def list(self, request):
+        user = self.request.user
+        queryset = Wishlist.objects.filter(user=user)
+        serializer = WishlistSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        data = {}
+        data['product'] = request.data['product']
+        data['user'] = self.request.user.id
+        serializer = WishlistPostSerializer(data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def destroy(self, request, pk=None):
+        res = Wishlist.objects.get(pk=pk,user=self.request.user.id).delete()
+        return Response({"Msage":"deleted  sussesfully"},status=status.HTTP_204_NO_CONTENT)
+
 
 def add_peginator(results, requested_page_no, items_per_page):
     '''

@@ -3,20 +3,23 @@
 """
 import random
 from datetime import datetime, timedelta
-import sendgrid
+from django.contrib.auth import login
 from django.conf import settings
 from rest_framework.exceptions import ParseError
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import permissions
+import sendgrid
 from sendgrid.helpers.mail import Email, Content, Mail
+from knox.views import LoginView as KnoxLoginView
 from .models import User, ResetPassword
 from .permissions import UserAccessPermission
 from .serializers import UserLoginSerializer, UserSerializer, RequestResetPasswordSerializer, ValidateResetPasswordSerializer, ResetPasswordSerializer, ResponseResetPasswordSerializer
 
 
-class UserViewSet(ModelViewSet):
+class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
     """
         User Model Viewset
     """
@@ -25,18 +28,8 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [UserAccessPermission]
 
-    @action(detail=False, methods=['post'])
-    def auth(self, request):
-        """
-             Authentication API (login)
-        """
-        data = request.data
-        user_login_serializer = UserLoginSerializer(data=data)
-        if user_login_serializer.is_valid(raise_exception=True):
-            return Response(user_login_serializer.data)
-
     @action(detail=False, methods=['post'], url_path='reset-password')
-    def request_reset_password(self, request):
+    def request_reset_password(self, request):  # pylint: disable=no-self-use
         """
             Request Reset Password API
         """
@@ -75,6 +68,7 @@ class UserViewSet(ModelViewSet):
                 data={'message': 'OTP has been sent to your registered Email address', 'email': serializer.data['email']})
             if response_serializer.is_valid(raise_exception=True):
                 return Response(response_serializer.data, status=HTTP_200_OK)
+        return False
 
     @action(methods=['post'], detail=False, url_path='reset-password/validate')
     def validate_reset_password(self, request):
@@ -88,6 +82,7 @@ class UserViewSet(ModelViewSet):
                 data={'message': 'Data validated successfully.'})
             if response_serializer.is_valid(raise_exception=True):
                 return Response(response_serializer.data, status=HTTP_200_OK)
+        return False
 
     @action(detail=False, methods=['post'], url_path='reset-password/reset')
     def reset_password(self, request):
@@ -105,3 +100,18 @@ class UserViewSet(ModelViewSet):
                 data={'message': 'Password Reset successfull.'})
             if response_serializer.is_valid(raise_exception=True):
                 return Response(response_serializer.data, status=HTTP_200_OK)
+        return False
+
+
+class UserLoginView(KnoxLoginView):
+    """
+       Login View overriding the base knox login view
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+        login(request, user)
+        return super(UserLoginView, self).post(request, format=None)

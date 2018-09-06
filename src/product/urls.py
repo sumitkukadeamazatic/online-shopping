@@ -3,8 +3,13 @@
 """
 
 from django.urls import path
-from .views import CategoryView, ProductView, ProductSellerView, WishlistViewset
-from rest_framework.routers import DefaultRouter
+from .views import (CategoryView,
+                    ProductView,
+                    ProductSellerView,
+                    #ProductReviewView,
+                    #WishlistViewset,
+                    SellerReviewView)
+#from rest_framework.routers import DefaultRouter
 
 
 #router = DefaultRouter()
@@ -13,6 +18,8 @@ from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     path('category', CategoryView.as_view()),
+    path('s/<int:pk>', SellerReviewView.as_view()),
+    #path('p/<int:pk>', ProductReviewView.as_view()),
     path('', ProductView.as_view()),
     path('<int:id>', ProductView.as_view()),
     path('product-seller', ProductSellerView.as_view()),

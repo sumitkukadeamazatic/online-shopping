@@ -304,3 +304,37 @@ class ProductSellerView(APIView):
 
         data['sellers'] = seller_details
         return Response(data)
+
+class SellerReviewView(APIView):
+    def post(self, request, format=None):
+        product_id = request.data.get("product_id", None)
+        seller_id = request.data.get("seller_id", None)
+        rating = request.data.get("rating", None)
+        title = request.data.get("title", None)
+        description = request.data.get("description", None)
+
+
+
+#class ProductReviewView(APIView):
+    #def get(self, request, pk):
+        #resp = {}
+        #reviews = list(Review.objects.filter(product_id=pk).values('id',
+                                                                  #'title',
+                                                                  #'product_id',
+                                                                  #'created_at',
+                                                                  #'updated_at',
+                                                                  #'description',
+                                                                  #'rating'))
+        #for review in reviews:
+            #user_id = review.pop('user_id')
+            #try:
+                #review["user_name"] = User.objects.filter(id=user_id).values('first_name',
+                                                                             #'middle_name',
+                                                                             #'last_name').get()
+            #except Exception as e:
+                #review["user_name"] = "Not available."
+
+        #resp["reviews"] = reviews
+
+
+        #return Response(resp)

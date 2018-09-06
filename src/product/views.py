@@ -2,9 +2,8 @@
 product app models
 """
 from rest_framework.views import APIView
-from rest_framework.response import Response
 #from django.http import Http404
-from rest_framework import permissions, authentication#, status
+from rest_framework import permissions, authentication  # , status
 # from django.shortcuts import render
 
 from django.core.paginator import Paginator
@@ -13,7 +12,9 @@ from django.core.paginator import Paginator
 from .models import Category, Wishlist
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .serializers import WishlistSerializer, WishlistPostSerializer
+from rest_framework.viewsets import ViewSet
+from rest_framework.permissions import AllowAny
+from .serializers import WishlistSerializer, WishlistPostSerializer, OfferSerializer
 
 
 class WishlistViewset(viewsets.ViewSet):
@@ -34,8 +35,8 @@ class WishlistViewset(viewsets.ViewSet):
         return Response(serializer.errors)
 
     def destroy(self, request, pk=None):
-        res = Wishlist.objects.get(pk=pk,user=self.request.user.id).delete()
-        return Response({"Msage":"deleted  sussesfully"},status=status.HTTP_204_NO_CONTENT)
+        res = Wishlist.objects.get(pk=pk, user=self.request.user.id).delete()
+        return Response({"Msage": "deleted  sussesfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class CategoryView(APIView):
@@ -47,6 +48,7 @@ class CategoryView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     #serializer_class = CategorySerializer
     permission_classes = (permissions.AllowAny,)
+
     def get(self, request):
         """
         GET all category from db
@@ -68,7 +70,7 @@ class CategoryView(APIView):
                 ele['category'] = list(Category.objects.values('id',
                                                                'name',
                                                                'slug'
-                                                              ).filter(parent_id=ele['id']))
+                                                               ).filter(parent_id=ele['id']))
         elif not parentid:
             results = []
         else:
@@ -93,3 +95,25 @@ class CategoryView(APIView):
         data['results'] = page_paginator.object_list
 
         return Response(data)
+
+
+class OfferViewSet(ViewSet):
+    """
+        Offer Viewset in product
+    """
+
+    serializer_class = OfferSerializer
+    permission_classes = [AllowAny]
+
+    def list(self, request):
+        print('before serializer')
+
+        offer_serializer = OfferSerializer(
+            data={'product_slug': request.GET['product_slug']}, many=True)
+        offer_serializer.is_valid(raise_exception=True)
+        print(offer_serializer.data)
+        if request.auth is None:
+            print('in if')
+        else:
+            print('in else')
+        return Response({'a': 'b'})

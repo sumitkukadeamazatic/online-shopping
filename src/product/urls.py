@@ -3,12 +3,12 @@
 """
 
 from django.urls import path
-from .views import *
+from .views import WishlistViewset, CategoryView, OfferViewSet
 from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register('/wishlist',WishlistViewset, base_name='wishlist')
+router.register('/wishlist', WishlistViewset, base_name='wishlist')
 urlpatterns = router.urls
 
 urlpatterns = [
@@ -16,5 +16,9 @@ urlpatterns = [
     #path('authorization-test', AuthenticateTest.as_view()),
     #path('second-test', SecondTestView.as_view()),
     #path('third-test', ThirdTestView.as_view())
-    path('category',CategoryView.as_view())
+    path('category', CategoryView.as_view())
+]
+
+urlpatterns = urlpatterns + [
+    path('offer', OfferViewSet.as_view({'get': 'list'}))
 ]

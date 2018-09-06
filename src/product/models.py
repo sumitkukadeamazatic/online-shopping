@@ -113,7 +113,9 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
-
+    
+    def __str__(self):
+        return self.name
 
 class ProductFeature(CustomBaseModelMixin):
     """

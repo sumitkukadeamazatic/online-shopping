@@ -1,6 +1,7 @@
 """
 product app models
 """
+import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, authentication#, status
@@ -10,6 +11,7 @@ from django.http import Http404#, JsonResponse
 from django.core.paginator import Paginator
 #from .serializers import CategorySerializer
 from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
+from seller.models import Seller, SellerUser
 
 def add_peginator(results, requested_page_no, items_per_page):
     '''
@@ -19,7 +21,10 @@ def add_peginator(results, requested_page_no, items_per_page):
     '''
     data = {}
     page = {}
-    requested_page_no = int(requested_page_no)
+    try:
+        requested_page_no = int(requested_page_no)
+    except ValueError:
+        requested_page_no = 1
     requested_page_no = requested_page_no if requested_page_no is not 0 else 5
     results_paginator = Paginator(results, items_per_page)
     page_paginator = results_paginator.get_page(requested_page_no)
@@ -82,10 +87,6 @@ class CategoryView(APIView):
                                                    'slug').filter(parent_id=parentid))
         return Response(add_peginator(results, requested_page_no, items_per_page))
 
-def product_view_get(request, id):
-    print('#################################')
-    return Response({"sdkvb":'ksv'})
-
 
 
 class ProductView(APIView):
@@ -95,7 +96,7 @@ class ProductView(APIView):
 
     def filter_product_list(self, product_id, data_json):
         '''return false if any of the thing will not match'''
-        if data_json['seller_ids'] != r'.*':
+        if data_json['seller_ids']:
             is_exists = False
             for seller_id in data_json['seller_ids']:
                 if ProductSeller.objects.filter(
@@ -106,7 +107,7 @@ class ProductView(APIView):
             if not is_exists and data_json['seller_ids'] != []:
                 return False
 
-        if data_json['brands'] != r'.*':
+        if data_json['brands']:
             is_exists = False
             for brand_id in data_json['brands']:
                 if Product.objects.values().filter(id=product_id, brand_id=brand_id).exists():
@@ -117,10 +118,10 @@ class ProductView(APIView):
 
         product_selling_price = Product.objects.values_list(
             'selling_price', flat=True).filter(id=product_id).get()
-        if data_json['min_price'] != r'.*':
+        if data_json['min_price']:
             if product_selling_price < data_json['min_price']:
                 return False
-        if data_json['max_price'] != r'.*':
+        if data_json['max_price']:
             if product_selling_price > data_json['max_price']:
                 return False
 
@@ -128,8 +129,12 @@ class ProductView(APIView):
             'rating', flat=True).filter(product_id=product_id))
         try:
             average_rating = sum(total_ratings)/len(total_ratings)
-            if average_rating < data_json['rating']:
-                return False
+            ## handled error if user sent value other than decimal/float/int.
+            try:
+                if average_rating < data_json['rating']:
+                    return False
+            except TypeError:
+                pass
         except ZeroDivisionError:
             pass
 
@@ -196,17 +201,22 @@ class ProductView(APIView):
 
     def post(self, request, format=None):
         data_json = {}
-        data_json['category_slug'] = request.data.get('category_slug', r'.*')
-        data_json['page_no'] = request.data.get('page_no', False)
+        data_json['category_slug'] = request.data.get('category_slug', None)
+        data_json['page_no'] = request.data.get('page_no', 1)
         data_json['items_per_page'] = request.data.get('items_per_page', 5)
-        data_json['seller_ids'] = request.data.get('seller_id', r'.*')
-        data_json['rating'] = request.data.get('rating', r'.*')
-        data_json['min_price'] = request.data.get('min_price', r'.*')
-        data_json['max_price'] = request.data.get('max_price', r'.*')
-        data_json['brands'] = request.data.get('brand', r'.*')
-        data_json['discount'] = request.data.get('discount', r'.*')
-        data_json['feature_slug'] = request.data.get('feature_slug', r'.*')
-        data_json['rating'] = request.data.get('rating', r'.*')
+        
+        ## if category list is not sent then returning all products available in database
+        if not data_json['category_slug']:
+            products = list(Product.objects.values())
+            return Response({"products":products})
+
+        data_json['seller_ids'] = request.data.get('seller_id', [])
+        data_json['rating'] = request.data.get('rating', 0.1)
+        data_json['min_price'] = request.data.get('min_price', None)
+        data_json['max_price'] = request.data.get('max_price', None)
+        data_json['brands'] = request.data.get('brand', None)
+        data_json['discount'] = request.data.get('discount', 0.0)
+        data_json['feature_slug'] = request.data.get('feature_slug', None)
         # Fetching category id from category slug
         category_id = list(Category.objects.values_list('id', flat=True).filter(
             slug=data_json['category_slug']))
@@ -217,7 +227,6 @@ class ProductView(APIView):
         for pro_id in product_id_list:
             if self.filter_product_list(pro_id, data_json):
                 products = products + list(Product.objects.filter(id=pro_id).values())
-
 
         products = add_peginator(products, data_json['page_no'], data_json['items_per_page'])
 
@@ -234,20 +243,37 @@ class ProductSellerView(APIView):
         product_id = product_id[0] if len(product_id) == 1 else None
         seller_list = list(ProductSeller.objects.values_list(
             'seller_id', flat=True).filter(product_id=product_id))
+        product_detail = Product.objects.values().filter(id=product_id)
+        if product_detail:
+            product_detail = product_detail[0]
+        else:
+            return Response({"response":"Invalid request."})
         seller_details = []
         for sid in seller_list:
             sd = Seller.objects.values().filter(id=sid).get()
+            # seller and product relation
+            spd = list(ProductSeller.objects.filter(
+                seller_id=sid, product_id=product_id).values())
+            spd = spd[0] if spd else None
             seller_detail = {}
             seller_detail['id'] = sid
-            seller_detail['name'] = sd['company_nae']
+            seller_detail['name'] = sd['company_name']
+            ratings = Review.objects.values_list('rating', flat=True).filter(seller_id=sid)
+            try:
+                ratings = sum(ratings)/len(ratings)
+            except ZeroDivisionError:
+                ratings = "Ratings not available."
+
+            seller_detail['rating'] = ratings
+            base_price = float(product_detail['base_price'])
+            discount = float(spd['discount'])
+            seller_detail['selling_price'] = base_price-(base_price*discount/100)
+            experience = datetime.datetime.now().year - sd['created_at'].year
+            seller_detail["selling_exprience"] = str(experience) + " year(s)."
+            seller_detail['delivery_days'] = {"min" : spd['min_delivery_days'],
+                                              "max" : spd['max_delivery_days']}
             seller_details.append(seller_detail)
 
 
-
-
-
         data['sellers'] = seller_details
-
-
         return Response(data)
-

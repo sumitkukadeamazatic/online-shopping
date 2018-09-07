@@ -13,10 +13,28 @@ from django.core.paginator import Paginator
 from .models import Category, Wishlist
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .serializers import WishlistSerializer, WishlistPostSerializer
+from .serializers import WishlistSerializer
+from .permissions import UserAccessPermission
 
 
-class WishlistViewset(viewsets.ViewSet):
+class WishlistViewset(viewsets.ModelViewSet):
+   
+    def get_queryset(self):
+        """
+        This view should return a list of all the Address
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        return Wishlist.objects.filter(user=user)
+
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = [UserAccessPermission]
+    serializer_class = WishlistSerializer
+
+    def get_paginated_response(self, data):
+       return Response(data)
+
+    """
     def list(self, request):
         try:
             user = self.request.user
@@ -33,10 +51,10 @@ class WishlistViewset(viewsets.ViewSet):
         try:
             data = {}
             data['product'] = request.data['product']
-            data['user'] = self.request.user.id
-            serializer = WishlistPostSerializer(data=data, partial=True)
+            # data['user'] = self.request.user.id
+            serializer = WishlistSerializer(data=data, partial=True)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(user=self.request.user.id)
                 return Response(serializer.data)
             return Response(serializer.errors)
         except TypeError:
@@ -55,7 +73,7 @@ class WishlistViewset(viewsets.ViewSet):
             return Response({'Error':'Add Token To request Heder'},status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'Error':str(e)},status=status.HTTP_400_BAD_REQUEST)
-        
+    """
 
 class CategoryView(APIView):
     '''

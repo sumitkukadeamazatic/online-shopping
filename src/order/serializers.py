@@ -32,17 +32,23 @@ class CartProductSerializer(serializers.ModelSerializer):
         if value<0:
             raise serializers.ValidationError("quantity not less than 0")
         return value
+    
+    
 
-class CartProductPostSerializer(serializers.ModelSerializer):
+class AddCartProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartProduct
-        fields = ('id','quantity', 'product_seller', 'is_order_generated', 'cart')
+        fields = ('quantity', 'product_seller')
     
     def validate_quantity(self, value):
-        if value<0:
+        if value<=0:
             raise serializers.ValidationError("quantity not less than 0")
         return value
     
+    def create(self, obj):
+        user = self.context['request'].user
+        cart=Cart.objects.get_or_create(user=user,is_cart_processed=False)[0]
+        return CartProduct.objects.create(cart=cart, quantity = obj['quantity'], product_seller = obj['product_seller'], is_order_generated = False)
 
 class OrderSerializer(serializers.ModelSerializer):
     order_place_date = serializers.SerializerMethodField()

@@ -23,7 +23,5 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ('id','product')
 
-class WishlistPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wishlist
-        fields = ('id','user','product')
+    def create(self, valid_data):
+        return Wishlist.objects.create(product=valid_data['product'],user=self.context['request'].user)

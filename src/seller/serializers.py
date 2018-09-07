@@ -18,7 +18,7 @@ class SellerSerializer(serializers.ModelSerializer):
             'status',
         )
 
-    def validate(self,obj):
+    def validate(self, obj):
         if not obj['contact_number'].isdigit():
             raise ValidationError({'contact_number': 'Contact number must contain number'})
         return obj
@@ -40,8 +40,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(write_only=True)
 
     class Meta:
-        model = Review
-        
+        model = Review     
         fields = (
             'user_id',
             'user_name',
@@ -51,8 +50,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             'created_at'
         )
 
-    def get_userName(self,obj):
-        print(obj.rating)
+    def get_userName(self, obj):
         user_name_dic = User.objects.values('first_name','middle_name','last_name').filter(id=obj.user_id).first()
         user_name = ' '.join(filter(None,(map(lambda x:user_name_dic[x],user_name_dic))))
         return user_name

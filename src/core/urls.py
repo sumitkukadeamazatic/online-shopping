@@ -20,7 +20,8 @@ from user.views import request_forgot_password
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('user.urls')),
-    path('seller/',include('seller.urls'))
+    path('seller/',include('seller.urls')),
+    path('return/',include('return.urls'))
 #    path('address/', include('contact.urls')),
 #    path('request-reset-password', request_forgot_password)
 ]

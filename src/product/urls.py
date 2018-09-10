@@ -3,7 +3,7 @@
 """
 
 from django.urls import path
-from .views import WishlistViewset, CategoryView, OfferViewSet
+from .views import *
 from rest_framework.routers import DefaultRouter
 
 
@@ -17,8 +17,4 @@ urlpatterns = [
     #path('second-test', SecondTestView.as_view()),
     #path('third-test', ThirdTestView.as_view())
     path('category', CategoryView.as_view())
-]
-
-urlpatterns = urlpatterns + [
-    path('offer', OfferViewSet.as_view({'get': 'list'}))
 ]

@@ -3,9 +3,8 @@ Offer App Filters
 """
 
 from rest_framework.filters import BaseFilterBackend
-from datetime import datetime
-from .models import Offer
 from django.utils import timezone
+from .models import Offer
 
 
 class OfferFilterBackend(BaseFilterBackend):

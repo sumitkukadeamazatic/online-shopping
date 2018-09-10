@@ -3,11 +3,10 @@
 """
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
+from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ParseError, AuthenticationFailed
 from rest_framework.validators import UniqueValidator
-from django.utils import timezone
 from .models import Role, User, ResetPassword
 
 
@@ -163,6 +162,8 @@ class ResetPasswordSerializer(serializers.Serializer):
             Validate reset password data
         """
         user = User.objects.get(email=data['email'])
+        if user is None:
+            raise ParseError(detail='Invalid data.')
         now = datetime.now()
         possible_otp_time = now - timedelta(minutes=5)
         reset_pending = ResetPassword.objects.filter(

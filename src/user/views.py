@@ -19,7 +19,7 @@ from .permissions import UserAccessPermission
 from .serializers import UserLoginSerializer, UserSerializer, RequestResetPasswordSerializer, ValidateResetPasswordSerializer, ResetPasswordSerializer, ResponseResetPasswordSerializer
 
 
-class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
+class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors,too-many-locals
     """
         User Model Viewset
     """
@@ -71,7 +71,7 @@ class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
         return False
 
     @action(methods=['post'], detail=False, url_path='reset-password/validate')
-    def validate_reset_password(self, request):
+    def validate_reset_password(self, request):    # pylint: disable=no-self-use
         """
             Validate Reset Password request using OTP
         """
@@ -85,7 +85,7 @@ class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
         return False
 
     @action(detail=False, methods=['post'], url_path='reset-password/reset')
-    def reset_password(self, request):
+    def reset_password(self, request):      # pylint: disable=no-self-use
         """
             Reset Password
         """

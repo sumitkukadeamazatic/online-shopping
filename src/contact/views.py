@@ -5,7 +5,7 @@ from contact.models import Address
 from contact.serializers import AddressSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
-
+from .permissions import UserAccessPermission
 
 class AddressViewset(viewsets.ModelViewSet):
     def get_queryset(self):
@@ -15,8 +15,9 @@ class AddressViewset(viewsets.ModelViewSet):
         """
         user = self.request.user
         return Address.objects.filter(user=user)
-
     serializer_class = AddressSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = [UserAccessPermission]
 
     def get_paginated_response(self, data):
        return Response(data)

@@ -26,40 +26,5 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ('id', 'product')
 
-
-class WishlistPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wishlist
-        fields = ('id', 'user', 'product')
-
-
-class OfferSerializer(ModelSerializer):
-    """
-       Serializer for product's offer listing.
-    """
-
-    product_slug = serializers.SlugField()
-
-    class Meta:
-        model = Offer
-        fields = ('id', 'name', 'description', 'amount', 'percentage', 'amount_limit',
-                  'minimum', 'valid_from', 'valid_upto', 'start_time', 'end_time', 'product_slug')
-        extra_kwargs = {
-            'product_slug': {
-                'write_only': True
-            },
-            'name': {
-                'required': False
-            },
-            'description': {
-                'required': False
-            }
-        }
-
-    def validate(self, data):
-        """
-            Validate product slug
-        """
-        print('in validate method')
-        print(data)
-        return data
+    def create(self, valid_data):
+        return Wishlist.objects.create(product=valid_data['product'], user=self.context['request'].user)

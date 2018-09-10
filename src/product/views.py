@@ -12,31 +12,26 @@ from django.core.paginator import Paginator
 from .models import Category, Wishlist
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
-from rest_framework.permissions import AllowAny
-from .serializers import WishlistSerializer, WishlistPostSerializer, OfferSerializer
+from .serializers import WishlistSerializer
+from .permissions import UserAccessPermission
 
 
-class WishlistViewset(viewsets.ViewSet):
-    def list(self, request):
+class WishlistViewset(viewsets.ModelViewSet):
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the Address
+        for the currently authenticated user.
+        """
         user = self.request.user
-        queryset = Wishlist.objects.filter(user=user)
-        serializer = WishlistSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Wishlist.objects.filter(user=user)
 
-    def create(self, request):
-        data = {}
-        data['product'] = request.data['product']
-        data['user'] = self.request.user.id
-        serializer = WishlistPostSerializer(data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = [UserAccessPermission]
+    serializer_class = WishlistSerializer
 
-    def destroy(self, request, pk=None):
-        res = Wishlist.objects.get(pk=pk, user=self.request.user.id).delete()
-        return Response({"Msage": "deleted  sussesfully"}, status=status.HTTP_204_NO_CONTENT)
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class CategoryView(APIView):
@@ -95,25 +90,3 @@ class CategoryView(APIView):
         data['results'] = page_paginator.object_list
 
         return Response(data)
-
-
-class OfferViewSet(ViewSet):
-    """
-        Offer Viewset in product
-    """
-
-    serializer_class = OfferSerializer
-    permission_classes = [AllowAny]
-
-    def list(self, request):
-        print('before serializer')
-
-        offer_serializer = OfferSerializer(
-            data={'product_slug': request.GET['product_slug']}, many=True)
-        offer_serializer.is_valid(raise_exception=True)
-        print(offer_serializer.data)
-        if request.auth is None:
-            print('in if')
-        else:
-            print('in else')
-        return Response({'a': 'b'})

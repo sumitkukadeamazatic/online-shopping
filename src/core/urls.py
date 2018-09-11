@@ -16,5 +16,6 @@ urlpatterns = [
     path('api/auth/logout', knox_views.LogoutView.as_view()),
     path('api/auth/logoutall', knox_views.LogoutAllView.as_view()),
     path('wishlist/', include('product.wishlist-urls')),
+    path('offer/', include('offer.urls')),
     path('order/', include('order.order-urls')),
 ]

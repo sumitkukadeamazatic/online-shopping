@@ -19,9 +19,9 @@ from .permissions import UserAccessPermission
 from .serializers import UserLoginSerializer, UserSerializer, RequestResetPasswordSerializer, ValidateResetPasswordSerializer, ResetPasswordSerializer, ResponseResetPasswordSerializer
 
 
-class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
+class UserViewSet(ModelViewSet):        # pylint: disable=too-many-ancestors
     """
-        User Model Viewset
+    User Model Viewset
     """
 
     serializer_class = UserSerializer
@@ -31,7 +31,7 @@ class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
     @action(detail=False, methods=['post'], url_path='reset-password')
     def request_reset_password(self, request):  # pylint: disable=no-self-use
         """
-            Request Reset Password API
+        Request Reset Password API
         """
         serializer = RequestResetPasswordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -71,7 +71,7 @@ class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
         return False
 
     @action(methods=['post'], detail=False, url_path='reset-password/validate')
-    def validate_reset_password(self, request):
+    def validate_reset_password(self, request):    # pylint: disable=no-self-use
         """
             Validate Reset Password request using OTP
         """
@@ -85,7 +85,7 @@ class UserViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
         return False
 
     @action(detail=False, methods=['post'], url_path='reset-password/reset')
-    def reset_password(self, request):
+    def reset_password(self, request):      # pylint: disable=no-self-use
         """
             Reset Password
         """
@@ -109,7 +109,7 @@ class UserLoginView(KnoxLoginView):
     """
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request):
+    def post(self, request, format=None):  # pylint: disable=redefined-builtin
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data

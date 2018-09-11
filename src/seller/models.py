@@ -26,6 +26,9 @@ class Seller(CustomBaseModelMixin):
                 name='seller_index')
         ]
 
+    def __str__(self):
+        return self.company_name
+
 
 class SellerUser(CustomBaseModelMixin):
     """

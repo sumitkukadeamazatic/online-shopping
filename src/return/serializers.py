@@ -66,25 +66,11 @@ class ReturnSerializer(serializers.ModelSerializer):
         Return Serializer
     """
 
-    '''
     class Meta:
         model = ReturnLineitem
         fields = (
             'reason',
             'description',
-        )
-    '''
-
-    #image = serializers.SerializerMethodField()
-    class Meta:
-        model = ReturnLineitem
-        fields = (
-            'lineitem',
-            'return_order',
-            'status',
-            'description',
-            'reason',
-            'quantity'
         )
 
     def create(self, validated_data):
@@ -102,3 +88,34 @@ class ReturnSerializer(serializers.ModelSerializer):
             returnOrderLog_serializer.save()
         return returnLineitem_serializer
 
+class ViewReturnLineitemSerializer(serializers.ModelSerializer):
+    """
+        Serializer to view ReturnLineitem
+    """
+
+    class Meta:
+        model = ReturnLineitem
+        fields=(
+            'id',
+            'lineitem',
+            'return_order',
+            'status',
+            'description',
+            'reason',
+            'quantity',
+        )
+
+class ViewReturnSerializer(serializers.ModelSerializer):
+    """
+        Serializer to view ReturnOrder
+    """
+    
+    return_lineitems = ViewReturnLineitemSerializer(many=True)
+    class Meta:
+        model = ReturnOrder
+        fields = (
+            'id',
+            'status',
+            'order_id',
+            'return_lineitems'
+        )

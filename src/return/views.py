@@ -20,7 +20,6 @@ class ReturnViewSetPrevious(viewsets.ViewSet):
     """
     def create(self, request):
         if not ReturnOrder.objects.filter(order_id=request.data['order']):
-            print ("Hii")
             returnOrder_serializer = ReturnOrderSerializer(data=request.data)
             if returnOrder_serializer.is_valid():
                 returnOrder_serializer.save()
@@ -42,21 +41,23 @@ class ReturnViewSet(viewsets.ModelViewSet):
     """
 
     queryset = ReturnOrder.objects.all()
-    serializer_class = ReturnSerializer
+    serializer_class = ViewReturnSerializer
 
     def get_queryset(self):
         # print (ReturnLineitem.objects.filter(return_order_id=13))
         # return ReturnLineitem.objects.filter(return_order_id=13)
-        cart_ids = Cart.objects.filter(user_id=11).values_list('id', flat=True)
-        print (cart_ids)
+        cart_ids = Cart.objects.filter(user_id=self.request.user.id).values_list('id', flat=True)
+        # print (cart_ids)
         order_ids = Order.objects.filter(cart_id__in=cart_ids).values_list('id', flat=True)
-        print (order_ids)
+        # print (order_ids)
         returnOrder_ids = ReturnOrder.objects.filter(order_id__in=order_ids).values_list('id',flat=True)
-        print (returnOrder_ids)
+        # print (returnOrder_ids)
         returnLineitem_ids = ReturnLineitem.objects.filter(return_order_id__in=returnOrder_ids)
-        print (returnLineitem_ids)
-        print (ReturnLineitem.objects.all().count())
-        return ReturnLineitem.objects.all()
+        # print (returnLineitem_ids)
+        # print (ReturnLineitem.objects.all().count())
+        return returnOrder_ids
 
+'''
     def get_paginated_response(self, obj):
         return Response(obj)
+'''

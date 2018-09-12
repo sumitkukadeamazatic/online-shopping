@@ -7,13 +7,13 @@ from django.db import models
 from order import models as order_model
 from product import models as product_model
 from utils.models import CustomBaseModelMixin
-
+from rest_framework.exceptions import ValidationError
 # Create your models here.
 
 
 class Offer(CustomBaseModelMixin):
     """
-        Configuration of OfferModel
+    Configuration of OfferModel
     """
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
@@ -85,12 +85,18 @@ class OrderOffer(CustomBaseModelMixin):
         on_delete=models.CASCADE,
         related_name=None)
 
+    def validate_unique(self, exclude=None):
+        existing_relation = OrderOffer.objects.filter(
+            order__id=self.order.id, offer__id=self.offer.id).first()
+        if not existing_relation is None:
+            raise ValidationError('Order-Offer relation already exists.')
+
 
 class UserOffer(CustomBaseModelMixin):
     """
         Configuration of UserOfferModel
     """
-    order = models.ForeignKey(
+    user = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
         related_name=None)
@@ -98,7 +104,7 @@ class UserOffer(CustomBaseModelMixin):
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-    is_redeemed = models.BooleanField()
+    is_redeemed = models.BooleanField(default=False)
 
 
 class OfferLineitem(CustomBaseModelMixin):

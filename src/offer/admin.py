@@ -40,7 +40,7 @@ class UserOfferAdmin(admin.ModelAdmin):
     """
         Configuration of UserOfferAdmin
     """
-    list_display = ['id', 'order', 'offer', 'created_at', 'updated_at']
+    list_display = ['id', 'user', 'offer', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at']
 
 

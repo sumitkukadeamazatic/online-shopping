@@ -3,10 +3,14 @@
 """
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
+from django.conf import settings
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError, AuthenticationFailed
 from rest_framework.validators import UniqueValidator
+import random
+import sendgrid
+from sendgrid.helpers.mail import Email, Content, Mail
 from .models import Role, User, ResetPassword
 
 
@@ -108,7 +112,37 @@ class RequestResetPasswordSerializer(serializers.Serializer):  # pylint: disable
         user = User.objects.filter(email=data['email']).first()
         if not user:
             raise ParseError(detail='Email doesn\'t exists.')
-        return data
+        now = datetime.now()
+        possible_otp_time = now - timedelta(minutes=5)
+        reset_password = ResetPassword.objects.filter(
+            user_id=user.id, is_validated=False, is_reset=False, created_at__gte=possible_otp_time).first()
+        if reset_password:
+            otp = reset_password.otp
+        else:
+            while True:
+                otp = random.randint(100000, 999999)
+                otp_exists = ResetPassword.objects.filter(
+                    otp=otp, is_validated=True).first()
+                if otp_exists is None:
+                    break
+            ResetPassword.objects.create(
+                user=user, otp=otp)
+        if settings.APP_ENVIRONMENT == 'production':
+            sendgrid_inst = sendgrid.SendGridAPIClient(
+                apikey=settings.SENDGRID_API_KEY)
+            from_email = Email(settings.DEFAULT_FROM_MAIL)
+            to_email = Email(data['email'])
+            subject = "Amazatic Dummy E-commerce Site Reset password"
+            content = Content(
+                "text/plain", "Hello, Please use following OTP for resetting your password.\n\t %s" % otp)
+            mail = Mail(from_email, subject, to_email, content)
+            mail_response = sendgrid_inst.client.mail.send.post(
+                request_body=mail.get())
+            if not mail_response.status_code in [200, 202]:
+                raise ParseError(detail='Not able to send email.')
+        response_data = {
+            'message': 'OTP has been sent to your registered Email address', 'email': data['email']}
+        return response_data
 
 
 class ValidateResetPasswordSerializer(serializers.Serializer):  # pylint: disable=abstract-method

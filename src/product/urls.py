@@ -1,5 +1,5 @@
 """
-    User App URLs
+    Product App URLs
 """
 
 from django.urls import path
@@ -15,6 +15,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('wishlist', WishlistViewset, base_name='wishlist')
 router.register('category', CategoryView, base_name='category')
+router.register('review', ReviewView, base_name='review')
 router.register('', ProductView, base_name='product')
 urlpatterns = router.urls
 #

@@ -88,13 +88,7 @@ class ProductSerializer(serializers.ModelSerializer):
                                                         'user',
                                                         'title',
                                                         'description')
-        #review_ls = []
-        #for review in rev['reviews']:
-            #pass
-           #user = User.objects.filter(id=review['user']).get()
-           #rev.update({'user_name': user})
-
-        return(rev)
+        return rev
 
 
 class WishlistSerializer(serializers.ModelSerializer):
@@ -106,3 +100,12 @@ class WishlistPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = ('id','user','product')
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ('id', 'user', 'title', 'description', 'rating')
+class ReviewPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ('user', 'seller', 'product', 'rating', 'title', 'description')

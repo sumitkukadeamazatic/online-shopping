@@ -35,6 +35,14 @@ class ReturnViewSetPrevious(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors)
 
+class ReturnViewSetPost(viewsets.ModelViewSet):
+    """
+        A viewset to create return order
+    """
+
+    queryset = ReturnLineitem.objects.all()
+    serializer_class = ReturnSerializer
+
 class ReturnViewSet(viewsets.ModelViewSet):
     """
         A viewset to create and list return order
@@ -51,11 +59,12 @@ class ReturnViewSet(viewsets.ModelViewSet):
         order_ids = Order.objects.filter(cart_id__in=cart_ids).values_list('id', flat=True)
         # print (order_ids)
         returnOrder_ids = ReturnOrder.objects.filter(order_id__in=order_ids).values_list('id',flat=True)
+        # returnOrder_ids = ReturnOrder.objects.filter(order_id__in=order_ids)
         # print (returnOrder_ids)
         returnLineitem_ids = ReturnLineitem.objects.filter(return_order_id__in=returnOrder_ids)
         # print (returnLineitem_ids)
         # print (ReturnLineitem.objects.all().count())
-        return returnOrder_ids
+        return returnLineitem_ids
 
 '''
     def get_paginated_response(self, obj):

@@ -88,20 +88,34 @@ class ReturnSerializer(serializers.ModelSerializer):
             returnOrderLog_serializer.save()
         return returnLineitem_serializer
 
+
 class ViewReturnLineitemSerializer(serializers.ModelSerializer):
     """
         Serializer to view ReturnLineitem
     """
 
+    return_lineitem_id = serializers.SerializerMethodField()
+    product_name = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    quantity = serializers.SerializerMethodField()
+
+    def get_return_lineitem_id(self, obj):
+        return obj.id
+
+    def get_status(self, obj):
+        return obj.status
+
+    def get_quantity(self, obj):
+        return obj.quantity
+   
     class Meta:
         model = ReturnLineitem
         fields=(
-            'id',
-            'lineitem',
-            'return_order',
+            'return_lineitem_id',
+            'product_name',
+            # 'price',
+            # 'image',
             'status',
-            'description',
-            'reason',
             'quantity',
         )
 
@@ -109,13 +123,28 @@ class ViewReturnSerializer(serializers.ModelSerializer):
     """
         Serializer to view ReturnOrder
     """
-    
-    return_lineitems = ViewReturnLineitemSerializer(many=True)
+    '''
+    return_lineitems = serializers.SerializerMethodField()
+
+    def get_return_lineitems(self, obj):
+        serialized_data = ViewReturnLineitemSerializer(obj.return_lineitems.all(), many=True, read_only=True, context=self.context)
+        return serialized_data.data
+    '''
+
+    #image = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
+    return_lineitems = serializers.SerializerMethodField()
+
+    def get_id(self, obj):
+        print (obj.return_order.id)
+        return 1
+
+    def get_return_lineitems(self, obj):
+        return (ViewReturnLineitemSerializer(obj).data)
+
     class Meta:
         model = ReturnOrder
         fields = (
             'id',
-            'status',
-            'order_id',
-            'return_lineitems'
+            'return_lineitems',
         )

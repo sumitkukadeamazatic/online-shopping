@@ -20,7 +20,7 @@ class Offer(CustomBaseModelMixin):
     description = models.TextField()
     code = models.CharField(max_length=20, blank=True, null=True, unique=True)
     amount = models.DecimalField(
-        max_digits=5,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True)
@@ -31,7 +31,7 @@ class Offer(CustomBaseModelMixin):
         null=True)
     is_for_order = models.BooleanField()
     minimum = models.DecimalField(
-        max_digits=5,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True)
@@ -66,10 +66,16 @@ class ProductOffer(CustomBaseModelMixin):
         product_model.Product,
         on_delete=models.CASCADE,
         related_name=None)
-    offers = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
+
+    def validate_unique(self, exclude=None):
+        existing_relation = ProductOffer.objects.filter(
+            product_id=self.product.id, offers_id=self.offer.id).first()
+        if not existing_relation is None:
+            raise ValidationError('Product-Offer relation already exists.')
 
 
 class OrderOffer(CustomBaseModelMixin):
@@ -87,7 +93,7 @@ class OrderOffer(CustomBaseModelMixin):
 
     def validate_unique(self, exclude=None):
         existing_relation = OrderOffer.objects.filter(
-            order__id=self.order.id, offer__id=self.offer.id).first()
+            order_id=self.order.id, offer_id=self.offer.id).first()
         if not existing_relation is None:
             raise ValidationError('Order-Offer relation already exists.')
 

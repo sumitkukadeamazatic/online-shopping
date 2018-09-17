@@ -3,8 +3,6 @@ from contact.models import Address
 import re
 
 
-    
-
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address

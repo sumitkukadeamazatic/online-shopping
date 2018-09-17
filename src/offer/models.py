@@ -54,6 +54,9 @@ class Offer(CustomBaseModelMixin):
                     'name'],
                 name='offer_index')]
 
+    def __str__(self):
+        return self.name
+
 
 class ProductOffer(CustomBaseModelMixin):
     """

@@ -1,26 +1,19 @@
 """
 product app models
 """
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions, authentication, viewsets
-from django.http import Http404#, JsonResponse
-# from django.shortcuts import render
+from rest_framework import permissions, viewsets, status
 
-from django.core.paginator import Paginator
-#from .serializers import CategorySerializer
 from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
 from seller.models import Seller, SellerUser
-from .models import Category, Wishlist
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+from .models import Wishlist
 from .serializers import (WishlistSerializer,
                           WishlistPostSerializer,
                           ReviewPostSerializer,
                           CategorySerializer,
                           ReviewSerializer,
+                          ProductSellerSerializer,
                           ProductSerializer)
-
 
 class WishlistViewset(viewsets.ViewSet):
     def list(self, request):
@@ -40,7 +33,7 @@ class WishlistViewset(viewsets.ViewSet):
         return Response(serializer.errors)
 
     def destroy(self, request, pk=None):
-        res = Wishlist.objects.get(pk=pk,user=self.request.user.id).delete()
+        res = Wishlist.objects.get(pk=pk, user=self.request.user.id).delete()
         return Response({"Msage":"deleted  sussesfully"},status=status.HTTP_204_NO_CONTENT)
 
 class CategoryView(viewsets.ModelViewSet):
@@ -54,59 +47,44 @@ class CategoryView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
 
-class ProductView(viewsets.ReadOnlyModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = (permissions.AllowAny,)
+class ProductView(viewsets.ModelViewSet):
+    def list(self, request):
+        queryset = Product.objects.all()
+        serializer_class = ProductSerializer(queryset, many=True)
+        permission_classes = (permissions.AllowAny,)
+        return Response(serializer_class.data)
 
+    def create(self, request):
+        data = request.data
+        queryset = Product.objects.filter(brand__in=data['brand'],
+                                          category__in=data["category_id"],
+                                          base_price__gte=data["min_price"],
+                                          base_price__lte=data["max_price"])
+        pro_id = queryset.values_list('id', flat=True)
+        exclude_list = []
+        for pid in pro_id:
+            pro_ratings = Review.objects.filter(product=pid).values_list('rating', flat=True)
+            if pro_ratings:
+                if (sum(pro_ratings)/len(pro_ratings)) < data["rating"]:
+                    exclude_list.append(pid)
+            else:
+                    exclude_list.append(pid)
+            price = Product.objects.values('base_price',
+                                           'selling_price').filter(id=pid).get()
+            pro_discount = (price['base_price']-price['selling_price']) /price['base_price'] * 100
+            if pro_discount < data["discount"]:
+                if pid not in exclude_list:
+                    exclude_list.append(pid)
+        queryset = queryset.exclude(id__in=exclude_list)
+        serializer_class = ProductSerializer(queryset, many=True)
+        permission_classes = (permissions.AllowAny,)
+        return Response(serializer_class.data)
 
 class ProductSellerView(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-
-    #def get_queryset(self):
-        #qs =
-    #def get(self, request):
-        #data = {}
-        #product_slug = request.GET.get('product_slug', None)
-        #product_id = list(Product.objects.values_list(
-            #'id', flat=True).filter(slug=product_slug))
-        #product_id = product_id[0] if len(product_id) == 1 else None
-        #seller_list = list(ProductSeller.objects.values_list(
-            #'seller_id', flat=True).filter(product_id=product_id))
-        #product_detail = Product.objects.values().filter(id=product_id)
-        #if product_detail:
-            #product_detail = product_detail[0]
-        #else:
-            #return Response({"response":"Invalid request."})
-        #seller_details = []
-        #for sid in seller_list:
-            #sd = Seller.objects.values().filter(id=sid).get()
-            ## seller and product relation
-            #spd = list(ProductSeller.objects.filter(
-                #seller_id=sid, product_id=product_id).values())
-            #spd = spd[0] if spd else None
-            #seller_detail = {}
-            #seller_detail['id'] = sid
-            #seller_detail['name'] = sd['company_name']
-            #ratings = Review.objects.values_list('rating', flat=True).filter(seller_id=sid)
-            #try:
-                #ratings = sum(ratings)/len(ratings)
-            #except ZeroDivisionError:
-                #ratings = "Ratings not available."
-
-            #seller_detail['rating'] = ratings
-            #base_price = float(product_detail['base_price'])
-            #discount = float(spd['discount'])
-            #seller_detail['selling_price'] = base_price-(base_price*discount/100)
-            #experience = datetime.datetime.now().year - sd['created_at'].year
-            #seller_detail["selling_exprience"] = str(experience) + " year(s)."
-            #seller_detail['delivery_days'] = {"min" : spd['min_delivery_days'],
-                                              #"max" : spd['max_delivery_days']}
-            #seller_details.append(seller_detail)
-
-
-        #data['sellers'] = seller_details
-        #return Response(data)
+    def retrieve(self, request, pk=None):
+        queryset = ProductSeller.objects.filter(product=pk)
+        serializer_class = ProductSellerSerializer(queryset, many=True)
+        return Response(serializer_class.data)
 
 class ReviewView(viewsets.ModelViewSet):
     def list(self, request):

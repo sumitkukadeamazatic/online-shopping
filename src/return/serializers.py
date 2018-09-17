@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Order as ReturnOrder, Lineitem as ReturnLineitem, OrderLog as ReturnOrderLog
 from order.models import Order, Lineitem
+from product.models import Product
 
 class ReturnOrderSerializer(serializers.ModelSerializer):
     """
@@ -44,8 +45,6 @@ class ReturnLineitemSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        print (self.context)
-        print (validated_data)
         print (self.context['request'].data)
         if not ReturnOrder.objects.filter(order_id=self.context['order']):
             returnOrder_serializer = ReturnOrderSerializer(data=self.context)
@@ -66,15 +65,22 @@ class ReturnSerializer(serializers.ModelSerializer):
         Return Serializer
     """
 
+    '''def __init__(self, *args, **kwargs):
+        many = kwargs.pop('many', True)
+        super(ReturnSerializer, self).__init__(many=many, *args, **kwargs)
+    '''
+
     class Meta:
         model = ReturnLineitem
         fields = (
-            'reason',
+            # 'reason',
             'description',
+            # 'returnOrder'
         )
 
     def create(self, validated_data):
         content = self.context['request'].data
+        print (content)
         if not ReturnOrder.objects.filter(order_id=content['order']):
             returnOrder_serializer = ReturnOrderSerializer(data=content)
             if returnOrder_serializer.is_valid():
@@ -96,11 +102,22 @@ class ViewReturnLineitemSerializer(serializers.ModelSerializer):
 
     return_lineitem_id = serializers.SerializerMethodField()
     product_name = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     quantity = serializers.SerializerMethodField()
 
     def get_return_lineitem_id(self, obj):
         return obj.id
+
+    def get_product_name(self, obj):
+        return Product.objects.get(id=(Lineitem.objects.get(id=obj.lineitem_id).product_id)).name
+
+    def get_price(self, obj):
+        return Lineitem.objects.get(id=obj.lineitem_id).selling_price
+
+    def get_image(self, obj):
+        return Product.objects.get(id=(Lineitem.objects.get(id=obj.lineitem_id).product_id)).images
 
     def get_status(self, obj):
         return obj.status
@@ -113,8 +130,8 @@ class ViewReturnLineitemSerializer(serializers.ModelSerializer):
         fields=(
             'return_lineitem_id',
             'product_name',
-            # 'price',
-            # 'image',
+            'price',
+            'image',
             'status',
             'quantity',
         )
@@ -123,21 +140,12 @@ class ViewReturnSerializer(serializers.ModelSerializer):
     """
         Serializer to view ReturnOrder
     """
-    '''
-    return_lineitems = serializers.SerializerMethodField()
 
-    def get_return_lineitems(self, obj):
-        serialized_data = ViewReturnLineitemSerializer(obj.return_lineitems.all(), many=True, read_only=True, context=self.context)
-        return serialized_data.data
-    '''
-
-    #image = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField()
     return_lineitems = serializers.SerializerMethodField()
 
     def get_id(self, obj):
-        print (obj.return_order.id)
-        return 1
+        return obj.return_order_id
 
     def get_return_lineitems(self, obj):
         return (ViewReturnLineitemSerializer(obj).data)

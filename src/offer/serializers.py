@@ -2,12 +2,12 @@
 Offer App serializers
 """
 
+from datetime import datetime
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
-from .models import Offer, UserOffer, ProductOffer
 from utils import serializers as utils_serializers
-from datetime import datetime
+from .models import Offer, UserOffer, ProductOffer
 
 
 class OfferSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class OfferSerializer(serializers.ModelSerializer):
         exclude = ('created_at', 'updated_at')
 
 
-class OfferValidateSerializer(serializers.Serializer):
+class OfferValidateSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """
     Serializer used for validating an offer
     """
@@ -31,7 +31,7 @@ class OfferValidateSerializer(serializers.Serializer):
     total_order_amount = serializers.DecimalField(
         max_digits=10, decimal_places=2)
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-differ
         today = timezone.localdate()
         offer = Offer.objects.filter(
             code=data['code'], valid_from__lte=today, valid_upto__gte=today).first()
@@ -57,13 +57,13 @@ class OfferValidateSerializer(serializers.Serializer):
         # Check if offer has time limitation (e.g. offer is valid in 1PM-4PM)
         if not ((offer.start_time is None) and (offer.end_time is None)):
             time = datetime.time(datetime.now())
-            if not (time >= offer.start_time and time <= offer.end_time):
+            if not offer.start_time <= time <= offer.end_time:
                 raise ParseError(detail='Invalid data.')
 
         # Check if offer has weekday limitation (e.g. offer is valid only on Mondays)
         if offer.days:
             weekday = (datetime.today()).weekday()
-            if not (weekday in offer.days):
+            if not weekday in offer.days:
                 raise ParseError(detail='Invalid data.')
 
         # Check if offer has minimum order amount restriction
@@ -72,12 +72,12 @@ class OfferValidateSerializer(serializers.Serializer):
                 raise ParseError(detail='Invalid data.')
 
         # Offer has either a fixed amount to deduct or a percentage
-        if not (offer.amount is None):
+        if not offer.amount is None:
             discounted_amount = data['total_order_amount'] - offer.amount
-        elif not (offer.percentage is None):
+        elif not offer.percentage is None:
             discount = data['total_order_amount'] - (offer.percentage / 100)
             # Offer might have maximum discount amount limit
-            if (not(offer.amount_limit is None)) and discount > offer.amount_limit:
+            if (not offer.amount_limit is None) and discount > offer.amount_limit:
                 discount = offer.amount_limit
             discounted_amount = data['total_order_amount'] - discount
         else:

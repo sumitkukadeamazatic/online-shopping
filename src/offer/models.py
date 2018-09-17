@@ -4,10 +4,10 @@
 from user import models as user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from rest_framework.exceptions import ValidationError
 from order import models as order_model
 from product import models as product_model
 from utils.models import CustomBaseModelMixin
-from rest_framework.exceptions import ValidationError
 # Create your models here.
 
 
@@ -73,7 +73,7 @@ class ProductOffer(CustomBaseModelMixin):
 
     def validate_unique(self, exclude=None):
         existing_relation = ProductOffer.objects.filter(
-            product_id=self.product.id, offers_id=self.offer.id).first()
+            product=self.product, offer=self.offer).first()
         if not existing_relation is None:
             raise ValidationError('Product-Offer relation already exists.')
 
@@ -93,7 +93,7 @@ class OrderOffer(CustomBaseModelMixin):
 
     def validate_unique(self, exclude=None):
         existing_relation = OrderOffer.objects.filter(
-            order_id=self.order.id, offer_id=self.offer.id).first()
+            order=self.order, offer=self.offer).first()
         if not existing_relation is None:
             raise ValidationError('Order-Offer relation already exists.')
 

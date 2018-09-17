@@ -13,11 +13,11 @@ class OfferForm(forms.ModelForm):
 
     class Meta:
         model = Offer
-        exclude = ('created_at', 'updated_at')
+        fields = ('name', 'slug', 'description', 'code', 'amount', 'percentage', 'is_for_order', 'minimum',
+                  'amount_limit', 'for_new_user', 'valid_from', 'valid_upto', 'start_time', 'end_time', 'days', 'max_count')
 
     def clean(self):
         cleaned_data = super().clean()
-        form_data_keys = cleaned_data.keys()
         # Check if 'amount' and 'percentage' values are cleaned or not.
         if set(['amount', 'percentage']).issubset(cleaned_data):
             if cleaned_data['amount'] and cleaned_data['percentage']:

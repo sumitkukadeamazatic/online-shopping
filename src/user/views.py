@@ -1,9 +1,7 @@
 """
     User App Views
 """
-from datetime import datetime, timedelta
 from django.contrib.auth import login
-from rest_framework.exceptions import ParseError
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response

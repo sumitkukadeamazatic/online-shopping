@@ -2,13 +2,13 @@
    User App Serializers
 """
 from datetime import datetime, timedelta
+import random
 from django.contrib.auth import authenticate
 from django.conf import settings
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError, AuthenticationFailed
 from rest_framework.validators import UniqueValidator
-import random
 import sendgrid
 from sendgrid.helpers.mail import Email, Content, Mail
 from .models import Role, User, ResetPassword

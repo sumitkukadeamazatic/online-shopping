@@ -27,6 +27,9 @@ class Category(CustomBaseModelMixin):
                 name='category_index'),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Feature(CustomBaseModelMixin):
     """
@@ -44,6 +47,9 @@ class Feature(CustomBaseModelMixin):
                 ],
                 name='feature_index'),
         ]
+
+    def __str__(self):
+        return self.name
 
 
 class Tax(CustomBaseModelMixin):
@@ -63,6 +69,9 @@ class Tax(CustomBaseModelMixin):
                 ],
                 name='tax_index'),
         ]
+
+    def __str__(self):
+        return self.name
 
 
 class CategoryTax(CustomBaseModelMixin):
@@ -91,6 +100,9 @@ class Brand(CustomBaseModelMixin):
                 name='brand_index'),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Product(CustomBaseModelMixin):
     """
@@ -113,8 +125,7 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
-    
-    def __str__(self):
+def __str__(self):
         return self.name
 
 class ProductFeature(CustomBaseModelMixin):

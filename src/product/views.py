@@ -6,7 +6,14 @@ from rest_framework import permissions, viewsets, status
 
 from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
 from seller.models import Seller, SellerUser
+<<<<<<< HEAD
 from .models import Wishlist
+=======
+from .models import Category, Wishlist
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from .permissions import UserAccessPermission
+>>>>>>> 5e02fb5786d6dec6bfef7aaf16ac7661f97c3010
 from .serializers import (WishlistSerializer,
                           WishlistPostSerializer,
                           ReviewPostSerializer,
@@ -15,26 +22,33 @@ from .serializers import (WishlistSerializer,
                           ProductSellerSerializer,
                           ProductSerializer)
 
+<<<<<<< HEAD
 class WishlistViewset(viewsets.ViewSet):
     def list(self, request):
+=======
+class WishlistViewset(viewsets.ModelViewSet):
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the Address
+        for the currently authenticated user.
+        """
+>>>>>>> 5e02fb5786d6dec6bfef7aaf16ac7661f97c3010
         user = self.request.user
-        queryset = Wishlist.objects.filter(user=user)
-        serializer = WishlistSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Wishlist.objects.filter(user=user)
 
-    def create(self, request):
-        data = {}
-        data['product'] = request.data['product']
-        data['user'] = self.request.user.id
-        serializer = WishlistPostSerializer(data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = [UserAccessPermission]
+    serializer_class = WishlistSerializer
 
+<<<<<<< HEAD
     def destroy(self, request, pk=None):
         res = Wishlist.objects.get(pk=pk, user=self.request.user.id).delete()
         return Response({"Msage":"deleted  sussesfully"},status=status.HTTP_204_NO_CONTENT)
+=======
+    def get_paginated_response(self, data):
+        return Response(data)
+>>>>>>> 5e02fb5786d6dec6bfef7aaf16ac7661f97c3010
 
 class CategoryView(viewsets.ModelViewSet):
     '''
@@ -81,10 +95,15 @@ class ProductView(viewsets.ModelViewSet):
         return Response(serializer_class.data)
 
 class ProductSellerView(viewsets.ModelViewSet):
+<<<<<<< HEAD
     def retrieve(self, request, pk=None):
         queryset = ProductSeller.objects.filter(product=pk)
         serializer_class = ProductSellerSerializer(queryset, many=True)
         return Response(serializer_class.data)
+=======
+    queryset = Product.objects.all()
+
+>>>>>>> 5e02fb5786d6dec6bfef7aaf16ac7661f97c3010
 
 class ReviewView(viewsets.ModelViewSet):
     def list(self, request):

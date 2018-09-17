@@ -91,10 +91,11 @@ class ProductSerializer(serializers.ModelSerializer):
         return rev
 
 
+
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
-        fields = ('id','product')
+        fields = ('id', 'product')
 
 class WishlistPostSerializer(serializers.ModelSerializer):
     class Meta:

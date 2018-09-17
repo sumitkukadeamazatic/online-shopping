@@ -10,7 +10,7 @@ from .models import (User,
                      ProductSeller,
                      ProductFeature,
                      Feature)
-
+from django.utils import timezone
 
 class CategorySerializer(serializers.ModelSerializer):
     """
@@ -101,6 +101,43 @@ class WishlistPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = ('id','user','product')
+
+class ProductSellerSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    selling_price = serializers.SerializerMethodField()
+    selling_exprience = serializers.SerializerMethodField()
+    delivery_days = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductSeller
+        fields = ('id',
+                  'name',
+                  'rating',
+                  'selling_price',
+                  'selling_exprience',
+                  'delivery_days')
+
+    def get_name(self, obj):
+        return obj.seller.company_name
+    
+    def get_rating(self, obj):
+        rev = list(Review.objects.filter(seller=obj.seller).values_list('rating', flat=True))
+        if rev:
+            avg_ret = sum(rev) / len(rev)
+        else:
+            avg_ret = 0
+        return avg_ret
+    def get_selling_exprience(self, obj):
+        return str(timezone.now().year - obj.created_at.year)+" years."
+    def get_selling_price(self, obj):
+        price = obj.product.selling_price
+        discount = obj.discount
+        sp = price - (price*(discount/100))
+        return sp
+    def get_delivery_days(self, obj):
+        return {"min":obj.min_delivery_days,
+                "max":obj.max_delivery_days}
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:

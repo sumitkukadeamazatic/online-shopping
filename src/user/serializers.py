@@ -3,11 +3,10 @@
 """
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
+from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ParseError, AuthenticationFailed
 from rest_framework.validators import UniqueValidator
-from django.utils import timezone
 from .models import Role, User, ResetPassword
 
 
@@ -33,7 +32,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
             }
         }
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-differ
         """
             User Authentication
         """
@@ -71,7 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def create(self, valid_data):
+    def create(self, valid_data):  # pylint: disable=arguments-differ
         password = valid_data.pop('password')
         customer_role = Role.objects.filter(slug='customer').distinct().first()
         if customer_role is None:
@@ -82,7 +81,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(password=password, **valid_data)
         return user
 
-    def update(self, user, valid_data):
+    def update(self, user, valid_data):  # pylint: disable=arguments-differ
         if 'password' in valid_data.keys():
             password = valid_data.pop('password')
             user.set_password(password)
@@ -91,9 +90,9 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.get(pk=user.id)
 
 
-class RequestResetPasswordSerializer(serializers.Serializer):
+class RequestResetPasswordSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """
-     User reset password request serializer
+    User reset password request serializer
     """
     email = serializers.EmailField()
     message = serializers.CharField(
@@ -102,9 +101,9 @@ class RequestResetPasswordSerializer(serializers.Serializer):
     class Meta:
         model = ResetPassword
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-differ
         """
-            User Reset Password validate
+        User Reset Password validate
         """
         user = User.objects.filter(email=data['email']).first()
         if not user:
@@ -112,9 +111,9 @@ class RequestResetPasswordSerializer(serializers.Serializer):
         return data
 
 
-class ValidateResetPasswordSerializer(serializers.Serializer):
+class ValidateResetPasswordSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """
-        Validate Reset password request Serializer
+    Validate Reset password request Serializer
     """
 
     otp = serializers.CharField()
@@ -131,9 +130,9 @@ class ValidateResetPasswordSerializer(serializers.Serializer):
             }
         }
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-differ
         """
-           Validate API for reset password validate
+        Validate API for reset password validate
         """
         requested_user = ResetPassword.objects.filter(
             user__email=data['email'], is_validated=False, otp=data['otp']).first()
@@ -149,20 +148,22 @@ class ValidateResetPasswordSerializer(serializers.Serializer):
         return data
 
 
-class ResetPasswordSerializer(serializers.Serializer):
+class ResetPasswordSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """
-        Reset Password Serializer
+    Reset Password Serializer
     """
     email = serializers.EmailField()
     password = serializers.CharField()
     confirm_password = serializers.CharField()
     reset_password_id = serializers.IntegerField(required=False)
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-differ
         """
-            Validate reset password data
+        Validate reset password data
         """
         user = User.objects.get(email=data['email'])
+        if user is None:
+            raise ParseError(detail='Invalid data.')
         now = datetime.now()
         possible_otp_time = now - timedelta(minutes=5)
         reset_pending = ResetPassword.objects.filter(
@@ -175,8 +176,8 @@ class ResetPasswordSerializer(serializers.Serializer):
         return data
 
 
-class ResponseResetPasswordSerializer(serializers.Serializer):
+class ResponseResetPasswordSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """
-       Serializer for Response
+    Serializer for Response
     """
     message = serializers.CharField(required=True)

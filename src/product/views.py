@@ -1,21 +1,22 @@
 """
 product app models
 """
-from rest_framework.views import APIView
 from rest_framework.response import Response
-#from django.http import Http404
-from rest_framework import permissions, authentication#, status
-# from django.shortcuts import render
+from rest_framework import permissions, viewsets, status
 
-from django.core.paginator import Paginator
-#from django.http import JsonResponse
-#from .serializers import CategorySerializer
+from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
+from seller.models import Seller, SellerUser
 from .models import Category, Wishlist
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .serializers import WishlistSerializer
 from .permissions import UserAccessPermission
-
+from .serializers import (WishlistSerializer,
+                          WishlistPostSerializer,
+                          ReviewPostSerializer,
+                          CategorySerializer,
+                          ReviewSerializer,
+                          ProductSellerSerializer,
+                          ProductSerializer)
 
 class WishlistViewset(viewsets.ModelViewSet):
 
@@ -36,58 +37,98 @@ class WishlistViewset(viewsets.ModelViewSet):
 
 
 
-class CategoryView(APIView):
+class CategoryView(viewsets.ModelViewSet):
     '''
     category view -
     view to list all category to the db
     Anyone can access the view
     '''
-    authentication_classes = (authentication.TokenAuthentication,)
-    #serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     permission_classes = (permissions.AllowAny,)
-    def get(self, request):
-        """
-        GET all category from db
-        """
-        requested_page_no = int(request.GET.get('page', False))
-        requested_category_slug = request.GET.get('category_slug', None)
-        items_per_page = 10
-        parentid = [x.id for x in Category.objects.all().filter(
-            slug=requested_category_slug)]
-        print(parentid)
-        parentid = parentid[0] if len(parentid) == 1 else None
 
-        if not requested_category_slug:
-            results = list(Category.objects.values('id',
-                                                   'name',
-                                                   'slug'
-                                                   ).filter(parent_id=requested_category_slug))
-            for ele in results:
-                ele['category'] = list(Category.objects.values('id',
-                                                               'name',
-                                                               'slug'
-                                                              ).filter(parent_id=ele['id']))
-        elif not parentid:
-            results = []
-        else:
-            results = list(Category.objects.values('id',
-                                                   'name',
-                                                   'slug').filter(parent_id=parentid))
-        results_paginator = Paginator(results, items_per_page)
-        page_paginator = results_paginator.get_page(requested_page_no)
-        no_of_pages = results_paginator.num_pages
-        if not requested_page_no:
-            results = results_paginator.object_list
-        else:
-            results = results_paginator.get_page(requested_page_no).object_list
-        page = {}
-        page['current_page'] = requested_page_no if requested_page_no < no_of_pages and requested_page_no > 0 else "Invalid page number"
-        page['items_per_page'] = items_per_page
-        page['no_of_pages'] = no_of_pages
-        page['has_previous'] = page_paginator.has_previous()
-        page['has_next'] = page_paginator.has_next()
-        data = {}
-        data['page'] = page
-        data['results'] = page_paginator.object_list
 
-        return Response(data)
+class ProductView(viewsets.ModelViewSet):
+    def list(self, request):
+        queryset = Product.objects.all()
+        serializer_class = ProductSerializer(queryset, many=True)
+        permission_classes = (permissions.AllowAny,)
+        return Response(serializer_class.data)
+
+    def create(self, request):
+        data = request.data
+        queryset = Product.objects.filter(brand__in=data['brand'],
+                                          category__in=data["category_id"],
+                                          base_price__gte=data["min_price"],
+                                          base_price__lte=data["max_price"])
+        pro_id = queryset.values_list('id', flat=True)
+        exclude_list = []
+        for pid in pro_id:
+            pro_ratings = Review.objects.filter(product=pid).values_list('rating', flat=True)
+            if pro_ratings:
+                if (sum(pro_ratings)/len(pro_ratings)) < data["rating"]:
+                    exclude_list.append(pid)
+            else:
+                    exclude_list.append(pid)
+            price = Product.objects.values('base_price',
+                                           'selling_price').filter(id=pid).get()
+            pro_discount = (price['base_price']-price['selling_price']) /price['base_price'] * 100
+            if pro_discount < data["discount"]:
+                if pid not in exclude_list:
+                    exclude_list.append(pid)
+        queryset = queryset.exclude(id__in=exclude_list)
+        serializer_class = ProductSerializer(queryset, many=True)
+        permission_classes = (permissions.AllowAny,)
+        return Response(serializer_class.data)
+
+class ProductSellerView(viewsets.ModelViewSet):
+    def retrieve(self, request, pk=None):
+        queryset = ProductSeller.objects.filter(product=pk)
+        serializer_class = ProductSellerSerializer(queryset, many=True)
+        return Response(serializer_class.data)
+
+class ReviewView(viewsets.ModelViewSet):
+    def list(self, request):
+        seller_id = request.GET.get('seller_id', False)
+        product_id = request.GET.get('product_id', False)
+        # if seller_id and product_id is not given or both given
+        if not (bool(seller_id) ^ bool(product_id)):
+            return Response({"response":"Invalid Request."})
+
+        if seller_id:
+            queryset = Review.objects.filter(seller=seller_id)
+        if product_id:
+            queryset = Review.objects.filter(product=product_id)
+
+        serializer = ReviewSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        data = request.data
+        data['user'] = request.user.id
+        try:
+            if not (bool(data['seller']) ^ bool(data['product'])):
+                return Response({"response":"Invalid Request."})
+        except KeyError:
+            return Response({"response":"Mandatory field(s) missing."})
+
+        serializer = ReviewPostSerializer(data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response({})
+
+    def partial_update(self, request, pk=None):
+        data = request.data
+        data['user'] = request.user.id
+        try:
+            if not (bool(data['seller']) ^ bool(data['product'])):
+                return Response({"response":"Invalid Request."})
+        except KeyError:
+            return Response({"response":"Mandatory field(s) missing."})
+        
+        serializer = ReviewPostSerializer(data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

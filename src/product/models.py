@@ -27,6 +27,9 @@ class Category(CustomBaseModelMixin):
                 name='category_index'),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Feature(CustomBaseModelMixin):
     """
@@ -44,6 +47,9 @@ class Feature(CustomBaseModelMixin):
                 ],
                 name='feature_index'),
         ]
+
+    def __str__(self):
+        return self.name
 
 
 class Tax(CustomBaseModelMixin):
@@ -63,6 +69,9 @@ class Tax(CustomBaseModelMixin):
                 ],
                 name='tax_index'),
         ]
+
+    def __str__(self):
+        return self.name
 
 
 class CategoryTax(CustomBaseModelMixin):
@@ -91,6 +100,9 @@ class Brand(CustomBaseModelMixin):
                 name='brand_index'),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Product(CustomBaseModelMixin):
     """
@@ -112,7 +124,8 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
-
+def __str__(self):
+        return self.name
 
 class ProductFeature(CustomBaseModelMixin):
     """
@@ -163,8 +176,8 @@ class Review(CustomBaseModelMixin):
        This represents review table in database.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2)
     title = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True, blank=True)

@@ -18,7 +18,11 @@ from .permissions import UserAccessPermission
 
 
 class WishlistViewset(viewsets.ModelViewSet):
-   
+
+    http_method_names = ('get', 'post', 'patch', 'delete')
+    permission_classes = [UserAccessPermission]
+    serializer_class = WishlistSerializer
+
     def get_queryset(self):
         """
         This view should return a list of all the Address
@@ -27,53 +31,10 @@ class WishlistViewset(viewsets.ModelViewSet):
         user = self.request.user
         return Wishlist.objects.filter(user=user)
 
-    http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = [UserAccessPermission]
-    serializer_class = WishlistSerializer
-
     def get_paginated_response(self, data):
        return Response(data)
 
-    """
-    def list(self, request):
-        try:
-            user = self.request.user
-            queryset = Wishlist.objects.filter(user=user)
-            serializer = WishlistSerializer(queryset, many=True)
-            return Response(serializer.data)
-        except TypeError:
-            return Response({'Error':'Add Token To request Heder'},status=status.HTTP_401_UNAUTHORIZED)
-        except Exception as e:
-            return Response({'Error':str(e)},status=status.HTTP_400_BAD_REQUEST)
-        
-        
-    def create(self, request):
-        try:
-            data = {}
-            data['product'] = request.data['product']
-            # data['user'] = self.request.user.id
-            serializer = WishlistSerializer(data=data, partial=True)
-            if serializer.is_valid():
-                serializer.save(user=self.request.user.id)
-                return Response(serializer.data)
-            return Response(serializer.errors)
-        except TypeError:
-            return Response({'Error':'Add Token To request Heder'},status=status.HTTP_401_UNAUTHORIZED)
-        except Exception as e:
-            return Response({'Error':str(e)},status=status.HTTP_400_BAD_REQUEST)
-        
-        
-    def destroy(self, request, pk=None):
-        try:
-            res = Wishlist.objects.get(pk=pk,user=self.request.user.id).delete()
-            return Response({"Msage":"deleted  sussesfully"},status=status.HTTP_204_NO_CONTENT)
-        except Wishlist.DoesNotExist:
-            return Response({'Error':'This Product not added in Wishlist'},status=status.HTTP_204_NO_CONTENT)
-        except TypeError:
-            return Response({'Error':'Add Token To request Heder'},status=status.HTTP_401_UNAUTHORIZED)
-        except Exception as e:
-            return Response({'Error':str(e)},status=status.HTTP_400_BAD_REQUEST)
-    """
+
 
 class CategoryView(APIView):
     '''

@@ -12,6 +12,6 @@ class OfferPermission(BasePermission):
     message = "Access Denied."
 
     def has_permission(self, request, view):
-        if view.action == 'list':
+        if view.action in ['list', 'validate']:
             return True
         return False

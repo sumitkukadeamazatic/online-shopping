@@ -3,6 +3,7 @@
 """
 from django.contrib import admin
 from . import models
+from .forms import OfferForm
 # Register your models here.
 
 
@@ -10,6 +11,7 @@ class OfferAdmin(admin.ModelAdmin):
     """
         Configuration of OfferAdmin
     """
+    form = OfferForm
     list_display = ['id', 'name', 'slug', 'description', 'code', 'amount', 'percentage', 'is_for_order', 'minimum',
                     'amount_limit', 'for_new_user', 'valid_from', 'valid_upto', 'start_time', 'end_time', 'days', 'max_count']
     list_filter = ['created_at', 'updated_at', 'valid_from', 'valid_upto',
@@ -31,8 +33,8 @@ class ProductOfferAdmin(admin.ModelAdmin):
     """
         Configuration of ProductOfferAdmin
     """
-    list_display = ['id', 'product_id',
-                    'offers_id', 'created_at', 'updated_at']
+    list_display = ['id', 'product',
+                    'offer', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at']
 
 
@@ -40,7 +42,7 @@ class UserOfferAdmin(admin.ModelAdmin):
     """
         Configuration of UserOfferAdmin
     """
-    list_display = ['id', 'order', 'offer', 'created_at', 'updated_at']
+    list_display = ['id', 'user', 'offer', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at']
 
 

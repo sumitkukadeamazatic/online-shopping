@@ -41,9 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django_extensions',
+    'django_extensions',
     'rest_framework',
-    'rest_framework_filters',
     'knox',
     'utils',
     'user',
@@ -109,9 +108,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
     ),
-    #'DEFAULT_FILTER_BACKENDS': (
-        #'rest_framework_filters.backends.RestFrameworkFilterBackend',
-    #),
+    # 'DEFAULT_FILTER_BACKENDS': (
+    # 'rest_framework_filters.backends.RestFrameworkFilterBackend',
+    # ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }

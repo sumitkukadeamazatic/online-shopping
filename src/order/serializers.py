@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from order.models import Cart, CartProduct, Order, OrderLog, Lineitem, PaymentMethod
+from order.models import Cart, CartProduct, Order, OrderLog, Lineitem, LineitemTax, PaymentMethod
+from product.models import CategoryTax
 from product.models import ProductSeller
 from contact.models import Address
 from offer.models import Offer, OrderOffer, OfferLineitem
 import json
-
 
 class CartProductSerializer(serializers.ModelSerializer):
     slug = serializers.SerializerMethodField()
@@ -102,7 +102,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 }
             )
         return data
-     
+
     def validate(self, data):
         if not Cart.objects.filter(pk=self.context['request'].data['cart']):
             raise serializers.ValidationError("%s is not a vaid Cart id"%(self.context['request'].data['cart']))
@@ -150,7 +150,7 @@ class OrderSerializer(serializers.ModelSerializer):
             billing_state = bill_address.state,
             billing_pincode = bill_address.pincode,
             totoal_shipping_cost = sum([product['shipping_cost'] for product in products if 'shipping_cost' in product]),   
-            status = 'order-genrated'
+            status = 'order-genrated'
         )
        
         for offer in offers:
@@ -183,3 +183,30 @@ class OrderSerializer(serializers.ModelSerializer):
         cart.is_cart_processed=True
         cart.save()
         return order
+
+class TaxSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    class Meta:
+        model = CategoryTax
+        fields = ('name', 'percentage')
+    def get_name(self, obj):
+        return obj.tax.name
+     
+class TaxInvoiceSerializer(serializers.ModelSerializer):
+    product_name = serializers.SerializerMethodField()
+    tax_type = serializers.SerializerMethodField()
+    tax_rate = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lineitem
+        fields = ('product_name', 'quantity', 'selling_price', 'tax_type', 'tax_rate')
+
+    def get_product_name(self, obj):
+        return obj.product.name
+    def get_tax_type(self, obj):
+        return LineitemTax.objects.filter(lineitem=obj).tax_name
+    def get_tax_rate(self, obj):
+        return LineitemTax.objects.filter(lineitem=obj).tax_amount
+
+class OrderShippingSerializer(serializers.ModelSerializer):
+    pass

@@ -6,7 +6,7 @@ from rest_framework import permissions, viewsets, status
 
 from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
 from seller.models import Seller, SellerUser
-from .models import Category, Wishlist
+from .models import Wishlist
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import UserAccessPermission

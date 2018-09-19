@@ -9,8 +9,10 @@ class UserAccessPermission(BasePermission):
     message = "Access Denied."
     
     def has_permission(self, request, view):
+        print(view.action)
         if not request.auth:
             return False
-        if view.action == 'create' or view.action == 'list' or view.action == 'payment' or view.action == 'retrieve':
+        allowed_actions = ['create', 'list','payment', 'retrieve', 'shipping']
+        if view.action in allowed_actions:
             return True
         return  False

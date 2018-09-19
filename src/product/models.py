@@ -113,7 +113,6 @@ class Product(CustomBaseModelMixin):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
-    selling_price = models.DecimalField(max_digits=19, decimal_places=2)
     slug = models.SlugField(unique=True)
     images = ArrayField(models.TextField())
 
@@ -125,10 +124,8 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
-
-    def __str__(self):
+def __str__(self):
         return self.name
-
 
 class ProductFeature(CustomBaseModelMixin):
     """
@@ -156,6 +153,7 @@ class ProductSeller(CustomBaseModelMixin):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2)
+    selling_price = models.DecimalField(max_digits=19, decimal_places=2)
     min_delivery_days = models.PositiveSmallIntegerField()
     max_delivery_days = models.PositiveSmallIntegerField()
     available_pin_codes = ArrayField(models.CharField(max_length=10))
@@ -178,8 +176,8 @@ class Review(CustomBaseModelMixin):
        This represents review table in database.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2)
     title = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True, blank=True)

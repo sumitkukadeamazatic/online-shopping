@@ -31,12 +31,11 @@ class ProductAdmin(admin.ModelAdmin):
         'slug',
         'description',
         'base_price',
-        'selling_price',
         'created_at',
         'updated_at',
         'images']
     list_filter = ['created_at', 'updated_at']
-    list_editable = ['base_price', 'selling_price', 'images']
+    list_editable = ['base_price', 'images']
     prepopulated_fields = {'slug': ('name',)}
 
 
@@ -65,6 +64,12 @@ class BrandAdmin(admin.ModelAdmin):
     list_editable = ['name']
     prepopulated_fields = {'slug': ('name',)}
 
+class ProductFeature(admin.ModelAdmin):
+    """
+    product_feature Model Admin
+    """
+    inline_type = 'tabular'
+
 
 class ProductSellerAdmin(admin.ModelAdmin):
     """
@@ -74,6 +79,7 @@ class ProductSellerAdmin(admin.ModelAdmin):
         'id',
         'quantity',
         'discount',
+        'selling_price',
         'min_delivery_days',
         'max_delivery_days',
         'available_pin_codes',
@@ -83,6 +89,7 @@ class ProductSellerAdmin(admin.ModelAdmin):
     list_filter = [
         'quantity',
         'discount',
+        'selling_price',
         'min_delivery_days',
         'max_delivery_days',
         'created_at',
@@ -90,6 +97,7 @@ class ProductSellerAdmin(admin.ModelAdmin):
     list_editable = [
         'quantity',
         'discount',
+        'selling_price',
         'min_delivery_days',
         'max_delivery_days']
 

@@ -32,6 +32,7 @@ class Address(CustomBaseModelMixin):
     state = models.CharField(max_length=60)
     pincode = models.CharField(max_length=10)
     is_home = models.BooleanField(default=False)
+    contact_no = models.CharField(max_length=20)
 
     class Meta:
         indexes = [

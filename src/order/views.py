@@ -1,11 +1,12 @@
 """
    Contact App Views
 """
-from order.models import Cart, CartProduct, Order, Lineitem
+from order.models import Cart, CartProduct, Order, Lineitem, ShippingDetails
 from product.models import CategoryTax
 from order.serializers import  (CartProductSerializer,
                                 TaxInvoiceSerializer,
                                 OrderSerializer,
+                                OrderShippingSerializer,
                                 TaxSerializer)
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -34,14 +35,6 @@ class OrderViewset(viewsets.ModelViewSet):
         instance.save()
         return Response(OrderSerializer(instance).data)
  
-    @action(methods=['post'], detail=False, permission_classes=[UserAccessPermission])
-    def shipping(self, request):
-        print("######################")
-        #instance = self.get_object()
-        #instance.payment_info = json.loads(request.data['payment_info'])
-        #instance.save()
-        return Response({})
-
 
 
 class CartViewset(viewsets.ModelViewSet):
@@ -61,15 +54,19 @@ class CartViewset(viewsets.ModelViewSet):
         return Response(data)
 
 class TaxViewset(viewsets.ReadOnlyModelViewSet):
-    def list(self, request):
-        queryset = CategoryTax.objects.all()
-        serializer_class = TaxSerializer(queryset, many=True)
-        return Response(serializer_class.data)
+    permission_classes = [UserAccessPermission]
+    queryset = CategoryTax.objects.all()
+    serializer_class = TaxSerializer
+        
+    
 
     def retrieve(self, request, pk=None):
         queryset = CategoryTax.objects.filter(category = pk)
         serializer_class = TaxSerializer(queryset, many=True)
         return Response(serializer_class.data)
+
+    def get_paginated_response(self, data):
+        return Response(data)
 
 class ShippingViewset(viewsets.ModelViewSet):
     def create(self, request):
@@ -82,10 +79,7 @@ class TaxInvoiceViewset(viewsets.ReadOnlyModelViewSet):
         serializer_class = TaxInvoiceSerializer(queryset, many=False)
         return Response(serializer_class.data)
 
-    #def list(self, request):
-        #return Response({})
-#class OrderShippingViewset(viewsets.ModelViewSet):
-    ##permission_classes = [UserAccessPermission]
-    #def create(self, request):
-        #return Response({})
-        #queryser = 
+class OrderShippingViewset(viewsets.ModelViewSet):
+    permission_classes = (UserAccessPermission,)
+    serializer_class = OrderShippingSerializer
+    queryset = ShippingDetails.objects.all()

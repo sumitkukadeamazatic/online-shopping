@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from order.models import Cart, CartProduct, Order, OrderLog, Lineitem, LineitemTax, PaymentMethod
-from product.models import CategoryTax
-from product.models import ProductSeller
+from order.models import Cart, CartProduct, Order, OrderLog, Lineitem, PaymentMethod, LineShippingDetails, ShippingDetails
+from product.models import ProductSeller, CategoryTax
 from contact.models import Address
 from offer.models import Offer, OrderOffer, OfferLineitem
 import json
@@ -27,7 +26,7 @@ class CartProductSerializer(serializers.ModelSerializer):
         return obj.product_seller.selling_price
 
     def get_img(self, obj):
-        return obj.product_seller.product.images 
+        return obj.product_seller.product.imag
         
     def get_in_stock(self, obj):
         return obj.product_seller.quantity > 0
@@ -102,7 +101,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 }
             )
         return data
-
+     
     def validate(self, data):
         if not Cart.objects.filter(pk=self.context['request'].data['cart']):
             raise serializers.ValidationError("%s is not a vaid Cart id"%(self.context['request'].data['cart']))
@@ -150,7 +149,7 @@ class OrderSerializer(serializers.ModelSerializer):
             billing_state = bill_address.state,
             billing_pincode = bill_address.pincode,
             totoal_shipping_cost = sum([product['shipping_cost'] for product in products if 'shipping_cost' in product]),   
-            status = 'order-genrated'
+            status = 'order-genrated'
         )
        
         for offer in offers:
@@ -175,7 +174,7 @@ class OrderSerializer(serializers.ModelSerializer):
                     shiping_cost = scls[0] if scls else 0 ,
                     gift_wrap_charges = gwcls[0] if gwcls else 0,
                 )
-        
+
             for offer in offers:
                 OfferLineitem.objects.create(offer=offer,lineitem=li)
             OrderLog.objects.create(lineitem=li, status='order-genrated',description='order-genrated')
@@ -202,11 +201,22 @@ class TaxInvoiceSerializer(serializers.ModelSerializer):
         fields = ('product_name', 'quantity', 'selling_price', 'tax_type', 'tax_rate')
 
     def get_product_name(self, obj):
-        return obj.product.name
+        print(obj)
+        return obj.product_seller.product.name
     def get_tax_type(self, obj):
         return LineitemTax.objects.filter(lineitem=obj).tax_name
     def get_tax_rate(self, obj):
         return LineitemTax.objects.filter(lineitem=obj).tax_amount
 
 class OrderShippingSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = ShippingDetails
+        fields = '__all__'
+    
+    def create(self, valid_data):
+        print('#######################')
+        sd = ShippingDetails.objects.create(courior_name=valid_data['courior_name'] , tracking_number =valid_data['tracking_number'], deliverd_date=valid_data['deliverd_date'], tracking_url=valid_data['tracking_url'])
+        lqls = json.loads(self.context['request'].data['lineitem_quantity'])
+        for lq in lqls:
+            LineShippingDetails.objects.create(lineitem= lq['lineitem'],quantity=lq['quantity'],shipping_details=sd, description=lq['description'])
+        return sd

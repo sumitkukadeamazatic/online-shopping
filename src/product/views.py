@@ -11,7 +11,6 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import UserAccessPermission
 from .serializers import (WishlistSerializer,
-                          WishlistPostSerializer,
                           ReviewPostSerializer,
                           CategorySerializer,
                           ReviewSerializer,
@@ -29,7 +28,10 @@ class WishlistViewset(viewsets.ModelViewSet):
         This view should return a list of all the Address
         for the currently authenticated user.
         """
+        print("hii")
+        print(self.request.user)
         user = self.request.user
+        
         return Wishlist.objects.filter(user=user)
 
     def get_paginated_response(self, data):

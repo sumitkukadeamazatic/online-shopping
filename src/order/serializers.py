@@ -127,7 +127,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("%s is not a vaid product_seller id"%(product['product_seller']))
         return data
 
-
+    
     def create(self , validate_data):
         cart = Cart.objects.get(pk=self.context['request'].data['cart'])
         bill_address = Address.objects.get(pk=self.context['request'].data['bill_address'])
@@ -159,6 +159,7 @@ class OrderSerializer(serializers.ModelSerializer):
         cpls = CartProduct.objects.filter(cart=cart,is_order_generated=False,product_seller__in=[product['product_seller'] for product in products])
         offerss = [product['offers'] for product  in products]
         cpls_offers = zip(cpls,offerss)
+        print(cpls_offers,cpls,offerss)
         for cp_ofr in cpls_offers:
             scls = [product['shipping_cost'] for product in products if product['product_seller']==cp_ofr[0].product_seller and 'shipping_cost' in product] 
             

@@ -2,47 +2,45 @@
    Contact App Views
 """
 from order.models import Cart, CartProduct, Order
-from order.serializers import  CartProductSerializer, AddCartProductSerializer, OrderSerializer
+from order.serializers import  CartProductSerializer, OrderSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import UserAccessPermission
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+import json
 
-class OrderViewset(viewsets.ViewSet):
 
-    def get_queryset(self):
-        """
-        This view should return a list of all the Address
-        for the currently authenticated user.
-        """
-        user = self.request.user
-        return Order.objects.filter(cart=Cart.objects.get_or_create(user=user,is_cart_processed=False)[0])
-
-    http_method_names = ['get', 'post', 'patch', 'delete']
+class OrderViewset(viewsets.ModelViewSet):
+    
+    http_method_names = ('get', 'post', 'patch', 'delete')
     permission_classes = [UserAccessPermission]
     serializer_class = OrderSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(cart__in=Cart.objects.filter(user=user))
+    
     def get_paginated_response(self, data):
        return Response(data)
+
+    @action(methods=['patch'], detail=True, permission_classes=[UserAccessPermission])
+    def payment(self, request, pk=None):
+        instance = self.get_object()
+        instance.payment_info = json.loads(request.data['payment_info'])
+        instance.save()
+        return Response(OrderSerializer(instance).data)
 
 
 class CartViewset(viewsets.ModelViewSet):
     
-    def get_serializer_class(self):
-        if self.request.method != 'POST':
-            return CartProductSerializer
-        return AddCartProductSerializer
-
+    http_method_names = ('get', 'post', 'patch', 'delete')
+    permission_classes = [UserAccessPermission]
+    serializer_class = CartProductSerializer
+    
     def get_queryset(self):
-        """
-        This view should return a list of all the Address
-        for the currently authenticated user.
-        """
         user = self.request.user
         return CartProduct.objects.filter(cart=Cart.objects.get_or_create(user=user,is_cart_processed=False)[0])
-
-    http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = [UserAccessPermission]
-    
 
     def get_paginated_response(self, data):
        return Response(data)

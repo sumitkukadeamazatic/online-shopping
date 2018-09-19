@@ -113,7 +113,6 @@ class Product(CustomBaseModelMixin):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
-    selling_price = models.DecimalField(max_digits=19, decimal_places=2)
     slug = models.SlugField(unique=True)
     images = ArrayField(models.TextField())
 
@@ -154,6 +153,7 @@ class ProductSeller(CustomBaseModelMixin):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2)
+    selling_price = models.DecimalField(max_digits=19, decimal_places=2)
     min_delivery_days = models.PositiveSmallIntegerField()
     max_delivery_days = models.PositiveSmallIntegerField()
     available_pin_codes = ArrayField(models.CharField(max_length=10))

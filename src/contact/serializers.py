@@ -6,7 +6,7 @@ import re
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ( 'id', 'user', 'seller', 'name', 'city', 'state', 'pincode', 'address_line', 'is_home')
+        fields = ( 'id', 'user', 'seller', 'name', 'city', 'state', 'pincode', 'address_line', 'is_home', 'contact_no')
         
         extris_cart_processedkwargs = {
             'is_cart_processedity': {
@@ -26,23 +26,18 @@ class AddressSerializer(serializers.ModelSerializer):
                 'required': False
             }
         }   
-
-    def validate(self, value):
-        try:
-            if not re.match(r'^([A-Za-z]+.?\s*)?[A-Za-z]+(\s*[A-Za-z]+){0,2}$',value['name']):
-                raise serializers.ValidationError({'name':"Please provide a correct Name"})
-        except KeyError:
-            pass
-    
-        try:
-            if not re.match(r'^[A-Za-z][A-Za-z\s-]+[A-Za-z]$',value['city']):
-                raise serializers.ValidationError({'city':"Please provide a correct City"})
-        except KeyError:
-            pass
-        
-        try:
-            if not re.match(r'^[A-Za-z][A-Za-z\s-]+[A-Za-z]$',value['state']):
-                raise serializers.ValidationError({'name':"Please provide a correct State"})
-        except KeyError:
-            pass
+    def validate_name(self, value):
+        if not re.match(r'^([A-Za-z]+.?\s*)?[A-Za-z]+(\s*[A-Za-z]+){0,2}$',value):
+            raise serializers.ValidationError({'name':"Please provide a correct Name"})
         return value
+
+    def validate_city(self, value):
+        if not re.match(r'^([A-Za-z]+.?\s*)?[A-Za-z]+(\s*[A-Za-z]+){0,2}$',value):
+            raise serializers.ValidationError({'city':"Please provide a correct city"})
+        return value
+
+    def validate_state(self, value):
+        if not re.match(r'^([A-Za-z]+.?\s*)?[A-Za-z]+(\s*[A-Za-z]+){0,2}$',value):
+            raise serializers.ValidationError({'state':"Please provide a correct state"})
+        return value
+

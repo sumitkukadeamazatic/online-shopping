@@ -4,23 +4,23 @@
 from user import models as user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from rest_framework.exceptions import ValidationError
 from order import models as order_model
 from product import models as product_model
 from utils.models import CustomBaseModelMixin
-
 # Create your models here.
 
 
 class Offer(CustomBaseModelMixin):
     """
-        Configuration of OfferModel
+    Configuration of OfferModel
     """
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
     description = models.TextField()
     code = models.CharField(max_length=20, blank=True, null=True, unique=True)
     amount = models.DecimalField(
-        max_digits=5,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True)
@@ -31,7 +31,7 @@ class Offer(CustomBaseModelMixin):
         null=True)
     is_for_order = models.BooleanField()
     minimum = models.DecimalField(
-        max_digits=5,
+        max_digits=7,
         decimal_places=2,
         blank=True,
         null=True)
@@ -66,10 +66,16 @@ class ProductOffer(CustomBaseModelMixin):
         product_model.Product,
         on_delete=models.CASCADE,
         related_name=None)
-    offers = models.ForeignKey(
+    offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
+
+    def validate_unique(self, exclude=None):
+        existing_relation = ProductOffer.objects.filter(
+            product=self.product, offer=self.offer).first()
+        if not existing_relation is None:
+            raise ValidationError('Product-Offer relation already exists.')
 
 
 class OrderOffer(CustomBaseModelMixin):
@@ -85,12 +91,18 @@ class OrderOffer(CustomBaseModelMixin):
         on_delete=models.CASCADE,
         related_name=None)
 
+    def validate_unique(self, exclude=None):
+        existing_relation = OrderOffer.objects.filter(
+            order=self.order, offer=self.offer).first()
+        if not existing_relation is None:
+            raise ValidationError('Order-Offer relation already exists.')
+
 
 class UserOffer(CustomBaseModelMixin):
     """
         Configuration of UserOfferModel
     """
-    order = models.ForeignKey(
+    user = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
         related_name=None)
@@ -98,7 +110,7 @@ class UserOffer(CustomBaseModelMixin):
         Offer,
         on_delete=models.CASCADE,
         related_name=None)
-    is_redeemed = models.BooleanField()
+    is_redeemed = models.BooleanField(default=False)
 
 
 class OfferLineitem(CustomBaseModelMixin):

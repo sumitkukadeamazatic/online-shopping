@@ -40,10 +40,10 @@ class Order(CustomBaseModelMixin):
         Cart,
         on_delete=models.CASCADE,
         related_name=None)
-    payment_info = JSONField()
+    payment_info = JSONField(null=True, blank=True)
     shipping_name = models.TextField()
     shipping_address_line = models.TextField()
-    shiping_contact_no = models.CharField(max_length=20, null=True, blank=True)
+    shipping_contact_no = models.CharField(max_length=20, null=True, blank=True)
     shipping_city = models.CharField(max_length=60)
     shipping_state = models.CharField(max_length=60)
     shipping_pincode = models.CharField(max_length=10)
@@ -93,22 +93,13 @@ class Lineitem(CustomBaseModelMixin):
         Order,
         on_delete=models.CASCADE,
         related_name=None)
-    product = models.ForeignKey(
-        product_model.Product,
-        on_delete=models.CASCADE,
-        related_name=None)
-    seller = models.ForeignKey(
-        seller_model.Seller,
+    product_seller = models.ForeignKey(
+        product_model.ProductSeller,
         on_delete=models.CASCADE,
         related_name=None)
     status = models.CharField(max_length=20)
     quantity = models.PositiveIntegerField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
-    discount = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True)
     shiping_cost = models.DecimalField(
         max_digits=19, decimal_places=2, blank=True, null=True)
     selling_price = models.DecimalField(max_digits=19, decimal_places=2)
@@ -172,7 +163,7 @@ class LineitemTax(CustomBaseModelMixin):
         on_delete=models.CASCADE,
         related_name=None)
     tax_name = models.CharField(max_length=20)
-    discount = models.DecimalField(max_digits=4, decimal_places=2)
+    percentage = models.DecimalField(max_digits=4, decimal_places=2)
     tax_amount = models.DecimalField(max_digits=19, decimal_places=2)
 
     class Meta:

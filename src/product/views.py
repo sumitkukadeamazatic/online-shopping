@@ -19,6 +19,11 @@ from .serializers import (WishlistSerializer,
                           ProductSerializer)
 
 class WishlistViewset(viewsets.ModelViewSet):
+
+    http_method_names = ('get', 'post', 'patch', 'delete')
+    permission_classes = [UserAccessPermission]
+    serializer_class = WishlistSerializer
+
     def get_queryset(self):
         """
         This view should return a list of all the Address
@@ -27,12 +32,10 @@ class WishlistViewset(viewsets.ModelViewSet):
         user = self.request.user
         return Wishlist.objects.filter(user=user)
 
-    http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = [UserAccessPermission]
-    serializer_class = WishlistSerializer
-
     def get_paginated_response(self, data):
-        return Response(data)
+       return Response(data)
+
+
 
 class CategoryView(viewsets.ModelViewSet):
     '''

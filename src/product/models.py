@@ -82,6 +82,8 @@ class CategoryTax(CustomBaseModelMixin):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     percentage = models.DecimalField(
         max_digits=4, decimal_places=2, default=0.0)
+    def __str__(self):
+        return self.tax.name
 
 
 class Brand(CustomBaseModelMixin):
@@ -125,8 +127,8 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
-def __str__(self):
-        return self.name
+    def __str__(self):
+            return self.name
 
 class ProductFeature(CustomBaseModelMixin):
     """
@@ -144,6 +146,8 @@ class ProductFeature(CustomBaseModelMixin):
                 ],
                 name='product_feature_index'),
         ]
+    def __str__(self):
+        return self.feature.name+" of "+self.product.name
 
 
 class ProductSeller(CustomBaseModelMixin):
@@ -169,6 +173,8 @@ class ProductSeller(CustomBaseModelMixin):
                 ],
                 name='product_seller_index'),
         ]
+    def __str__(self):
+        return self.seller.name+" is sailing "+self.product.name
 
 
 class Review(CustomBaseModelMixin):

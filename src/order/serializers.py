@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from order.models import Cart, CartProduct, Order, OrderLog, Lineitem
+from order.models import Cart, CartProduct, Order, OrderLog, Lineitem, LineitemTax
+from product.models import CategoryTax
   
 
 class CartProductSerializer(serializers.ModelSerializer):
@@ -90,5 +91,28 @@ class OrderSerializer(serializers.ModelSerializer):
                 }
             )
         return data
-        
-        
+
+class TaxSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    class Meta:
+        model = CategoryTax
+        fields = ('name', 'percentage')
+    def get_name(self, obj):
+        return obj.tax.name
+
+class TaxInvoiceSerializer(serializers.ModelSerializer):
+    product_name = serializers.SerializerMethodField()
+    tax_type = serializers.SerializerMethodField()
+    tax_rate = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lineitem
+        fields = ('product_name', 'quantity', 'selling_price', 'tax_type', 'tax_rate')
+
+    def get_product_name(self, obj):
+        return obj.product.name
+    def get_tax_type(self, obj):
+        return LineitemTax.objects.filter(lineitem=obj).tax_name
+    def get_tax_rate(self, obj):
+        return LineitemTax.objects.filter(lineitem=obj).tax_amount
+

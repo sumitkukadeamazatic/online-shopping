@@ -1,8 +1,13 @@
 """
    Contact App Views
 """
-from order.models import Cart, CartProduct, Order
-from order.serializers import  CartProductSerializer, AddCartProductSerializer, OrderSerializer
+from order.models import Cart, CartProduct, Order, Lineitem
+from product.models import CategoryTax
+from order.serializers import  (CartProductSerializer,
+                                AddCartProductSerializer,
+                                TaxInvoiceSerializer,
+                                OrderSerializer,
+                                TaxSerializer)
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import UserAccessPermission
@@ -42,7 +47,32 @@ class CartViewset(viewsets.ModelViewSet):
 
     http_method_names = ['get', 'post', 'patch', 'delete']
     permission_classes = [UserAccessPermission]
-    
 
     def get_paginated_response(self, data):
-       return Response(data)
+        return Response(data)
+
+class TaxViewset(viewsets.ReadOnlyModelViewSet):
+    def list(self, request):
+        queryset = CategoryTax.objects.all()
+        serializer_class = TaxSerializer(queryset, many=True)
+        return Response(serializer_class.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = CategoryTax.objects.filter(category = pk)
+        serializer_class = TaxSerializer(queryset, many=True)
+        return Response(serializer_class.data)
+
+class ShippingViewset(viewsets.ModelViewSet):
+    def create(self, request):
+        print(request.data)
+        return Response({})
+
+class TaxInvoiceViewset(viewsets.ReadOnlyModelViewSet):
+    def retrieve(self, request, pk=None):
+        queryset = Lineitem.objects.filter(order=pk)
+        serializer_class = TaxInvoiceSerializer(queryset, many=False)
+
+        return Response(serializer_class.data)
+
+    #def list(self, request):
+        #return Response({})

@@ -17,21 +17,36 @@ class ShippingDetailsSerializer(serializers.ModelSerializer):
         exclude = ('created_at', 'updated_at')
 
 
-class ReturnLineItemSerializer(serializers.ModelSerializer):
+class ReturnLineItemSerializer(serializers.Serializer):
     """
-    Model serializer for Return Line Items
+    Serializer for Return Line Items
     """
 
-    class Meta:
-        model = Lineitem
-        exclude = ('created_at', 'updated_at')
+    quantity = serializers.IntegerField()
+    description = serializers.CharField(required=False, allow_blank=True)
+    return_lineitem = serializers.PrimaryKeyRelatedField(
+        queryset=Lineitem.objects.all())
 
 
-class ReturnLineitemShippingSerializer(serializers.ModelSerializer):
+class ReturnLineitemShippingSerializer(serializers.Serializer):
     """
-    Model serializer for return line item shipping details
+    Serializer for return line item shipping details
     """
+    shipping_details = ShippingDetailsSerializer()
+    lineitems = ReturnLineItemSerializer(many=True)
 
     class Meta:
         model = LineitemShippingDetail
-        exclude = ('created_at', 'updated_at')
+        fields = ('shipping_details', 'lineitems')
+
+    def create(self, validated_data):
+        shipping_details_data = validated_data['shipping_details']
+        shipping_detail = ShippingDetails.objects.create(
+            **shipping_details_data)
+        lineitems = validated_data['lineitems']
+        for lineitem in lineitems:
+            lineitem.update({'shipping_detail': shipping_detail})
+            LineitemShippingDetail.objects.create(**lineitem)
+        response_data = {
+            'message': 'Lineitem shipping details created successfully'}
+        return response_data

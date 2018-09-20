@@ -40,13 +40,14 @@ class ReturnLineitemShippingSerializer(serializers.Serializer):
         fields = ('shipping_details', 'lineitems')
 
     def create(self, validated_data):
-        shipping_details_data = validated_data['shipping_details']
-        shipping_detail = ShippingDetails.objects.create(
-            **shipping_details_data)
-        lineitems = validated_data['lineitems']
-        for lineitem in lineitems:
-            lineitem.update({'shipping_detail': shipping_detail})
-            LineitemShippingDetail.objects.create(**lineitem)
-        response_data = {
-            'message': 'Lineitem shipping details created successfully'}
-        return response_data
+        # shipping_details_data = validated_data['shipping_details']
+        # shipping_detail = ShippingDetails.objects.create(
+        #     **shipping_details_data)
+        # lineitems = validated_data['lineitems']
+        # for lineitem in lineitems:
+        #     lineitem.update({'shipping_detail': shipping_detail})
+        #     LineitemShippingDetail.objects.create(**lineitem)
+        validated_data.update({
+            'message': 'Lineitem shipping details created successfully'})
+        print(validated_data, '########################################')
+        return validated_data

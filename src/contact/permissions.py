@@ -13,7 +13,7 @@ class UserAccessPermission(BasePermission):
             return False
         if view.action == 'create' and str(request.user.id) == request.data['user']:
             return True 
-        elif view.action == 'list' or view.action == 'destroy' or view.action == 'partial_update' or view.action == 'retrieve':
+        if view.action in ( 'list',  'retrieve',  'partial_update', 'destroy'):
             return True
         return  False
    

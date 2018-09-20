@@ -174,7 +174,7 @@ class ProductSeller(CustomBaseModelMixin):
                 name='product_seller_index'),
         ]
     def __str__(self):
-        return self.seller.name+" is sailing "+self.product.name
+        return self.seller.company_name+" is sailing "+self.product.name
 
 
 class Review(CustomBaseModelMixin):

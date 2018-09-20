@@ -22,8 +22,7 @@ class OrderViewset(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        return Order.objects.filter(cart__in=Cart.objects.filter(user=user))
+        return Order.objects.filter(cart__user=self.request.user)
     
     def get_paginated_response(self, data):
        return Response(data)
@@ -44,11 +43,8 @@ class CartViewset(viewsets.ModelViewSet):
     serializer_class = CartProductSerializer
     
     def get_queryset(self):
-        user = self.request.user
-        return CartProduct.objects.filter(cart=Cart.objects.get_or_create(user=user,is_cart_processed=False)[0])
+        return CartProduct.objects.filter(cart=Cart.objects.get_or_create(user = self.request.user,is_cart_processed=False)[0])
 
-    http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = [UserAccessPermission]
 
     def get_paginated_response(self, data):
         return Response(data)

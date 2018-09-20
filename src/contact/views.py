@@ -14,12 +14,7 @@ class AddressViewset(viewsets.ModelViewSet):
     permission_classes = [UserAccessPermission]
 
     def get_queryset(self):
-        """
-        This view should return a list of all the Address
-        for the currently authenticated user.
-        """
-        user = self.request.user
-        return Address.objects.filter(user=user)
+        return Address.objects.filter(user=self.request.user)
         
     def get_paginated_response(self, data):
        return Response(data)

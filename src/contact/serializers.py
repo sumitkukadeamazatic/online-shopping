@@ -8,7 +8,7 @@ class AddressSerializer(serializers.ModelSerializer):
         model = Address
         fields = ( 'id', 'user', 'seller', 'name', 'city', 'state', 'pincode', 'address_line', 'is_home', 'contact_no')
         
-        extris_cart_processedkwargs = {
+        extra_kwargs = {
             'is_cart_processedity': {
                 'allow_blank': True,
                 'required': False

@@ -24,15 +24,7 @@ class WishlistViewset(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
 
     def get_queryset(self):
-        """
-        This view should return a list of all the Address
-        for the currently authenticated user.
-        """
-        print("hii")
-        print(self.request.user)
-        user = self.request.user
-        
-        return Wishlist.objects.filter(user=user)
+       return Wishlist.objects.filter(user=self.request.user)
 
     def get_paginated_response(self, data):
        return Response(data)

@@ -37,8 +37,8 @@ class CartProductAdmin(admin.ModelAdmin):
     """
         Configuration of CartProductAdmin
     """
-    list_display = ['id', 'cart_id', 'product_id', 'seller_id',
-                    'quantity', 'is_order_generated', 'created_at', 'updated_at']
+    list_display = ['id', 'cart_id', 'product_seller', 'quantity',
+                    'is_order_generated', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at',
                    'is_order_generated', 'quantity']
 
@@ -47,8 +47,15 @@ class LineitemAdmin(admin.ModelAdmin):
     """
         Configuration of LineitemAdmin
     """
+
+
+<< << << < HEAD
     list_display = ['id', 'order_id', 'product_id', 'seller_id', 'status', 'quantity', 'base_price',
                     'discount', 'shiping_cost', 'selling_price', 'gift_wrap_charges', 'created_at', 'updated_at']
+== == == =
+    list_display = ['id', 'order_id', 'product_seller', 'status', 'quantity', 'base_price',
+                    'shiping_cost', 'selling_price', 'gift_wrap_charges', 'created_at', 'updated_at']
+>>>>>> > develop
     list_filter = ['created_at', 'updated_at', 'status']
 
 

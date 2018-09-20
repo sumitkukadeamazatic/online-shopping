@@ -21,9 +21,8 @@ class OrderViewset(viewsets.ModelViewSet):
     permission_classes = [UserAccessPermission]
     serializer_class = OrderSerializer
 
-    def get_queryset(self):
-        user = self.request.user
-        return Order.objects.filter(cart__in=Cart.objects.filter(user=user))
+    def get_queyset(self):
+        return   Order.objects.filter(cart__user=self.request.user)
     
     def get_paginated_response(self, data):
        return Response(data)

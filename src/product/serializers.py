@@ -97,10 +97,8 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ('id', 'product')
 
-class WishlistPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wishlist
-        fields = ('id','user','product')
+    def create(self, validate_data):
+        return Wishlist.objects.create(user=self.context['request'].user, product=validate_data['product'])
 
 class ProductSellerSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()

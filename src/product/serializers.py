@@ -129,7 +129,7 @@ class ProductSellerSerializer(serializers.ModelSerializer):
     def get_selling_exprience(self, obj):
         return str(timezone.now().year - obj.created_at.year)+" years."
     def get_selling_price(self, obj):
-        price = obj.product.selling_price
+        price = obj.selling_price
         discount = obj.discount
         sp = price - (price*(discount/100))
         return sp

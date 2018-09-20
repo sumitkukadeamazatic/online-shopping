@@ -42,6 +42,7 @@ class CategoryView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
 
+## Completed But needs Code improvement here
 class ProductView(viewsets.ModelViewSet):
     def list(self, request):
         queryset = Product.objects.all()
@@ -64,23 +65,19 @@ class ProductView(viewsets.ModelViewSet):
                     exclude_list.append(pid)
             else:
                     exclude_list.append(pid)
-            price = Product.objects.values('base_price',
-                                           'selling_price').filter(id=pid).get()
-            pro_discount = (price['base_price']-price['selling_price']) /price['base_price'] * 100
-            if pro_discount < data["discount"]:
-                if pid not in exclude_list:
-                    exclude_list.append(pid)
         queryset = queryset.exclude(id__in=exclude_list)
         serializer_class = ProductSerializer(queryset, many=True)
         permission_classes = (permissions.AllowAny,)
         return Response(serializer_class.data)
 
 class ProductSellerView(viewsets.ModelViewSet):
-    def retrieve(self, request, pk=None):
-        queryset = ProductSeller.objects.filter(product=pk)
-        serializer_class = ProductSellerSerializer(queryset, many=True)
-        return Response(serializer_class.data)
+    queryset = ProductSeller.objects.all()
+    lookup_field = 'product'
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = ProductSellerSerializer
 
+
+## Completed But needs Code improvement here
 class ReviewView(viewsets.ModelViewSet):
     def list(self, request):
         seller_id = request.GET.get('seller_id', False)

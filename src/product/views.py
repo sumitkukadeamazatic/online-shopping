@@ -4,8 +4,8 @@ product app models
 from rest_framework.response import Response
 from rest_framework import permissions, viewsets
 
-from .models import Category, Product, ProductSeller, Review
-from .models import Wishlist
+from .models import Category, Product, ProductSeller, Review, Wishlist
+from .filters import ProductFilter
 from .permissions import UserAccessPermission
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
@@ -13,6 +13,7 @@ from .serializers import (WishlistSerializer,
                           SellerReviewSerializer,
                           ProductSellerSerializer,
                           ProductSerializer)
+
 
 class WishlistViewset(viewsets.ModelViewSet):
     '''
@@ -38,8 +39,15 @@ class CategoryView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (permissions.AllowAny,)
 
+#####################################################
+class ProductViewWithFilter(viewsets.ModelViewSet):
+    print("######################w")
+    queryset = Product.objects.all()
+    filter_class = ProductFilter
+    serializer_class = ProductSerializer
+    permission_classes = (permissions.AllowAny,)
 
-## Completed But needs Code improvement here
+# Completed But needs Code improvement here
 class ProductView(viewsets.ModelViewSet):
     '''
     Product view -
@@ -62,14 +70,15 @@ class ProductView(viewsets.ModelViewSet):
         for pid in pro_id:
             pro_ratings = Review.objects.filter(product=pid).values_list('rating', flat=True)
             if pro_ratings:
-                if (sum(pro_ratings)/len(pro_ratings)) < data["rating"]:
+                if (sum(pro_ratings) / len(pro_ratings)) < data["rating"]:
                     exclude_list.append(pid)
             else:
-                    exclude_list.append(pid)
+                exclude_list.append(pid)
         queryset = queryset.exclude(id__in=exclude_list)
         serializer_class = ProductSerializer(queryset, many=True)
         permission_classes = (permissions.AllowAny,)
         return Response(serializer_class.data)
+
 
 class ProductSellerView(viewsets.ModelViewSet):
     '''
@@ -82,6 +91,7 @@ class ProductSellerView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ProductSellerSerializer
 
+
 class SellerReviewView(viewsets.ModelViewSet):
     '''
     Seller view -
@@ -92,6 +102,7 @@ class SellerReviewView(viewsets.ModelViewSet):
     lookup_field = 'seller_id'
     permission_classes = (permissions.AllowAny,)
     serializer_class = SellerReviewSerializer
+
 
 class ProductReviewView(viewsets.ModelViewSet):
     '''

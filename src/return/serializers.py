@@ -32,34 +32,6 @@ class ReturnOrderLogSerializer(serializers.ModelSerializer):
 
 # changes in order_lineitem (product_id, seller_id -> product_seller_id)
 
-class ReturnLineitemSerializer(serializers.ModelSerializer):
-    """
-        ReturnLineitem Serializer
-    """
-
-    class Meta:
-        model = ReturnLineitem
-        fields = (
-            'reason',
-            'description',
-        )
-
-    def create(self, validated_data):
-        print (self.context['request'].data)
-        if not ReturnOrder.objects.filter(order_id=self.context['order']):
-            returnOrder_serializer = ReturnOrderSerializer(data=self.context)
-            if returnOrder_serializer.is_valid():
-                returnOrder_serializer.save()
-        lineitem_data = Lineitem.objects.filter(order=self.context['order'], product=self.context['product']).values().first()  # order_lineitem
-        return_order_id = ReturnOrder.objects.get(order=self.context['order'])
-        returnLineitem_serializer = ReturnLineitem.objects.create(quantity=lineitem_data['quantity'], reason=validated_data['reason'], description=validated_data['description'], lineitem_id=lineitem_data['id'], return_order=return_order_id, status=lineitem_data['status'])
-        returnOrderLog_data = {'status': returnLineitem_serializer.status,'description': returnLineitem_serializer.description,'return_lineitem': returnLineitem_serializer.id}
-        returnOrderLog_serializer = ReturnOrderLogSerializer(data=returnOrderLog_data)
-        if returnOrderLog_serializer.is_valid():
-            returnOrderLog_serializer.save()
-        return returnLineitem_serializer
-
-
 class ReturnSerializer(serializers.ModelSerializer):
     """
         Return Serializer
@@ -73,14 +45,12 @@ class ReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReturnLineitem
         fields = (
-            # 'reason',
+            'reason',
             'description',
-            # 'returnOrder'
         )
 
     def create(self, validated_data):
         content = self.context['request'].data
-        print (content)
         if not ReturnOrder.objects.filter(order_id=content['order']):
             returnOrder_serializer = ReturnOrderSerializer(data=content)
             if returnOrder_serializer.is_valid():

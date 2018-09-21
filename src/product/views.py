@@ -26,10 +26,6 @@ class WishlistViewset(viewsets.ModelViewSet):
     def get_queryset(self):
        return Wishlist.objects.filter(user=self.request.user)
 
-    def get_paginated_response(self, data):
-       return Response(data)
-
-
 
 class CategoryView(viewsets.ModelViewSet):
     '''

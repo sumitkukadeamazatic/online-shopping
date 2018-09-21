@@ -11,9 +11,9 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .permissions import UserAccessPermission
 from .serializers import (WishlistSerializer,
-                          ReviewPostSerializer,
                           CategorySerializer,
-                          ReviewSerializer,
+                          ProductReviewSerializer,
+                          SellerReviewSerializer,
                           ProductSellerSerializer,
                           ProductSerializer)
 
@@ -76,50 +76,14 @@ class ProductSellerView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ProductSellerSerializer
 
+class SellerReviewView(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    lookup_field = 'seller_id'
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = SellerReviewSerializer
 
-## Completed But needs Code improvement here
-class ReviewView(viewsets.ModelViewSet):
-    def list(self, request):
-        seller_id = request.GET.get('seller_id', False)
-        product_id = request.GET.get('product_id', False)
-        # if seller_id and product_id is not given or both given
-        if not (bool(seller_id) ^ bool(product_id)):
-            return Response({"response":"Invalid Request."})
-
-        if seller_id:
-            queryset = Review.objects.filter(seller=seller_id)
-        if product_id:
-            queryset = Review.objects.filter(product=product_id)
-
-        serializer = ReviewSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request):
-        data = request.data
-        data['user'] = request.user.id
-        try:
-            if not (bool(data['seller']) ^ bool(data['product'])):
-                return Response({"response":"Invalid Request."})
-        except KeyError:
-            return Response({"response":"Mandatory field(s) missing."})
-
-        serializer = ReviewPostSerializer(data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response({})
-
-    def partial_update(self, request, pk=None):
-        data = request.data
-        data['user'] = request.user.id
-        try:
-            if not (bool(data['seller']) ^ bool(data['product'])):
-                return Response({"response":"Invalid Request."})
-        except KeyError:
-            return Response({"response":"Mandatory field(s) missing."})
-        
-        serializer = ReviewPostSerializer(data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+class ProductReviewView(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    lookup_field = 'product_id'
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = ProductReviewSerializer

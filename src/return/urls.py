@@ -1,10 +1,9 @@
 """
 Return APP urls
 """
+from rest_framework import routers
+from .views import ReturnViewSet
 
-from django.urls import path
-from .views import ReturnLineItemShippingView
-
-urlpatterns = [
-    path('lineitem-shipping-detail', ReturnLineItemShippingView.as_view())
-]
+router = routers.SimpleRouter()
+router.register(r'', ReturnViewSet, base_name='return')
+urlpatterns = router.urls

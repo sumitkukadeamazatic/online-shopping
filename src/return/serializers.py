@@ -18,10 +18,7 @@ class ShippingDetailsSerializer(serializers.ModelSerializer):
         exclude = ('created_at', 'updated_at')
 
 
-`
-
-
-class ReturnLineItemSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+class ReturnLineitemSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """
     Serializer for Return Line Items
     """
@@ -37,7 +34,7 @@ class ReturnLineitemShippingSerializer(serializers.Serializer):  # pylint: disab
     Serializer for return line item shipping details
     """
     shipping_details = ShippingDetailsSerializer()
-    lineitems = ReturnLineItemSerializer(many=True)
+    lineitems = ReturnLineitemSerializer(many=True)
 
     def create(self, validated_data):
         shipping_details_data = validated_data['shipping_details']
@@ -90,11 +87,6 @@ class ReturnSerializer(serializers.ModelSerializer):
     """
         Return Serializer
     """
-
-    '''def __init__(self, *args, **kwargs):
-        many = kwargs.pop('many', True)
-        super(ReturnSerializer, self).__init__(many=many, *args, **kwargs)
-    '''
 
     class Meta:
         model = ReturnLineitem

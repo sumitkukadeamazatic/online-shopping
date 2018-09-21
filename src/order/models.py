@@ -5,7 +5,6 @@ from user import models as user_model
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from utils.models import CustomBaseModelMixin
-from seller import models as seller_model
 from product import models as product_model
 
 

@@ -60,14 +60,10 @@ class ProductSerializer(serializers.ModelSerializer):
         feature_list = Feature.objects.filter(category=obj.category)
         features = {}
         for feature_object in feature_list:
-            try:
-                feature_name = feature_object.name
-                feature_value = ProductFeature.objects.filter(
-                    feature=feature_object, product=obj).values_list('value', flat=True).get()
-                features.update({feature_name: feature_value})
-            except Exception:
-                return ""
-
+            feature_name = feature_object.name
+            feature_value = ProductFeature.objects.filter(
+                feature=feature_object, product=obj).values_list('value', flat=True).get()
+            features.update({feature_name: feature_value})
         return features
 
     def get_reviews(self, obj):
@@ -139,6 +135,7 @@ class ProductSellerSerializer(serializers.ModelSerializer):
 
 
 class ProductReviewSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
     '''
     Product Review Serializer
     '''

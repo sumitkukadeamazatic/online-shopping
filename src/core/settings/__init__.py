@@ -115,7 +115,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-APPEND_SLASH = True
+    APPEND_SLASH = True
 
 REST_KNOX = {
     'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',

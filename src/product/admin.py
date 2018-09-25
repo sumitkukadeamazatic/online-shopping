@@ -64,6 +64,7 @@ class BrandAdmin(admin.ModelAdmin):
     list_editable = ['name']
     prepopulated_fields = {'slug': ('name',)}
 
+
 class ProductFeature(admin.ModelAdmin):
     """
     product_feature Model Admin

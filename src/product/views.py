@@ -4,8 +4,8 @@ product app models
 from rest_framework.response import Response
 from rest_framework import permissions, viewsets
 
-from .models import Category, Product, ProductSeller, Review
-from .models import Wishlist
+from .models import Category, Product, ProductSeller, Review, Wishlist
+from .filters import ProductFilter
 from .permissions import UserAccessPermission
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
@@ -13,6 +13,7 @@ from .serializers import (WishlistSerializer,
                           SellerReviewSerializer,
                           ProductSellerSerializer,
                           ProductSerializer)
+
 
 class WishlistViewset(viewsets.ModelViewSet):
     '''
@@ -28,7 +29,7 @@ class WishlistViewset(viewsets.ModelViewSet):
         return Wishlist.objects.filter(user=self.request.user)
 
 
-class CategoryView(viewsets.ModelViewSet):
+class CategoryView(viewsets.ReadOnlyModelViewSet):
     '''
     category view -
     view to list all category to the db
@@ -38,38 +39,16 @@ class CategoryView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (permissions.AllowAny,)
 
-
-## Completed But needs Code improvement here
-class ProductView(viewsets.ModelViewSet):
+class ProductView(viewsets.ReadOnlyModelViewSet):
     '''
-    Product view -
-    to get product list of product
+    Product View: 
+    to get product list also added filters
     '''
-    def list(self, request):
-        queryset = Product.objects.all()
-        serializer_class = ProductSerializer(queryset, many=True)
-        permission_classes = (permissions.AllowAny,)
-        return Response(serializer_class.data)
-
-    def create(self, request):
-        data = request.data
-        queryset = Product.objects.filter(brand__in=data['brand'],
-                                          category__in=data["category_id"],
-                                          base_price__gte=data["min_price"],
-                                          base_price__lte=data["max_price"])
-        pro_id = queryset.values_list('id', flat=True)
-        exclude_list = []
-        for pid in pro_id:
-            pro_ratings = Review.objects.filter(product=pid).values_list('rating', flat=True)
-            if pro_ratings:
-                if (sum(pro_ratings)/len(pro_ratings)) < data["rating"]:
-                    exclude_list.append(pid)
-            else:
-                    exclude_list.append(pid)
-        queryset = queryset.exclude(id__in=exclude_list)
-        serializer_class = ProductSerializer(queryset, many=True)
-        permission_classes = (permissions.AllowAny,)
-        return Response(serializer_class.data)
+    queryset = Product.objects.all()
+    filter_class = ProductFilter
+    filter_fields = ('slug')
+    serializer_class = ProductSerializer
+    permission_classes = (permissions.AllowAny,)
 
 class ProductSellerView(viewsets.ModelViewSet):
     '''
@@ -82,6 +61,7 @@ class ProductSellerView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ProductSellerSerializer
 
+
 class SellerReviewView(viewsets.ModelViewSet):
     '''
     Seller view -
@@ -92,6 +72,7 @@ class SellerReviewView(viewsets.ModelViewSet):
     lookup_field = 'seller_id'
     permission_classes = (permissions.AllowAny,)
     serializer_class = SellerReviewSerializer
+
 
 class ProductReviewView(viewsets.ModelViewSet):
     '''

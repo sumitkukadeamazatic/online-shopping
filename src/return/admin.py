@@ -1,19 +1,39 @@
 """Admin
     All Return related Admin
 """
+from django.shortcuts import render
 from django.contrib import admin
+from django_admin_row_actions import AdminRowActionsMixin
 from . import models
 
 # Register your models here.
 
 
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(AdminRowActionsMixin, admin.ModelAdmin):
     """ Admin Model
         return_order_admin model
     """
     list_display = ['order_id', 'status', 'created_at', 'updated_at']
     list_filter = ['order_id', 'status', 'created_at', 'updated_at']
-    list_editable = ['status']
+
+    def change_status(self, request, obj):
+        if request.method == 'GET':
+            return render(request,
+                          'change_status.html',
+                          context={})
+        print('method is post')
+        print((request.POST), '*********************')
+        print(obj.__class__)
+
+    def get_row_actions(self, obj):
+        row_actions = [
+            {
+                'label': 'Change status',
+                'action': 'change_status',
+            },
+        ]
+        row_actions += super(OrderAdmin, self).get_row_actions(obj)
+        return row_actions
 
 
 admin.site.register(models.Order, OrderAdmin)

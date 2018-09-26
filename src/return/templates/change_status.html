@@ -11,19 +11,25 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <form action="" method="post">
-     {% csrf_token %}
-     <p>
+      {% csrf_token %}
+      <p>
+          Current status is <b> {{ current_status_name }} </b>
+      </p>
+      <p>
          Please select new status :
          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-             <label class="btn btn-default active">
-                 <input type="radio" name="options" id="option1" value="option1" autocomplete="off" checked> Active
-             </label>
-             <label class="btn btn-default">
-                 <input type="radio" name="options" id="option2" value="option2" autocomplete="off"> Radio
-             </label>
-             <label class="btn btn-default">
-                 <input type="radio" name="options" id="option3" value="option3" autocomplete="off"> Radio
-             </label>
+
+             {% for abbr, name in status_choices.items %}
+                      {% if object_status == abbr %}
+                           <label class="btn btn-default active">
+                                <input type="radio" name="status" id="status_{{abbr}}" value="{{abbr}}" autocomplete="off"> {{ name }}
+                           </label>
+                      {% else %}
+                           <label class="btn btn-default">
+                                <input type="radio" name="status" id="status_{{abbr}}" value="{{abbr}}" autocomplete="off"> {{ name }}
+                           </label>
+                      {% endif %}
+             {% endfor %}
          </div>
      </p>
      <input type="submit" value="Update status"/>

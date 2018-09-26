@@ -9,18 +9,40 @@ from . import models
 # Register your models here.
 
 
-class OrderAdmin(AdminRowActionsMixin, admin.ModelAdmin):
+class OrderAdmin(admin.ModelAdmin):
     """ Admin Model
         return_order_admin model
     """
     list_display = ['order_id', 'status', 'created_at', 'updated_at']
     list_filter = ['order_id', 'status', 'created_at', 'updated_at']
 
+
+admin.site.register(models.Order, OrderAdmin)
+
+
+class LineitemAdmin(AdminRowActionsMixin, admin.ModelAdmin):
+    """ Admin Model
+        return_lineitem_admin model
+    """
+    list_display = ['return_order_id', 'lineitem_id', 'quantity',
+                    'reason', 'description', 'status', 'created_at', 'updated_at']
+    list_filter = ['return_order_id', 'status',
+                   'reason', 'created_at', 'updated_at']
+    # list_editable = ['status', 'reason']
+
     def change_status(self, request, obj):
         if request.method == 'GET':
-            return render(request,
-                          'change_status.html',
-                          context={})
+            status_choices = dict(models.Lineitem.STATUS_CHOICES_FIELDS)
+            object_status = (obj.status, status_choices[obj.status])
+            print(object_status[0])
+            context = {
+                'status_choices': dict(models.Lineitem.STATUS_CHOICES_FIELDS),
+                'current_status_name': status_choices[obj.status],
+                'object_status': obj.status
+            }
+
+            print(context)
+            return render(request, 'change_status.html', context=context)
         print('method is post')
         print((request.POST), '*********************')
         print(obj.__class__)
@@ -32,22 +54,8 @@ class OrderAdmin(AdminRowActionsMixin, admin.ModelAdmin):
                 'action': 'change_status',
             },
         ]
-        row_actions += super(OrderAdmin, self).get_row_actions(obj)
+        row_actions += super(LineitemAdmin, self).get_row_actions(obj)
         return row_actions
-
-
-admin.site.register(models.Order, OrderAdmin)
-
-
-class LineitemAdmin(admin.ModelAdmin):
-    """ Admin Model
-        return_lineitem_admin model
-    """
-    list_display = ['return_order_id', 'lineitem_id', 'quantity',
-                    'reason', 'description', 'status', 'created_at', 'updated_at']
-    list_filter = ['return_order_id', 'status',
-                   'reason', 'created_at', 'updated_at']
-    list_editable = ['status', 'reason']
 
 
 admin.site.register(models.Lineitem, LineitemAdmin)

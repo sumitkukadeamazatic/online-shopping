@@ -5,7 +5,6 @@ from user import models as user_model
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from utils.models import CustomBaseModelMixin
-from seller import models as seller_model
 from product import models as product_model
 
 
@@ -27,6 +26,9 @@ class PaymentMethod(CustomBaseModelMixin):
     mode = models.CharField(max_length=20)
     slug = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return self.mode
+
 
 class Order(CustomBaseModelMixin):
     """
@@ -43,7 +45,8 @@ class Order(CustomBaseModelMixin):
     payment_info = JSONField(null=True, blank=True)
     shipping_name = models.TextField()
     shipping_address_line = models.TextField()
-    shipping_contact_no = models.CharField(max_length=20, null=True, blank=True)
+    shipping_contact_no = models.CharField(
+        max_length=20, null=True, blank=True)
     shipping_city = models.CharField(max_length=60)
     shipping_state = models.CharField(max_length=60)
     shipping_pincode = models.CharField(max_length=10)

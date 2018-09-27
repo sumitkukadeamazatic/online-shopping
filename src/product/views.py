@@ -1,12 +1,12 @@
 """
 product app models
 """
-from rest_framework.response import Response
-from rest_framework import permissions, viewsets
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import AllowAny
 
 from .models import Category, Product, ProductSeller, Review, Wishlist
 from .filters import ProductFilter
-from .permissions import UserAccessPermission
+from .permissions import UserAccessPermission, _user_access
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
                           ProductReviewSerializer,
@@ -15,7 +15,7 @@ from .serializers import (WishlistSerializer,
                           ProductSerializer)
 
 
-class WishlistViewset(viewsets.ModelViewSet):
+class WishlistViewset(ModelViewSet): # pylint: disable=too-many-ancestors
     '''
     Wishlist view -
     to get wishlisted product of logged in user
@@ -29,7 +29,7 @@ class WishlistViewset(viewsets.ModelViewSet):
         return Wishlist.objects.filter(user=self.request.user)
 
 
-class CategoryView(viewsets.ReadOnlyModelViewSet):
+class CategoryView(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
     '''
     category view -
     view to list all category to the db
@@ -37,20 +37,20 @@ class CategoryView(viewsets.ReadOnlyModelViewSet):
     '''
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [AllowAny]
 
-class ProductView(viewsets.ReadOnlyModelViewSet):
+class ProductView(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
     '''
-    Product View: 
+    Product View:
     to get product list also added filters
     '''
     queryset = Product.objects.all()
     filter_class = ProductFilter
     filter_fields = ('slug')
     serializer_class = ProductSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [AllowAny]
 
-class ProductSellerView(viewsets.ModelViewSet):
+class ProductSellerView(ModelViewSet): # pylint: disable=too-many-ancestors
     '''
     Product Seller view -
     to get product seller of product
@@ -58,29 +58,30 @@ class ProductSellerView(viewsets.ModelViewSet):
     '''
     queryset = ProductSeller.objects.all()
     lookup_field = 'product'
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [AllowAny]
     serializer_class = ProductSellerSerializer
 
 
-class SellerReviewView(viewsets.ModelViewSet):
+class SellerReviewView(ModelViewSet): # pylint: disable=too-many-ancestors
     '''
     Seller view -
     to get seller reviews
     anyone can access view
     '''
-    queryset = Review.objects.all()
-    lookup_field = 'seller_id'
-    permission_classes = (permissions.AllowAny,)
+    queryset = Review.objects.exclude(seller__isnull=True)
+    lookup_field = 'seller'
     serializer_class = SellerReviewSerializer
+    def get_permissions(self):
+        return _user_access(self.action)
 
-
-class ProductReviewView(viewsets.ModelViewSet):
+class ProductReviewView(ModelViewSet): # pylint: disable=too-many-ancestors
     '''
     Product view -
     to get product reviews
     anyone can access view
     '''
-    queryset = Review.objects.all()
-    lookup_field = 'product_id'
-    permission_classes = (permissions.AllowAny,)
+    queryset = Review.objects.exclude(product__isnull=True)
+    lookup_field = 'product'
     serializer_class = ProductReviewSerializer
+    def get_permissions(self):
+        return _user_access(self.action)

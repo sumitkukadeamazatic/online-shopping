@@ -4,6 +4,7 @@
 from django.utils import timezone
 from django.db.models import Avg
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from .models import (Product,
                      Category,
                      Wishlist,
@@ -86,7 +87,8 @@ class WishlistSerializer(serializers.ModelSerializer):
 
     def create(self, validate_data):
         '''create'''
-        return Wishlist.objects.create(user=self.context['request'].user, product=validate_data['product'])
+        return (Wishlist.objects.create(user=self.context['request'].user,
+                                        product=validate_data['product']))
 
 
 class ProductSellerSerializer(serializers.ModelSerializer):
@@ -135,7 +137,6 @@ class ProductSellerSerializer(serializers.ModelSerializer):
 
 
 class ProductReviewSerializer(serializers.ModelSerializer):
-    id = serializers.SerializerMethodField()
     '''
     Product Review Serializer
     '''
@@ -143,6 +144,10 @@ class ProductReviewSerializer(serializers.ModelSerializer):
         '''meta'''
         model = Review
         fields = ('id', 'user', 'product', 'rating', 'title', 'description')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=('user', 'product'), )]
 
 
 class SellerReviewSerializer(serializers.ModelSerializer):
@@ -153,3 +158,8 @@ class SellerReviewSerializer(serializers.ModelSerializer):
         '''meta'''
         model = Review
         fields = ('id', 'user', 'seller', 'rating', 'title', 'description')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(), fields=('user', 'seller'), )]
+
+

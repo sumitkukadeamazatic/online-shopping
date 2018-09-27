@@ -2,10 +2,6 @@
      Seller App Views
 """
 
-# from django.shortcuts import render
-# Create your views here.
-
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
@@ -13,9 +9,13 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .models import SellerUser, Seller, User
 from product.models import Review
-
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 class SellerView(APIView):
+    """
+        Seller View using class based views
+    """
 
     def get(self, request, format=None):
         seller_id = request.GET['seller_id']
@@ -45,28 +45,18 @@ class SellerView(APIView):
         return Response(sellerResponse.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-'''
-        print (request.META.get('HTTP_TOKEN'))
-        print (Token.objects.get(key=request.META.get('HTTP_TOKEN')).user.id)
-        #return JsonResponse(serializer.data)
-        #request.POST = request.POST.copy()
-        #request.POST.update({'message':'Post Method'})
-
-class SellerViewSet(viewsets.ReadOnlyModelViewSet):
+class SellerViewSet(viewsets.ModelViewSet):
+    """
+        Seller View using Model Viewset
+    """
 
     queryset = Seller.objects.all()
     serializer_class = SellerSerializer
-    permission_classes = (permissions.AllowAny,)
-
-    def list(self,request):
-        print(request.data)
-        data = {'message':'list method'}
-        sellerResponse = SellerSerializer(data)
-        return JsonResponse(sellerResponse.data)
-
-    def create(self, request):
-        print (request.data)
-        data = {'message':'create method'}
-        sellerResponse = SellerSerializer(data)
-        return JsonResponse(sellerResponse.data)
-'''
+    #permission_classes = [IsAuthenticated]
+    
+    def get_serializer_class(self):
+        print (self.action)
+        if self.action == 'retrieve':
+            return SellerDetailSerializer
+        else:
+            return SellerSerializer

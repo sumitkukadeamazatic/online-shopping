@@ -2,29 +2,18 @@
     Product App URLs
 """
 
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import (CategoryView,
                     ProductView,
                     ProductSellerView,
-                    #ProductReviewView,
-                    WishlistViewset,
-                    ReviewView)
-from rest_framework.routers import DefaultRouter
+                    SellerReviewView,
+                    WishlistViewset)
 
 
 router = DefaultRouter()
 router.register('wishlist', WishlistViewset, base_name='wishlist')
 router.register('sellers', ProductSellerView, base_name='sellers')
 router.register('category', CategoryView, base_name='category')
-router.register('review', ReviewView, base_name='review')
+router.register('review/seller', SellerReviewView, base_name='review')
 router.register('', ProductView, base_name='product')
 urlpatterns = router.urls
-#
-#urlpatterns = [
-    #path('category', CategoryView.as_view()),
-    #path('review/', ReviewView.as_view()),
-    ##path('p/', ProductReviewView.as_view()),
-    #path('', ProductView.as_view()),
-    #path('<int:id>', ProductView.as_view()),
-    #path('product-seller', ProductSellerView.as_view()),
-#]

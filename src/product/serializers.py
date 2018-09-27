@@ -1,16 +1,17 @@
 """
     serializers for product app
 """
-from rest_framework import serializers, exceptions
-from .models import (User,
-                     Product,
+from django.utils import timezone
+from django.db.models import Avg
+from rest_framework import serializers
+from .models import (Product,
                      Category,
                      Wishlist,
                      Review,
                      ProductSeller,
                      ProductFeature,
                      Feature)
-from django.utils import timezone
+
 
 class CategorySerializer(serializers.ModelSerializer):
     """
@@ -19,88 +20,79 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         '''meta'''
         model = Category
-        fields = ('id','name','slug')
+        fields = ('id', 'name', 'slug')
+
 
 class ProductSerializer(serializers.ModelSerializer):
+    '''
+    Product Seller Serializer
+    '''
     rating = serializers.SerializerMethodField()
-    base_price = serializers.SerializerMethodField()
-    selling_price = serializers.SerializerMethodField()
-    img = serializers.SerializerMethodField()
     in_stock = serializers.SerializerMethodField()
     feature = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
 
     class Meta:
+        '''meta'''
         model = Product
         fields = ('id',
                   'slug',
                   'name',
                   'rating',
                   'base_price',
-                  'selling_price',
-                  'img',
+                  'images',
                   'in_stock',
                   'feature',
                   'description',
                   'reviews')
-    def get_rating(self,obj):
-        rev = list(Review.objects.filter(product=obj).values_list('rating', flat=True))
-        if rev:
-            avg_ret = sum(rev) / len(rev)
-        else:
-            avg_ret = 0
-        return avg_ret
 
-    def get_base_price(self, obj):
-        return obj.base_price
-    
-    def get_selling_price(self, obj):
-        return obj.selling_price
-    
-    def get_img(self, obj):
-        return obj.images
+    def get_rating(self, obj):
+        '''rating'''
+        return Review.objects.filter(product=obj).aggregate(Avg('rating'))['rating__avg']
 
     def get_in_stock(self, obj):
-        qty = list(ProductSeller.objects.filter(product=obj).values_list('quantity',flat=True))
-        return sum(qty)
-    
+        '''check all stock from all seller'''
+        return sum(ProductSeller.objects.filter(product=obj).values_list('quantity', flat=True))
+
+    # Need to change this
     def get_feature(self, obj):
+        '''Need to rewrite code'''
         feature_list = Feature.objects.filter(category=obj.category)
         features = {}
         for feature_object in feature_list:
-            try:
-                feature_name = feature_object.name
-                feature_value = ProductFeature.objects.filter(
-                    feature=feature_object, product=obj).values_list('value', flat=True).get()
-                features.update({feature_name : feature_value})
-            except Exception:
-                return ""
-
+            feature_name = feature_object.name
+            feature_value = ProductFeature.objects.filter(
+                feature=feature_object, product=obj).values_list('value', flat=True).get()
+            features.update({feature_name: feature_value})
         return features
-    
-    def get_description(self, obj):
-        return obj.description
 
     def get_reviews(self, obj):
-        rev = Review.objects.filter(product=obj).values('id',
-                                                        'rating',
-                                                        'user',
-                                                        'title',
-                                                        'description')
-        return rev
-
+        '''fetch reviews'''
+        return Review.objects.filter(product=obj).values('id',
+                                                         'rating',
+                                                         'user',
+                                                         'title',
+                                                         'description')
 
 
 class WishlistSerializer(serializers.ModelSerializer):
+    '''
+    Wishlist Serializer
+    '''
     class Meta:
+        '''meta'''
         model = Wishlist
         fields = ('id', 'product')
 
     def create(self, validate_data):
+        '''create'''
         return Wishlist.objects.create(user=self.context['request'].user, product=validate_data['product'])
 
+
 class ProductSellerSerializer(serializers.ModelSerializer):
+    '''
+    Product Seller Serializer
+    '''
     name = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
     selling_price = serializers.SerializerMethodField()
@@ -108,6 +100,7 @@ class ProductSellerSerializer(serializers.ModelSerializer):
     delivery_days = serializers.SerializerMethodField()
 
     class Meta:
+        '''meta'''
         model = ProductSeller
         fields = ('id',
                   'name',
@@ -117,31 +110,46 @@ class ProductSellerSerializer(serializers.ModelSerializer):
                   'delivery_days')
 
     def get_name(self, obj):
+        '''Company Name'''
         return obj.seller.company_name
-    
-    def get_rating(self, obj):
-        rev = list(Review.objects.filter(seller=obj.seller).values_list('rating', flat=True))
-        if rev:
-            avg_ret = sum(rev) / len(rev)
-        else:
-            avg_ret = 0
-        return avg_ret
-    def get_selling_exprience(self, obj):
-        return str(timezone.now().year - obj.created_at.year)+" years."
-    def get_selling_price(self, obj):
-        price = obj.product.selling_price
-        discount = obj.discount
-        sp = price - (price*(discount/100))
-        return sp
-    def get_delivery_days(self, obj):
-        return {"min":obj.min_delivery_days,
-                "max":obj.max_delivery_days}
 
-class ReviewSerializer(serializers.ModelSerializer):
+    def get_rating(self, obj):
+        '''Rating'''
+        return Review.objects.filter(seller=obj.seller).aggregate(Avg('rating'))['rating__avg']
+
+    def get_selling_exprience(self, obj):
+        '''selling experience'''
+        return str(timezone.now().year - obj.created_at.year) + " years."
+
+    def get_selling_price(self, obj):
+        '''selling price'''
+        price = obj.selling_price
+        discount = obj.discount
+        sp = price - (price * (discount / 100))
+        return sp
+
+    def get_delivery_days(self, obj):
+        '''return delivery days'''
+        return {"min": obj.min_delivery_days,
+                "max": obj.max_delivery_days}
+
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    '''
+    Product Review Serializer
+    '''
     class Meta:
+        '''meta'''
         model = Review
-        fields = ('id', 'user', 'title', 'description', 'rating')
-class ReviewPostSerializer(serializers.ModelSerializer):
+        fields = ('id', 'user', 'product', 'rating', 'title', 'description')
+
+
+class SellerReviewSerializer(serializers.ModelSerializer):
+    '''
+    Seller Review Serializer
+    '''
     class Meta:
+        '''meta'''
         model = Review
-        fields = ('user', 'seller', 'product', 'rating', 'title', 'description')
+        fields = ('id', 'user', 'seller', 'rating', 'title', 'description')

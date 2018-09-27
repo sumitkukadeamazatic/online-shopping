@@ -18,6 +18,7 @@ class Category(CustomBaseModelMixin):
     parent_id = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
+        '''meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -40,6 +41,7 @@ class Feature(CustomBaseModelMixin):
     slug = models.CharField(max_length=50, unique=True)
 
     class Meta:
+        '''meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -62,6 +64,7 @@ class Tax(CustomBaseModelMixin):
     is_active = models.BooleanField()
 
     class Meta:
+        '''meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -82,6 +85,7 @@ class CategoryTax(CustomBaseModelMixin):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     percentage = models.DecimalField(
         max_digits=4, decimal_places=2, default=0.0)
+
     def __str__(self):
         return self.tax.name
 
@@ -94,6 +98,7 @@ class Brand(CustomBaseModelMixin):
     slug = models.SlugField(unique=True)
 
     class Meta:
+        '''meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -119,6 +124,7 @@ class Product(CustomBaseModelMixin):
     images = ArrayField(models.TextField())
 
     class Meta:
+        '''meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -126,8 +132,10 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
+
     def __str__(self):
-            return self.name
+        return self.name
+
 
 class ProductFeature(CustomBaseModelMixin):
     """
@@ -145,8 +153,9 @@ class ProductFeature(CustomBaseModelMixin):
                 ],
                 name='product_feature_index'),
         ]
+
     def __str__(self):
-        return self.feature.name+" of "+self.product.name
+        return self.feature.name + " of " + self.product.name
 
 
 class ProductSeller(CustomBaseModelMixin):
@@ -173,8 +182,9 @@ class ProductSeller(CustomBaseModelMixin):
                 ],
                 name='product_seller_index'),
         ]
+
     def __str__(self):
-        return self.seller.company_name+" is sailing "+self.product.name
+        return self.seller.company_name+"-"+self.product.name
 
 
 class Review(CustomBaseModelMixin):
@@ -182,8 +192,10 @@ class Review(CustomBaseModelMixin):
        This represents review table in database.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    seller = models.ForeignKey(
+        Seller, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, null=True, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2)
     title = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True, blank=True)

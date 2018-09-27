@@ -3,13 +3,12 @@ product app models
 """
 from rest_framework.response import Response
 from rest_framework import permissions, viewsets, status
-
+from rest_framework.permissions import IsAuthenticated
 from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User
 from seller.models import Seller, SellerUser
 from .models import Wishlist
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .permissions import UserAccessPermission
 from .serializers import (WishlistSerializer,
                           ReviewPostSerializer,
                           CategorySerializer,
@@ -20,7 +19,7 @@ from .serializers import (WishlistSerializer,
 class WishlistViewset(viewsets.ModelViewSet):
 
     http_method_names = ('get', 'post', 'patch', 'delete')
-    permission_classes = [UserAccessPermission]
+    permission_classes = [IsAuthenticated]
     serializer_class = WishlistSerializer
 
     def get_queryset(self):

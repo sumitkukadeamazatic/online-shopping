@@ -31,7 +31,7 @@ class OfferValidateSerializer(serializers.Serializer):  # pylint: disable=abstra
     total_order_amount = serializers.DecimalField(
         max_digits=10, decimal_places=2)
 
-    def validate(self, data):       # pylint: disable=arguments-differ
+    def validate(self, data):       # pylint: disable=arguments-differ, too-many-branches
         today = timezone.localdate()
         offer = Offer.objects.filter(
             code=data['code'], valid_from__lte=today, valid_upto__gte=today).first()

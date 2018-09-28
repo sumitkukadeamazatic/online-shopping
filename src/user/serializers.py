@@ -105,7 +105,7 @@ class RequestResetPasswordSerializer(serializers.Serializer):  # pylint: disable
     class Meta:
         model = ResetPassword
 
-    def validate(self, data):  # pylint: disable=arguments-differ
+    def validate(self, data):  # pylint: disable=arguments-differ, too-many-locals
         """
         User Reset Password validate
         """

@@ -4,6 +4,7 @@
 from django.utils import timezone
 from django.db.models import Avg
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from .models import (Product,
                      Category,
                      Wishlist,
@@ -22,6 +23,11 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name', 'slug')
 
+class ProductFeatureSerializer(serializers.ModelSerializer):
+    '''get product feature'''
+    class Meta:
+        model = ProductFeature
+        fields = ('feature', 'value')
 
 class ProductSerializer(serializers.ModelSerializer):
     '''
@@ -58,6 +64,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_feature(self, obj): #pylint: disable=no-self-use
         '''Need to rewrite code'''
         feature_list = Feature.objects.filter(category=obj.category)
+        #return ProductFeatureSerializer(feature_list)
         features = {}
         for feature_object in feature_list:
             feature_name = feature_object.name
@@ -72,7 +79,7 @@ class ProductSerializer(serializers.ModelSerializer):
                                                          'rating',
                                                          'user',
                                                          'title',
-                                                         'description')
+                                                         'description')[:3]
 
 
 class WishlistSerializer(serializers.ModelSerializer):
@@ -86,7 +93,8 @@ class WishlistSerializer(serializers.ModelSerializer):
 
     def create(self, validate_data): #pylint: disable=arguments-differ
         '''create'''
-        return Wishlist.objects.create(user=self.context['request'].user, product=validate_data['product'])
+        return (Wishlist.objects.create(user=self.context['request'].user,
+                                        product=validate_data['product']))
 
 
 class ProductSellerSerializer(serializers.ModelSerializer):
@@ -137,13 +145,14 @@ class ProductSellerSerializer(serializers.ModelSerializer):
 class ProductReviewSerializer(serializers.ModelSerializer):
     '''ProductReviewSerializer'''
     id = serializers.SerializerMethodField()
-    '''
-    Product Review Serializer
-    '''
     class Meta:
         '''meta'''
         model = Review
         fields = ('id', 'user', 'product', 'rating', 'title', 'description')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=('user', 'product'), )]
 
 
 class SellerReviewSerializer(serializers.ModelSerializer):
@@ -154,3 +163,8 @@ class SellerReviewSerializer(serializers.ModelSerializer):
         '''meta'''
         model = Review
         fields = ('id', 'user', 'seller', 'rating', 'title', 'description')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(), fields=('user', 'seller'), )]
+
+

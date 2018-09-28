@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
-    'rest_framework_filters',
+    #    'rest_framework_filters',
     'django_filters',
     'knox',
     'utils',

@@ -9,7 +9,7 @@ from rest_framework.status import HTTP_200_OK
 from .models import Offer
 from .filters import OfferFilterBackend
 from .serializers import OfferSerializer, OfferValidateSerializer
-from .permissions import OfferPermission
+from rest_framework.permissions import IsAuthenticated
 
 
 class OfferViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
@@ -19,7 +19,7 @@ class OfferViewSet(ModelViewSet):  # pylint: disable=too-many-ancestors
     queryset = Offer.objects.all()
     filter_backends = (OfferFilterBackend,)
     serializer_class = OfferSerializer
-    permission_classes = (OfferPermission,)
+    permission_classes = (IsAuthenticated,)
 
     @action(methods=['post'], detail=False)
     def validate(self, request):  # pylint: disable=no-self-use

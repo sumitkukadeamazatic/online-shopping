@@ -23,6 +23,11 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name', 'slug')
 
+class ProductFeatureSerializer(serializers.ModelSerializer):
+    '''get product feature'''
+    class Meta:
+        model = ProductFeature
+        fields = ('feature', 'value')
 
 class ProductSerializer(serializers.ModelSerializer):
     '''
@@ -59,6 +64,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_feature(self, obj):
         '''Need to rewrite code'''
         feature_list = Feature.objects.filter(category=obj.category)
+        #return ProductFeatureSerializer(feature_list)
         features = {}
         for feature_object in feature_list:
             feature_name = feature_object.name
@@ -73,7 +79,7 @@ class ProductSerializer(serializers.ModelSerializer):
                                                          'rating',
                                                          'user',
                                                          'title',
-                                                         'description')
+                                                         'description')[:3]
 
 
 class WishlistSerializer(serializers.ModelSerializer):

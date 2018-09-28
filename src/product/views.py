@@ -2,11 +2,14 @@
 product app models
 """
 from rest_framework.response import Response
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, status
+from rest_framework.permissions import IsAuthenticated
+from .models import Category, Product, ProductSeller, Review, ProductFeature, Feature, User, Wishlist
+from seller.models import Seller, SellerUser
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
-from .models import Category, Product, ProductSeller, Review, Wishlist
 from .filters import ProductFilter
-from .permissions import UserAccessPermission
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
                           ProductReviewSerializer,
@@ -22,7 +25,7 @@ class WishlistViewset(viewsets.ModelViewSet):
     only logged in user can access view
     '''
     http_method_names = ('get', 'post', 'patch', 'delete')
-    permission_classes = [UserAccessPermission]
+    permission_classes = [IsAuthenticated]
     serializer_class = WishlistSerializer
 
     def get_queryset(self):

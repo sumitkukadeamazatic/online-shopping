@@ -1,8 +1,10 @@
 """Admin
     All Return related Admin
 """
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils.html import format_html
 from django_admin_row_actions import AdminRowActionsMixin
 from . import models
 
@@ -24,54 +26,54 @@ class LineitemAdmin(AdminRowActionsMixin, admin.ModelAdmin):
     """ Admin Model
         return_lineitem_admin model
     """
-    list_display = ['return_order_id', 'lineitem_id', 'quantity',
-                    'reason', 'description', 'status', 'created_at', 'updated_at']
-    list_filter = ['return_order_id', 'status',
-                   'reason', 'created_at', 'updated_at']
-    # list_editable = ['status', 'reason']
+    list_display = ('return_order_id', 'lineitem_id', 'quantity',
+                    'reason', 'description', 'status', 'created_at', 'updated_at')
+    list_filter = ('return_order_id', 'status',
+                   'reason', 'created_at', 'updated_at')
 
     def change_status(self, request, obj):
         if request.method == 'GET':
             status_choices = dict(models.Lineitem.STATUS_CHOICES_FIELDS)
             object_status = (obj.status, status_choices[obj.status])
-            print(object_status[0])
             context = {
                 'status_choices': dict(models.Lineitem.STATUS_CHOICES_FIELDS),
                 'current_status_name': status_choices[obj.status],
                 'object_status': obj.status
             }
-
-            print(context)
             return render(request, 'change_status.html', context=context)
-        print('method is post')
-        print((request.POST), '*********************')
-        print(obj.__class__)
+        if request.method == 'POST':
+            if 'status' in request.POST.keys():
+                obj.status = request.POST['status']
+                obj.save()
+                models.OrderLog.objects.create(
+                    return_lineitem=obj, status=obj.status, description=request.POST['description'])
+                self.message_user(request, "Return order status changed.",
+                                  level=messages.INFO)
+                return HttpResponseRedirect('/admin/return/lineitem/')
+
+            else:
+                self.message_user(request, "Select new status.",
+                                  level=messages.ERROR)
+        else:
+            self.message_user(request, 'Method not allowed.',
+                              level=messages.ERROR)
 
     def get_row_actions(self, obj):
-        row_actions = [
-            {
-                'label': 'Change status',
-                'action': 'change_status',
-            },
-        ]
-        row_actions += super(LineitemAdmin, self).get_row_actions(obj)
+        if obj.status == 'CM':
+            row_actions = []
+        else:
+            row_actions = [
+                {
+                    'label': 'Change status',
+                    'action': 'change_status',
+                    'enabled': obj.status != 'CM',
+                }
+            ]
+            row_actions += super(LineitemAdmin, self).get_row_actions(obj)
         return row_actions
 
 
 admin.site.register(models.Lineitem, LineitemAdmin)
-
-
-class OrderLogAdmin(admin.ModelAdmin):
-    """ Admin Model
-        return_order_log_admin model
-    """
-    list_display = ['return_lineitem_id', 'status',
-                    'description', 'created_at', 'updated_at']
-    list_filter = ['return_lineitem_id', 'status', 'created_at', 'updated_at']
-    list_editable = ['status']
-
-
-admin.site.register(models.OrderLog, OrderLogAdmin)
 
 
 class LineitemShippingDetailAdmin(admin.ModelAdmin):

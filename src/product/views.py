@@ -1,21 +1,9 @@
 """
 product app models
 """
-<<<<<<< HEAD
-from rest_framework import permissions, viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import Category, Product, ProductSeller, Review, Wishlist
-=======
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
-
-from seller.models import Seller, SellerUser
-from rest_framework import  status
->>>>>>> 79b30c69965847c95afde6b96cc77a8f46e1df0f
-
 from .filters import ProductFilter
-
-
 from .models import Category, Product, ProductSeller, Review, Wishlist
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
@@ -25,11 +13,7 @@ from .serializers import (WishlistSerializer,
                           ProductSerializer)
 
 
-<<<<<<< HEAD
 class WishlistViewset(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
-=======
-class WishlistViewset(ModelViewSet): # pylint: disable=too-many-ancestors
->>>>>>> 79b30c69965847c95afde6b96cc77a8f46e1df0f
     '''
     Wishlist view -
     to get wishlisted product of logged in user

@@ -4,7 +4,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import admin, messages
-from django.utils.html import format_html
 from django_admin_row_actions import AdminRowActionsMixin
 from . import models
 
@@ -31,18 +30,20 @@ class LineitemAdmin(AdminRowActionsMixin, admin.ModelAdmin):
     list_filter = ('return_order_id', 'status',
                    'reason', 'created_at', 'updated_at')
 
-    def change_status(self, request, obj):
+    def change_status(self, request, obj):  # pylint: disable=inconsistent-return-statements
+        """
+        function handles both GET and POST method of return change status flow
+        """
         if request.method == 'GET':
             status_choices = dict(models.Lineitem.STATUS_CHOICES_FIELDS)
-            object_status = (obj.status, status_choices[obj.status])
             context = {
                 'status_choices': dict(models.Lineitem.STATUS_CHOICES_FIELDS),
                 'current_status_name': status_choices[obj.status],
                 'object_status': obj.status
             }
             return render(request, 'change_status.html', context=context)
-        if request.method == 'POST':
-            if 'status' in request.POST.keys():
+        if request.method == 'POST':  # pylint: disable=no-else-return
+            if 'status' in request.POST.keys():  # pylint: disable=no-else-return
                 obj.status = request.POST['status']
                 obj.save()
                 models.OrderLog.objects.create(
@@ -50,7 +51,6 @@ class LineitemAdmin(AdminRowActionsMixin, admin.ModelAdmin):
                 self.message_user(request, "Return order status changed.",
                                   level=messages.INFO)
                 return HttpResponseRedirect('/admin/return/lineitem/')
-
             else:
                 self.message_user(request, "Select new status.",
                                   level=messages.ERROR)

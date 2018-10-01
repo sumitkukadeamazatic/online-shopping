@@ -4,6 +4,7 @@
 from django.utils import timezone
 from django.db.models import Avg
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from .models import (Product,
                      Category,
                      Wishlist,
@@ -22,6 +23,11 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name', 'slug')
 
+class ProductFeatureSerializer(serializers.ModelSerializer):
+    '''get product feature'''
+    class Meta:
+        model = ProductFeature
+        fields = ('feature', 'value')
 
 class ProductSerializer(serializers.ModelSerializer):
     '''
@@ -46,18 +52,19 @@ class ProductSerializer(serializers.ModelSerializer):
                   'description',
                   'reviews')
 
-    def get_rating(self, obj):
+    def get_rating(self, obj): #pylint: disable=no-self-use
         '''rating'''
         return Review.objects.filter(product=obj).aggregate(Avg('rating'))['rating__avg']
 
-    def get_in_stock(self, obj):
+    def get_in_stock(self, obj): #pylint: disable=no-self-use
         '''check all stock from all seller'''
         return sum(ProductSeller.objects.filter(product=obj).values_list('quantity', flat=True))
 
     # Need to change this
-    def get_feature(self, obj):
+    def get_feature(self, obj): #pylint: disable=no-self-use
         '''Need to rewrite code'''
         feature_list = Feature.objects.filter(category=obj.category)
+        #return ProductFeatureSerializer(feature_list)
         features = {}
         for feature_object in feature_list:
             feature_name = feature_object.name
@@ -66,13 +73,13 @@ class ProductSerializer(serializers.ModelSerializer):
             features.update({feature_name: feature_value})
         return features
 
-    def get_reviews(self, obj):
+    def get_reviews(self, obj): #pylint: disable=no-self-use
         '''fetch reviews'''
         return Review.objects.filter(product=obj).values('id',
                                                          'rating',
                                                          'user',
                                                          'title',
-                                                         'description')
+                                                         'description')[:3]
 
 
 class WishlistSerializer(serializers.ModelSerializer):
@@ -84,9 +91,10 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ('id', 'product')
 
-    def create(self, validate_data):
+    def create(self, validate_data): #pylint: disable=arguments-differ
         '''create'''
-        return Wishlist.objects.create(user=self.context['request'].user, product=validate_data['product'])
+        return (Wishlist.objects.create(user=self.context['request'].user,
+                                        product=validate_data['product']))
 
 
 class ProductSellerSerializer(serializers.ModelSerializer):
@@ -109,40 +117,42 @@ class ProductSellerSerializer(serializers.ModelSerializer):
                   'selling_exprience',
                   'delivery_days')
 
-    def get_name(self, obj):
+    def get_name(self, obj): #pylint: disable=no-self-use
         '''Company Name'''
         return obj.seller.company_name
 
-    def get_rating(self, obj):
+    def get_rating(self, obj): #pylint: disable=no-self-use
         '''Rating'''
         return Review.objects.filter(seller=obj.seller).aggregate(Avg('rating'))['rating__avg']
 
-    def get_selling_exprience(self, obj):
+    def get_selling_exprience(self, obj): #pylint: disable=no-self-use
         '''selling experience'''
         return str(timezone.now().year - obj.created_at.year) + " years."
 
-    def get_selling_price(self, obj):
+    def get_selling_price(self, obj): #pylint: disable=no-self-use
         '''selling price'''
         price = obj.selling_price
         discount = obj.discount
-        sp = price - (price * (discount / 100))
-        return sp
+        selling_price = price - (price * (discount / 100))
+        return selling_price
 
-    def get_delivery_days(self, obj):
+    def get_delivery_days(self, obj): #pylint: disable=no-self-use
         '''return delivery days'''
         return {"min": obj.min_delivery_days,
                 "max": obj.max_delivery_days}
 
 
 class ProductReviewSerializer(serializers.ModelSerializer):
+    '''ProductReviewSerializer'''
     id = serializers.SerializerMethodField()
-    '''
-    Product Review Serializer
-    '''
     class Meta:
         '''meta'''
         model = Review
         fields = ('id', 'user', 'product', 'rating', 'title', 'description')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=('user', 'product'), )]
 
 
 class SellerReviewSerializer(serializers.ModelSerializer):
@@ -153,3 +163,8 @@ class SellerReviewSerializer(serializers.ModelSerializer):
         '''meta'''
         model = Review
         fields = ('id', 'user', 'seller', 'rating', 'title', 'description')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(), fields=('user', 'seller'), )]
+
+

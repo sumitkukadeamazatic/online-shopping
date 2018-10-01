@@ -5,10 +5,10 @@ import json
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from product.models import CategoryTax
 from .models import Cart, CartProduct, Order, Lineitem, ShippingDetails
 from .serializers import CartProductSerializer, TaxInvoiceSerializer, OrderSerializer, OrderShippingSerializer, TaxSerializer  #pylint: disable=ungrouped-imports
-from rest_framework.permissions import IsAuthenticated
 
 class OrderViewset(viewsets.ModelViewSet):                  #pylint: disable=too-many-ancestors
     """
@@ -26,7 +26,6 @@ class OrderViewset(viewsets.ModelViewSet):                  #pylint: disable=too
         """
             This method is used to the payment info.
         """
-        print(request.accepted_renderer, ",",request.content_type )
         instance = self.get_object()
         instance.payment_info = json.loads(request.data['payment_info'])
         instance.save()

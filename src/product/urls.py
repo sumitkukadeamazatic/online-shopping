@@ -10,7 +10,7 @@ from .views import (CategoryView,
                     WishlistViewset)
 
 
-router = DefaultRouter()
+router = DefaultRouter() #pylint: disable=invalid-name
 router.register('wishlist', WishlistViewset, base_name='wishlist')
 router.register('sellers', ProductSellerView, base_name='sellers')
 router.register('category', CategoryView, base_name='category')

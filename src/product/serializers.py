@@ -18,14 +18,19 @@ class CategorySerializer(serializers.ModelSerializer):
     """
         serializers for product app
     """
+    sub_category = serializers.SerializerMethodField()
     class Meta:
         '''meta'''
         model = Category
-        fields = ('id', 'name', 'slug')
+        fields = ('id', 'name', 'slug', 'sub_category')
+    def get_sub_category(self, obj): #pylint: disable=no-self-use
+        '''Getting subcategory'''
+        return Category.objects.filter(parent=obj.id).values('id', 'name', 'slug')
 
 class ProductFeatureSerializer(serializers.ModelSerializer):
     '''get product feature'''
     class Meta:
+        '''meta'''
         model = ProductFeature
         fields = ('feature', 'value')
 
@@ -69,7 +74,9 @@ class ProductSerializer(serializers.ModelSerializer):
         for feature_object in feature_list:
             feature_name = feature_object.name
             feature_value = ProductFeature.objects.filter(
-                feature=feature_object, product=obj).values_list('value', flat=True).get()
+                feature=feature_object, product=obj).values('value')
+            if not feature_value:
+                feature_value = None
             features.update({feature_name: feature_value})
         return features
 
@@ -144,15 +151,13 @@ class ProductSellerSerializer(serializers.ModelSerializer):
 
 class ProductReviewSerializer(serializers.ModelSerializer):
     '''ProductReviewSerializer'''
-    id = serializers.SerializerMethodField()
     class Meta:
         '''meta'''
         model = Review
         fields = ('id', 'user', 'product', 'rating', 'title', 'description')
         validators = [
             UniqueTogetherValidator(
-                queryset=Review.objects.all(),
-                fields=('user', 'product'), )]
+                queryset=Review.objects.all(), fields=('user', 'product'), )]
 
 
 class SellerReviewSerializer(serializers.ModelSerializer):
@@ -166,5 +171,3 @@ class SellerReviewSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=Review.objects.all(), fields=('user', 'seller'), )]
-
-

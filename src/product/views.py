@@ -2,6 +2,8 @@
 product app models
 """
 from rest_framework import viewsets
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from .filters import ProductFilter
 from .models import Category, Product, ProductSeller, Review, Wishlist
@@ -36,7 +38,8 @@ class CategoryView(viewsets.ReadOnlyModelViewSet): #pylint: disable=too-many-anc
     view to list all category to the db
     Anyone can access the view
     '''
-    queryset = Category.objects.all()
+    queryset = Category.objects.exclude(parent__isnull=False)
+    #lookup_field = 'parent'
     serializer_class = CategorySerializer
     permission_classes = (AllowAny,)
 
@@ -69,10 +72,12 @@ class SellerReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancesto
     to get seller reviews
     anyone can access view
     '''
+    #http_method_names = ('get', 'post', 'patch', 'delete')
     queryset = Review.objects.exclude(seller__isnull=True)
     lookup_field = 'seller'
     serializer_class = SellerReviewSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
 
 
 class ProductReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
@@ -81,7 +86,14 @@ class ProductReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancest
     to get product reviews
     anyone can access view
     '''
-    queryset = Review.objects.exclude(product__isnull=True)
-    lookup_field = 'product'
-    serializer_class = ProductReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    #http_method_names = ('get', 'post', 'patch', 'delete')
+    #queryset = Review.objects.exclude(product__isnull=True)
+    #lookup_field = 'product'
+    #serializer_class = ProductReviewSerializer
+    #permission_classes = (IsAuthenticatedOrReadOnly,)
+    
+    def retrieve(self, request, pk=None):
+        queryset = Review.objects.all()
+        review = get_object_or_404(queryset, product=pk)
+        serializer = ProductReviewSerializer(review)
+        return Response(serializer.data)

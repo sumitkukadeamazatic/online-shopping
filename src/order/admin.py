@@ -27,7 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
     """
         Configuration of OrderAdmin
     """
-    list_display = ['id', 'payment_method_id', 'cart_id', 'address_id', 'payment_info', 'shipping_name', 'shipping_address_line', 'billing_name', 'billing_address_line',
+    list_display = ['id', 'payment_method_id', 'cart_id', 'payment_info', 'shipping_name', 'shipping_address_line', 'billing_name', 'billing_address_line',
                     'totoal_shipping_cost', 'status', 'created_at', 'updated_at', 'shipping_pincode', 'billing_pincode', 'shipping_city', 'shipping_state', 'billing_city', 'billing_state']
     list_filter = ['created_at', 'updated_at', 'shipping_pincode', 'billing_pincode',
                    'shipping_city', 'shipping_state', 'billing_city', 'billing_state']
@@ -66,34 +66,34 @@ class ShippingDetailsAdmin(admin.ModelAdmin):
         Configuration of ShippingDetailsAdmin
     """
     list_display = ['id', 'courior_name', 'tracking_number',
-                    'deliverd_date', 'tracking_url', 'created_at', 'updated_at']
+                    'deliverd_date', 'tracking_url', 'created_at']
     list_filter = ['created_at', 'updated_at',
                    'tracking_number', 'deliverd_date', 'courior_name']
 
 
 class LineShippingDetailsAdmin(admin.ModelAdmin):
     """
-        Configuration of LineShippingDetailsAdmin
+    Configuration of LineShippingDetailsAdmin
     """
     list_display = ['id', 'lineitem_id',
-                    'shiping_details_id', 'quantity', 'description']
+                    'quantity', 'description']
     list_filter = ['created_at', 'updated_at']
 
 
 class LineitemTaxAdmin(admin.ModelAdmin):
     """
-        Configuration of LineitemTaxAdmin
+    Configuration of LineitemTaxAdmin
     """
-    list_display = ['id', 'lineitem_id', 'tax_name', 'discount', 'tax_amount']
+    list_display = ['id', 'lineitem_id', 'tax_name', 'tax_name', 'tax_amount']
     list_filter = ['created_at', 'updated_at', 'tax_name']
 
 
-admin.site.register(models.Order)
-admin.site.register(models.Cart)
-admin.site.register(models.CartProduct)
-admin.site.register(models.Lineitem)
-admin.site.register(models.LineitemTax)
-admin.site.register(models.LineShippingDetails)
-admin.site.register(models.OrderLog)
+admin.site.register(models.Order, OrderAdmin)
+admin.site.register(models.Cart, CartAdmin)
+admin.site.register(models.CartProduct, CartProductAdmin)
+admin.site.register(models.Lineitem, LineitemAdmin)
+admin.site.register(models.LineitemTax, LineitemTaxAdmin)
+admin.site.register(models.LineShippingDetails, LineShippingDetailsAdmin)
+admin.site.register(models.OrderLog, OrderLogAdmin)
 admin.site.register(models.PaymentMethod, PaymentMethodAdmin)
-admin.site.register(models.ShippingDetails)
+admin.site.register(models.ShippingDetails, ShippingDetailsAdmin)

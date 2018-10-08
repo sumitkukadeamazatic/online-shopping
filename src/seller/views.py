@@ -56,6 +56,7 @@ class SellerViewSet(viewsets.ModelViewSet):
     
     def get_serializer_class(self):
         print (self.action)
+        print (self.request.user.is_superuser)
         if self.action == 'retrieve':
             return SellerDetailSerializer
         else:

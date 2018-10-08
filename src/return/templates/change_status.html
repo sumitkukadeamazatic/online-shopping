@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <form action="" method="post">
+      {% csrf_token %}
+      <p>
+          Current status is <b> {{ current_status_name }} </b>
+      </p>
+      <p>
+         Please select new status :
+         <div class="btn-group btn-group-toggle" data-toggle="buttons">
+
+             {% for abbr, name in status_choices.items %}
+                      {% if object_status == abbr %}
+                           <label class="btn btn-default active">
+                                <input type="radio" name="status" id="status_{{abbr}}" value="{{abbr}}" autocomplete="off"> {{ name }}
+                           </label>
+                      {% else %}
+                           <label class="btn btn-default">
+                                <input type="radio" name="status" id="status_{{abbr}}" value="{{abbr}}" autocomplete="off"> {{ name }}
+                           </label>
+                      {% endif %}
+             {% endfor %}
+         </div>
+      </p>
+      <p>
+          Description :<br>
+          <textarea name='description'  rows="5" cols="51"></textarea>
+      </p>
+     <input type="submit" value="Update status"/>
+</form>
+{% endblock %}

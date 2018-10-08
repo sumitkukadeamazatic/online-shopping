@@ -25,13 +25,11 @@ class SellerSerializer(serializers.ModelSerializer):
         )
 
     def validate_contact_number(self, value):
-        print (value)
         if not value.isdigit():
             raise ValidationError({'contact_number': 'Contact number must contain number'})
         return value
 
     def create(self, obj):
-        print (self.context['request'].user.id)
         request_data = self.context['request'].data
         seller_obj = Seller.objects.create(company_name=request_data['company_name'], contact_number=request_data['contact_number'], status=request_data['status'])
         seller_user_data = {'seller': seller_obj.id, 'user':self.context['request'].user.id}

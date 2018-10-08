@@ -20,10 +20,21 @@ class Cart(CustomBaseModelMixin):
 
 
 class PaymentMethod(CustomBaseModelMixin):
-    """Address
-        Configuration oAddressf PAddressymentMethodModules
     """
-    mode = models.CharField(max_length=20)
+        Configuration of PaymentMethodModules
+    """
+    CASH = 'Cash'
+    CARD = 'Debit/Credit Card'
+    UPI = 'UPI'
+    NET_BANKING = 'Net Banking'
+    METHOD_CHOICES = (
+        (CASH, 'Cash'),
+        (CARD, 'Debit/Credit Card'),
+        (UPI, 'UPI'),
+        (NET_BANKING, 'Net Banking'),
+    )
+
+    mode = models.CharField(max_length=20, choices=METHOD_CHOICES, default=CASH)
     slug = models.CharField(max_length=50, unique=True)
 
     def __str__(self):

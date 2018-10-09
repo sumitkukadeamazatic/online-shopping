@@ -122,7 +122,9 @@ class ProductSellerSerializer(serializers.ModelSerializer):
                   'rating',
                   'selling_price',
                   'selling_exprience',
-                  'delivery_days')
+                  'product',
+                  'delivery_days',
+                  'is_default')
 
     def get_name(self, obj): #pylint: disable=no-self-use
         '''Company Name'''
@@ -157,7 +159,7 @@ class ProductReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'product', 'rating', 'title', 'description')
         validators = [
             UniqueTogetherValidator(
-                queryset=Review.objects.all(), fields=('user', 'product'), )]
+                queryset=Review.objects.exclude(product__isnull=True), fields=('user', 'product'), )]
 
 
 class SellerReviewSerializer(serializers.ModelSerializer):
@@ -170,4 +172,4 @@ class SellerReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'seller', 'rating', 'title', 'description')
         validators = [
             UniqueTogetherValidator(
-                queryset=Review.objects.all(), fields=('user', 'seller'), )]
+                queryset=Review.objects.exclude(seller__isnull=True), fields=('user', 'seller'), )]

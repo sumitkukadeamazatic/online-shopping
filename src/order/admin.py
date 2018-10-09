@@ -2,8 +2,10 @@
         Configuration of admin
 """
 from django.contrib import admin
+from django.db.models import Q
+from django_admin_row_actions import AdminRowActionsMixin
+from importlib import import_module
 from . import models
-# Register your models here.
 
 
 class CartAdmin(admin.ModelAdmin):
@@ -43,7 +45,7 @@ class CartProductAdmin(admin.ModelAdmin):
                    'is_order_generated', 'quantity']
 
 
-class LineitemAdmin(admin.ModelAdmin):
+class LineitemAdmin(AdminRowActionsMixin, admin.ModelAdmin):
     """
         Configuration of LineitemAdmin
     """
@@ -51,6 +53,21 @@ class LineitemAdmin(admin.ModelAdmin):
     list_display = ['id', 'order_id', 'product_seller', 'status', 'quantity', 'base_price',
                     'shiping_cost', 'selling_price', 'gift_wrap_charges', 'created_at', 'updated_at']
     list_filter = ['created_at', 'updated_at', 'status']
+
+    def get_row_actions(self, obj):
+        shipping_details_relation = models.LineShippingDetails.objects.filter(
+            lineitem=obj)
+        if shipping_details_relation:
+            return []
+        row_actions = [
+            {
+                'label': 'Assign Shipping details',
+                'url': '/admin/order/lineshippingdetails/add/'
+
+            }
+        ]
+        row_actions += super(LineitemAdmin, self).get_row_actions(obj)
+        return row_actions
 
 
 class OrderLogAdmin(admin.ModelAdmin):
@@ -61,7 +78,7 @@ class OrderLogAdmin(admin.ModelAdmin):
     list_filter = ['created_at', 'updated_at']
 
 
-class ShippingDetailsAdmin(admin.ModelAdmin):
+class ShippingDetailsAdmin(AdminRowActionsMixin, admin.ModelAdmin):
     """
         Configuration of ShippingDetailsAdmin
     """
@@ -69,6 +86,29 @@ class ShippingDetailsAdmin(admin.ModelAdmin):
                     'deliverd_date', 'tracking_url', 'created_at']
     list_filter = ['created_at', 'updated_at',
                    'tracking_number', 'deliverd_date', 'courior_name']
+
+    def get_row_actions(self, obj):
+        order_relation = models.LineShippingDetails.objects.filter(
+            shipping_details=obj).first()
+        # need this because can not use "from return.models import *" as "return" is a keyword
+        return_models = import_module("return.models")
+        return_relation = return_models.LineitemShippingDetail.objects.filter(
+            shipping_detail=obj).first()
+        if order_relation or return_relation:
+            row_actions = []
+            return row_actions
+        row_actions = [
+            {
+                'label': 'Assign order lineitem',
+                'url': '/admin/order/lineshippingdetails/add/'
+            },
+            {
+                'label': 'Assign Return order lineitem',
+                'url': '/admin/return/lineitemshippingdetail/add/'
+            }
+        ]
+        row_actions += super(ShippingDetailsAdmin, self).get_row_actions(obj)
+        return row_actions
 
 
 class LineShippingDetailsAdmin(admin.ModelAdmin):
@@ -78,6 +118,13 @@ class LineShippingDetailsAdmin(admin.ModelAdmin):
     list_display = ['id', 'lineitem_id',
                     'quantity', 'description']
     list_filter = ['created_at', 'updated_at']
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'shipping_details':
+            return_models = import_module("return.models")
+            kwargs['queryset'] = models.ShippingDetails.objects.filter(~Q(id__in=models.LineShippingDetails.objects.values(
+                'shipping_details_id')) & ~Q(id__in=return_models.LineitemShippingDetail.objects.values('shipping_detail_id')))
+        return super(LineShippingDetailsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class LineitemTaxAdmin(admin.ModelAdmin):

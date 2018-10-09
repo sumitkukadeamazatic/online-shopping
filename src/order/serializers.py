@@ -286,3 +286,15 @@ class OrderShippingSerializer(serializers.ModelSerializer):
         for lineitem_quantity in lqls:
             LineShippingDetails.objects.create(lineitem=Lineitem.objects.get(id=lineitem_quantity['lineitem']), quantity=lineitem_quantity['quantity'], shipping_details=shipping_details, description=lineitem_quantity['description'])
         return shipping_details
+
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    """
+        Serializer is used to display Payment Method to Users
+    """
+
+    class Meta:
+        model = PaymentMethod
+        fields = (
+            'mode',
+        )

@@ -11,11 +11,11 @@ from .permissions import SellerAccessPermission
 
 class SellerViewSet(viewsets.ModelViewSet):
     """
-        Seller View using Model Viewset
+        Seller View to create, list and retrieve seller
     """
 
     permission_classes = [SellerAccessPermission]
-    http_method_names = ('get','post','patch','delete')
+    http_method_names = ('get','post','patch')
 
     def get_queryset(self):
         if self.request.user.is_superuser:

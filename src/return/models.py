@@ -59,8 +59,7 @@ class Lineitem(CustomBaseModelMixin):
     return_order = models.ForeignKey(Order, on_delete=models.CASCADE)
     lineitem = models.OneToOneField(
         order_model.Lineitem,
-        on_delete=models.CASCADE,
-        unique=True)
+        on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     reason = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)

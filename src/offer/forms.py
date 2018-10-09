@@ -26,3 +26,8 @@ class OfferForm(forms.ModelForm):
             elif cleaned_data['amount'] is None and cleaned_data['percentage'] is None:
                 raise forms.ValidationError(
                     "Set atleast one of amount or percentage.")
+        # Restrict admin to put either amount or amount_limit
+        if set(['amount', 'amount_limit']).issubset(cleaned_data):
+            if cleaned_data['amount'] and cleaned_data['amount_limit']:
+                raise forms.ValidationError(
+                    "Set either Amount or Amount Limit, not both.")

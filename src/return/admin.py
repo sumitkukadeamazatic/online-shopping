@@ -1,10 +1,12 @@
 """Admin
     All Return related Admin
 """
+from django.contrib import admin, messages
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib import admin, messages
 from django_admin_row_actions import AdminRowActionsMixin
+from order.models import ShippingDetails, LineShippingDetails as OrderLineShippingDetails
 from . import models
 
 # Register your models here.
@@ -59,17 +61,27 @@ class LineitemAdmin(AdminRowActionsMixin, admin.ModelAdmin):
                               level=messages.ERROR)
 
     def get_row_actions(self, obj):
-        if obj.status == 'CM':
+        shipping_details_relation = models.LineitemShippingDetail.objects.filter(
+            return_lineitem=obj)
+        if shipping_details_relation:
             row_actions = []
         else:
             row_actions = [
                 {
-                    'label': 'Change status',
-                    'action': 'change_status',
-                    'enabled': obj.status != 'CM',
+                    'label': 'Assign Shipping details',
+                    'url': '/admin/return/lineitemshippingdetail/add/'
                 }
             ]
-            row_actions += super(LineitemAdmin, self).get_row_actions(obj)
+        if obj.status == models.Lineitem.COMPLETE:
+            row_actions += []
+        else:
+            row_actions += [
+                {
+                    'label': 'Change status',
+                    'action': 'change_status',
+                }
+            ]
+        row_actions += super(LineitemAdmin, self).get_row_actions(obj)
         return row_actions
 
 
@@ -85,6 +97,12 @@ class LineitemShippingDetailAdmin(admin.ModelAdmin):
     list_filter = ['shipping_detail_id', 'return_lineitem_id',
                    'quantity', 'created_at', 'updated_at']
     list_editable = ['quantity']
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'shipping_detail':
+            kwargs['queryset'] = ShippingDetails.objects.filter(~Q(id__in=OrderLineShippingDetails.objects.values(
+                'shipping_details_id')) & ~Q(id__in=models.LineitemShippingDetail.objects.values('shipping_detail_id')))
+        return super(LineitemShippingDetailAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(models.LineitemShippingDetail,

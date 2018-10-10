@@ -7,7 +7,7 @@ from .models import SellerUser, Seller, User
 from product.models import Review
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .permissions import SellerAccessPermission
+from .permissions import SellerAccessPermission, ChangeStatusPermission
 
 class SellerViewSet(viewsets.ModelViewSet):
     """
@@ -28,3 +28,13 @@ class SellerViewSet(viewsets.ModelViewSet):
             return SellerDetailSerializer
         else:
             return SellerSerializer
+
+class ChangeStatusViewSet(viewsets.ModelViewSet):
+    """
+        View to change status of seller
+    """
+
+    http_method_names = ('patch')
+    queryset = Seller.objects.all()
+    serializer_class = ChangeStatusSerializer
+    permission_classes = [ChangeStatusPermission]

@@ -90,6 +90,6 @@ class PaymentMethodViewset(viewsets.ReadOnlyModelViewSet):
         Payment Method view used to display payment methods
     """
 
-    queryset = PaymentMethod.objects.all()
+    queryset = PaymentMethod.objects.filter(is_active='t')
     serializer_class = PaymentMethodSerializer
     permission_classes = (IsAuthenticated,)

@@ -78,3 +78,22 @@ class SellerDetailSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         serializer_data = Review.objects.filter(seller=obj).values()
         return ReviewSerializer(serializer_data, many=True).data
+
+class ChangeStatusSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Seller
+        fields = (
+            'status',
+        )
+        read_only_fields = (
+            'status',
+        )
+
+    def update(self, instance, validated_data):
+        if instance.status == "Active":
+            instance.status = "InActive"
+        else:
+            instance.status = "Active"
+        instance.save()
+        return instance

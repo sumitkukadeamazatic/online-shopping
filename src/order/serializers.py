@@ -1,7 +1,6 @@
 """
       This serializers script having cart and order api erlizer classes
 """
-import json
 from rest_framework import serializers
 from order.models import Cart, CartProduct, Order, OrderLog, Lineitem, PaymentMethod, LineShippingDetails, ShippingDetails, LineitemTax
 from product.models import ProductSeller, CategoryTax
@@ -69,7 +68,32 @@ class CartProductSerializer(serializers.ModelSerializer):
         """
            this method is used to validate product seller request data
         """
-        if not ProductSeller.objects.filter(pk=self.context['request'].data['product_seller']):
+        
+        cart = int(self.context['view'].kwargs.get('cart'))
+        print(cart)
+        if cart:
+            if self.context.get('request').auth:
+                if not Cart.objects.filter(id=cart,user=self.context.get('request').user,is_cart_processed=False):
+                    raise serializers.ValidationError("cart id in url not valid")
+                else:
+                    self.context['view'].kwargs['cart'] = Cart.objects.get(id=cart)
+            else:
+                carts = Cart.objects.filter(id=cart)
+                if not (carts and carts[0].user==None and carts[0].is_cart_processed==False):
+                    raise serializers.ValidationError("cart id in url not valid")
+                else:
+                    self.context['view'].kwargs['cart'] = carts[0]
+        else:
+            if self.context.get('request').auth:
+                self.context.get('view').kwargs['cart'] = Cart.objects.get_or_create(user=self.context.get('request').user, is_cart_processed=False)[0]
+            else:
+                self.context.get('view').kwargs['cart'] = Cart.objects.create(user=None, is_cart_processed=False)
+
+
+        if  self.context['request'].method != 'PATCH' and 'product_seller' not in self.context['request'].data:
+            raise  serializers.ValidationError("product_seller id is requred")
+        
+        if self.context['request'].method != 'PATCH' and  not ProductSeller.objects.filter(pk=self.context['request'].data['product_seller']):
             raise serializers.ValidationError("%s not valid product_seller id"%(self.context['request'].data['product_seller']))
         return data
 
@@ -77,8 +101,14 @@ class CartProductSerializer(serializers.ModelSerializer):
         """
            this method is used to create cart product
         """
-        cart = Cart.objects.get_or_create(user=self.context['request'].user, is_cart_processed=False)[0]
+        cart = self.context.get('view').kwargs.get('cart')
         product_seller = ProductSeller.objects.get(pk=self.context['request'].data['product_seller'])
+        cart_products = CartProduct.objects.filter(cart=cart,product_seller=product_seller)
+        if cart_products:
+            cart_products[0].quantity += obj['quantity']
+            cart_products[0].save()
+            return cart_products[0]
+        
         return CartProduct.objects.create(cart=cart, quantity=obj['quantity'], product_seller=product_seller, is_order_generated=self.context['request'].data['is_order_generated'])
 
 
@@ -147,6 +177,10 @@ class OrderSerializer(serializers.ModelSerializer):
         """
            this method is used to validate extra data whiout in serilizer data
         """
+        for i in ['cart', 'bill_address', 'shipping_address', 'payment_method', 'offers', 'products']:
+            if i not in self.context['request'].data:
+                raise serializers.ValidationError("%s id is Requered"%i)    
+        
         if not Cart.objects.filter(pk=self.context['request'].data['cart']):
             raise serializers.ValidationError("%s is not a vaid Cart id"%(self.context['request'].data['cart']))
 
@@ -155,21 +189,21 @@ class OrderSerializer(serializers.ModelSerializer):
 
         if not Address.objects.filter(pk=self.context['request'].data['shipping_address']):
             raise serializers.ValidationError("%s is not a vaid shipping_address id"%(self.context['request'].data['shipping_address']))
-        for offer in json.loads(self.context['request'].data['offers']):
+        for offer in (self.context['request'].data['offers']):
             if not Offer.objects.filter(pk=offer):
                 raise serializers.ValidationError("%s is not a vaid offer id"%(offer))
 
         if not PaymentMethod.objects.filter(pk=self.context['request'].data['payment_method']):
             raise serializers.ValidationError("%s is not a vaid payment_method id"%(self.context['request'].data['payment_method']))
 
-        for product in json.loads(self.context['request'].data['products']):
+        for product in (self.context['request'].data['products']):
             for offer in product['offers']:
                 if not Offer.objects.filter(pk=offer):
                     raise serializers.ValidationError("%s is not a vaid offer id"%(offer))
             if not ProductSeller.objects.filter(pk=product['product_seller']):
-                raise serializers.ValidationError("%s is not a vaid product_seller id"%(product['product_seller']))
+                raise serializers.ValidationError("%s is not a valid product_seller id"%(product['product_seller']))
             if not  CartProduct.objects.filter(cart=self.context['request'].data['cart'], is_order_generated=False, product_seller=product['product_seller']):
-                raise serializers.ValidationError("%s is not a vaid product_seller id"%(product['product_seller']))
+                raise serializers.ValidationError("%s is not a valid CartProduct id"%(product['product_seller']))
         return data
 
 
@@ -180,9 +214,9 @@ class OrderSerializer(serializers.ModelSerializer):
         cart = Cart.objects.get(pk=self.context['request'].data['cart'])
         bill_address = Address.objects.get(pk=self.context['request'].data['bill_address'])
         shipping_address = Address.objects.get(pk=self.context['request'].data['shipping_address'])
-        offers = Offer.objects.filter(id__in=json.loads(self.context['request'].data['offers']))
+        offers = Offer.objects.filter(id__in=(self.context['request'].data['offers']))
         payment_method = PaymentMethod.objects.get(pk=self.context['request'].data['payment_method'])
-        products = json.loads(self.context['request'].data['products'])
+        products = (self.context['request'].data['products'])
         order = Order.objects.create(
             payment_method=payment_method,
             cart=cart,
@@ -282,7 +316,7 @@ class OrderShippingSerializer(serializers.ModelSerializer):
             This method is used to create Order shipping serializer
         """
         shipping_details = ShippingDetails.objects.create(courior_name=valid_data['courior_name'], tracking_number=valid_data['tracking_number'], deliverd_date=valid_data['deliverd_date'], tracking_url=valid_data['tracking_url'])
-        lqls = json.loads(self.context['request'].data['lineitem_quantity'])
+        lqls = (self.context['request'].data['lineitem_quantity'])
         for lineitem_quantity in lqls:
             LineShippingDetails.objects.create(lineitem=Lineitem.objects.get(id=lineitem_quantity['lineitem']), quantity=lineitem_quantity['quantity'], shipping_details=shipping_details, description=lineitem_quantity['description'])
         return shipping_details

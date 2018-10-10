@@ -4,6 +4,7 @@
 from django.utils import timezone
 from django.db.models import Avg
 from rest_framework import serializers
+from rest_framework.exceptions import ParseError
 from rest_framework.validators import UniqueTogetherValidator
 from .models import (Product,
                      Category,
@@ -93,15 +94,35 @@ class WishlistSerializer(serializers.ModelSerializer):
     '''
     Wishlist Serializer
     '''
+    name = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    selling_price = serializers.SerializerMethodField()
     class Meta:
         '''meta'''
         model = Wishlist
-        fields = ('id', 'product')
+        fields = ('id', 'product_seller','name','rating','selling_price')
 
     def create(self, validate_data): #pylint: disable=arguments-differ
         '''create'''
+        if Wishlist.objects.filter(product_seller=validate_data['product_seller']):
+            raise ParseError(detail='product already exist in wishlist')
         return (Wishlist.objects.create(user=self.context['request'].user,
-                                        product=validate_data['product']))
+                                        product_seller=validate_data['product_seller']))
+
+    def get_name(self, obj): #pylint: disable=no-self-use
+        '''Product Name'''
+        return obj.product_seller.product.name
+
+    def get_rating(self, obj): #pylint: disable=no-self-use
+        '''Rating'''
+        return Review.objects.filter(product=obj.product_seller.product).aggregate(Avg('rating'))['rating__avg']
+
+    def get_selling_price(self, obj): #pylint: disable=no-self-use
+        '''selling price'''
+        price = obj.product_seller.selling_price
+        discount = obj.product_seller.discount
+        selling_price = price - (price * (discount / 100))
+        return selling_price
 
 
 class ProductSellerSerializer(serializers.ModelSerializer):

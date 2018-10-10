@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from product.models import CategoryTax
 from .permission import CartPermissions
-from .models import Cart, CartProduct, Order, Lineitem, ShippingDetails
-from .serializers import CartProductSerializer, TaxInvoiceSerializer, OrderSerializer, OrderShippingSerializer, TaxSerializer  #pylint: disable=ungrouped-imports
+from .models import Cart, CartProduct, Order, Lineitem, ShippingDetails, PaymentMethod
+from .serializers import CartProductSerializer, TaxInvoiceSerializer, OrderSerializer, OrderShippingSerializer, TaxSerializer, PaymentMethodSerializer  #pylint: disable=ungrouped-imports
 
 class OrderViewset(viewsets.ModelViewSet):                  #pylint: disable=too-many-ancestors
     """
@@ -95,3 +95,12 @@ class OrderShippingViewset(viewsets.ModelViewSet):     #pylint: disable=too-many
     permission_classes = (IsAuthenticated,)
     serializer_class = OrderShippingSerializer
     queryset = ShippingDetails.objects.all()
+
+class PaymentMethodViewset(viewsets.ReadOnlyModelViewSet):     #pylint: disable=too-many-ancestors
+    """
+        Payment Method view used to display payment methods
+    """
+
+    queryset = PaymentMethod.objects.filter(is_active='t')
+    serializer_class = PaymentMethodSerializer
+    permission_classes = (IsAuthenticated,)

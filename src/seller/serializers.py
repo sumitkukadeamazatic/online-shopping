@@ -3,6 +3,7 @@ from .models import Seller, User, SellerUser
 from product.models import Review
 from django.db.models import Avg
 from rest_framework.validators import ValidationError
+import re
 
 class SellerUserSerializer(serializers.ModelSerializer):
 
@@ -20,19 +21,16 @@ class SellerSerializer(serializers.ModelSerializer):
         fields = (
             'company_name',
             'contact_number',
-            'status',
         )
 
     def validate_contact_number(self, value):
-        print (value)
-        if not value.isdigit():
-            raise ValidationError({'contact_number': 'Contact number must contain number'})
+        if not re.match('^\+?[0-9]{5,}$',value):
+            raise ValidationError({'contact_number': 'Invalid contact number'})
         return value
 
     def create(self, obj):
-        print (self.context['request'].user.id)
         request_data = self.context['request'].data
-        seller_obj = Seller.objects.create(company_name=request_data['company_name'], contact_number=request_data['contact_number'], status=request_data['status'])
+        seller_obj = Seller.objects.create(company_name=request_data['company_name'], contact_number=request_data['contact_number'])
         seller_user_data = {'seller': seller_obj.id, 'user':self.context['request'].user.id}
         seller_user_serializer = SellerUserSerializer(data=seller_user_data)
         if seller_user_serializer.is_valid():
@@ -80,3 +78,22 @@ class SellerDetailSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         serializer_data = Review.objects.filter(seller=obj).values()
         return ReviewSerializer(serializer_data, many=True).data
+
+class ChangeStatusSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Seller
+        fields = (
+            'status',
+        )
+        read_only_fields = (
+            'status',
+        )
+
+    def update(self, instance, validated_data):
+        if instance.status == "Active":
+            instance.status = "InActive"
+        else:
+            instance.status = "Active"
+        instance.save()
+        return instance

@@ -13,9 +13,19 @@ class Seller(CustomBaseModelMixin):
     """
        Represents table 'seller'
     """
+    INPROGRESS = 'InProgress'
+    ACTIVE = 'Active'
+    INACTIVE = 'InActive'
+    STATUS_CHOICES = (
+        (INPROGRESS, 'InProgress'),
+        (ACTIVE, 'Active'),
+        (INACTIVE, 'InActive'),
+    )
+
     company_name = models.CharField(max_length=50, unique=True)
     contact_number = models.CharField(max_length=20)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=INPROGRESS)
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
         indexes = [

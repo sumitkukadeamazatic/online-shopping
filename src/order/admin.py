@@ -1,10 +1,10 @@
 """
         Configuration of admin
 """
+from importlib import import_module
 from django.contrib import admin
 from django.db.models import Q
 from django_admin_row_actions import AdminRowActionsMixin
-from importlib import import_module
 from . import models
 
 

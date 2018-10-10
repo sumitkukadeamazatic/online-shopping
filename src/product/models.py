@@ -1,13 +1,14 @@
 """
 product app models
 """
-
 from user.models import User
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 from utils.models import CustomBaseModelMixin
 from seller.models import Seller
 #
+
 
 class Category(CustomBaseModelMixin):
     """
@@ -185,6 +186,12 @@ class ProductSeller(CustomBaseModelMixin):
 
     def __str__(self):
         return self.seller.company_name+"-"+self.product.name
+
+    def validate_unique(self, exclude=None):
+        existing_relation = ProductSeller.objects.filter(
+            product=self.product, seller=self.seller).first()
+        if not existing_relation is None:
+            raise ValidationError('Product-Seller relation already exists.')
 
 
 class Review(CustomBaseModelMixin):

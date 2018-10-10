@@ -14,8 +14,7 @@ class OfferFilterBackend(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         today = timezone.localdate()
-        queryset = Offer.objects.filter(
-            valid_from__lte=today, valid_upto__gte=today)
+        queryset = Offer.objects.filter(valid_upto__gte=today)
         if 'product' in request.GET:
             queryset = queryset.filter(
                 productoffer__product_id=request.GET['product'])

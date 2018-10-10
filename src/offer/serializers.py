@@ -7,7 +7,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 from utils import serializers as utils_serializers
-from .models import Offer, UserOffer, ProductOffer
+from .models import Offer, UserOffer, ProductOffer, OrderOffer, OfferLineitem
 
 
 class OfferSerializer(serializers.ModelSerializer):
@@ -41,13 +41,16 @@ class OfferValidateSerializer(serializers.Serializer):  # pylint: disable=abstra
         # First check is this offer assigned to users exclusively
         user_offer_relations = UserOffer.objects.filter(offer=offer)
         if user_offer_relations:
+            # Checking if request is made by authenticated user
+            if not 'user_id' in data.keys():
+                raise ParseError(detail='Invalid data.')
             user_offer = user_offer_relations.filter(
                 user__id=data['user_id'], is_redeemed=False).first()
             if user_offer is None:
                 raise ParseError(detail='Invalid data.')
 
         # Check if offer is assigned to some specific products
-        product_offer_relation = ProductOffer.objects.filter(offers=offer)
+        product_offer_relation = ProductOffer.objects.filter(offer=offer)
         if product_offer_relation:
             product_offer = product_offer_relation.filter(
                 product_id__in=data['product'])
@@ -55,15 +58,28 @@ class OfferValidateSerializer(serializers.Serializer):  # pylint: disable=abstra
                 raise ParseError(detail='Invalid data.')
 
         # Check if offer has time limitation (e.g. offer is valid in 1PM-4PM)
-        if not ((offer.start_time is None) and (offer.end_time is None)):
-            time = datetime.time(datetime.now())
-            if not offer.start_time <= time <= offer.end_time:
+        time = datetime.time(datetime.now())
+        if not offer.start_time is None:
+            if not offer.start_time <= time:
+                raise ParseError(detail='Invalid data.')
+
+        if not offer.end_time is None:
+            if not offer.end_time >= time:
                 raise ParseError(detail='Invalid data.')
 
         # Check if offer has weekday limitation (e.g. offer is valid only on Mondays)
         if offer.days:
             weekday = (datetime.today()).weekday()
             if not weekday in offer.days:
+                raise ParseError(detail='Invalid data.')
+
+        # Check if offer has maximum count restriction
+        if not offer.max_count is None:
+            if offer.is_for_order:
+                offer_count = OrderOffer.objects.filter(offer=offer).count()
+            else:
+                offer_count = OfferLineitem.objects.filter(offer=offer).count()
+            if offer.max_count <= offer_count:
                 raise ParseError(detail='Invalid data.')
 
         # Check if offer has minimum order amount restriction

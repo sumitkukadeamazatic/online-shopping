@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from utils.models import CustomBaseModelMixin
 from seller.models import Seller
-
+#
 
 class Category(CustomBaseModelMixin):
     """
@@ -15,7 +15,7 @@ class Category(CustomBaseModelMixin):
     """
     name = models.CharField(max_length=50, unique=True)
     slug = models.CharField(max_length=50, unique=True)
-    parent_id = models.BigIntegerField(blank=True, null=True)
+    parent = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
         '''meta'''

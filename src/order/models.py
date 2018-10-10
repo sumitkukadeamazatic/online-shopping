@@ -71,6 +71,9 @@ class Order(CustomBaseModelMixin):
                     'billing_state'],
                 name='order_index')]
 
+    def __str__(self):
+        return "Order No. %s" % self.id  # pylint: disable=no-member
+
 
 class CartProduct(CustomBaseModelMixin):
     """
@@ -109,6 +112,11 @@ class Lineitem(CustomBaseModelMixin):
     gift_wrap_charges = models.DecimalField(
         max_digits=19, decimal_places=2, blank=True, null=True)
 
+    def __str__(self):
+        product_name = product_model.ProductSeller.objects.filter(
+            pk=self.product_seller_id).values('product__name').first()
+        return "Order No. %s - %s" % (self.order_id, product_name['product__name'])
+
 
 class OrderLog(CustomBaseModelMixin):
     """
@@ -139,6 +147,9 @@ class ShippingDetails(CustomBaseModelMixin):
                     'deliverd_date',
                     'courior_name'],
                 name='shiping_details_index')]
+
+    def __str__(self):
+        return '%s - %s' % (self.courior_name, self.tracking_number)
 
 
 class LineShippingDetails(CustomBaseModelMixin):

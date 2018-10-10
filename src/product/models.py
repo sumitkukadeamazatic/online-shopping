@@ -214,4 +214,5 @@ class Wishlist(CustomBaseModelMixin):
        This represents wishlist table in database.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_seller = models.ForeignKey(ProductSeller, on_delete=models.CASCADE)
+

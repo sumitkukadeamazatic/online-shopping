@@ -15,7 +15,7 @@ class Cart(CustomBaseModelMixin):
     user = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
-        related_name=None)
+        related_name=None,blank=True, null=True)
     is_cart_processed = models.BooleanField()
 
 

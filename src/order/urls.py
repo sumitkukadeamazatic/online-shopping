@@ -6,5 +6,5 @@ from . import views
 
 
 router = DefaultRouter() #pylint: disable=invalid-name
-router.register('', views.CartViewset, base_name='cart')
+router.register(r'(?P<cart>\d+)/cartproduct', views.CartProductViewset, base_name='cartproduct')
 urlpatterns = router.urls

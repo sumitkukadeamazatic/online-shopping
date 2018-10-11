@@ -1,11 +1,11 @@
 """
 product app models
 """
-from rest_framework import viewsets
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404, get_list_or_404
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden
+from django.shortcuts import get_list_or_404
+#from django.core.exceptions import PermissionDenied
+#from django.http import HttpResponseForbidden
+from rest_framework import viewsets, mixins
+#from rest_framework.response import Response
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated,
                                         IsAuthenticatedOrReadOnly,
@@ -17,8 +17,18 @@ from .serializers import (WishlistSerializer,
                           ProductReviewSerializer,
                           SellerReviewSerializer,
                           ProductSellerSerializer,
+                          ProductSellerListingSerializer,
                           ProductSerializer)
 
+class CreateDestroyUpdateModelViewSet(mixins.CreateModelMixin,
+                                      mixins.UpdateModelMixin,
+                                      mixins.DestroyModelMixin,
+                                      viewsets.GenericViewSet):
+    """
+    A viewset that provides default `create()`, `update()`,
+    `partial_update()`, `destroy()` actions.
+    """
+    pass
 
 class WishlistViewset(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
     '''
@@ -57,6 +67,16 @@ class ProductView(viewsets.ReadOnlyModelViewSet): #pylint: disable=too-many-ance
     filter_fields = ('slug')
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
+
+class SellerProductListingView(viewsets.ModelViewSet):
+    '''
+    Seller Product:
+    create product in product list,
+    seller can access seller product
+    '''
+    queryset = ProductSeller.objects.all()
+    serializer_class = ProductSellerListingSerializer
+    permission_classes = (IsAuthenticated,)
 
 class ProductSellerView(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
     '''

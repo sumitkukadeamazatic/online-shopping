@@ -1,13 +1,12 @@
 """
    Contact App Views
 """
-import json
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from product.models import CategoryTax
-from .permission import CartPermissions
 from .models import Cart, CartProduct, Order, Lineitem, ShippingDetails, PaymentMethod
 from .serializers import CartProductSerializer, TaxInvoiceSerializer, OrderSerializer, OrderShippingSerializer, TaxSerializer, PaymentMethodSerializer  #pylint: disable=ungrouped-imports
 
@@ -33,7 +32,7 @@ class OrderViewset(viewsets.ModelViewSet):                  #pylint: disable=too
         return Response(OrderSerializer(instance).data)
 
 
-class CartProductViewset(viewsets.ModelViewSet):
+class CartProductViewset(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
     """
      CartViewset is used to CartAPI.
     """
@@ -42,7 +41,6 @@ class CartProductViewset(viewsets.ModelViewSet):
     serializer_class = CartProductSerializer
 
     def get_queryset(self):
-        
         if not int(self.kwargs['cart']):
             if self.request.auth:
                 self.kwargs['cart'] = Cart.objects.get_or_create(user=self.request.user, is_cart_processed=False)[0].id
@@ -50,11 +48,10 @@ class CartProductViewset(viewsets.ModelViewSet):
                 self.kwargs['cart'] = Cart.objects.create(user=None, is_cart_processed=False).id
         cart = int(self.kwargs['cart'])
         if self.request.auth:
-            return CartProduct.objects.filter(cart__id=cart,cart__user=self.request.user, cart__is_cart_processed=False)
-        else:
-            return CartProduct.objects.filter(cart__id=cart,cart__user=None, cart__is_cart_processed=False)
+            return CartProduct.objects.filter(cart__id=cart, cart__user=self.request.user, cart__is_cart_processed=False)
+        return CartProduct.objects.filter(cart__id=cart, cart__user=None, cart__is_cart_processed=False)
 
-        
+
 class TaxViewset(viewsets.ReadOnlyModelViewSet):    #pylint: disable=too-many-ancestors
     """
      TaxViewset is used to TaxAPI

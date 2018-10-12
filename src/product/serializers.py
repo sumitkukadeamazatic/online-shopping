@@ -89,6 +89,11 @@ class ProductSerializer(serializers.ModelSerializer):
                                                          'title',
                                                          'description')[:3]
 
+class ProductSellerListingSerializer(serializers.ModelSerializer):
+    class Meta:
+        '''meta'''
+        model = ProductSeller
+        fields = '__all__'
 
 class WishlistSerializer(serializers.ModelSerializer):
     '''
@@ -115,7 +120,8 @@ class WishlistSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj): #pylint: disable=no-self-use
         '''Rating'''
-        return Review.objects.filter(product=obj.product_seller.product).aggregate(Avg('rating'))['rating__avg']
+        return Review.objects.filter(
+            product=obj.product_seller.product).aggregate(Avg('rating'))['rating__avg']
 
     def get_selling_price(self, obj): #pylint: disable=no-self-use
         '''selling price'''

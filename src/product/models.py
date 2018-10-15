@@ -2,11 +2,13 @@
 product app models
 """
 from user.models import User
+from seller.models import Seller
+from utils.models import CustomBaseModelMixin
+
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from utils.models import CustomBaseModelMixin
-from seller.models import Seller
+from django_extensions.db.fields import AutoSlugField
 #
 
 
@@ -121,7 +123,7 @@ class Product(CustomBaseModelMixin):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
-    slug = models.SlugField(unique=True)
+    slug = AutoSlugField(populate_from='name', unique=True, db_index=True)
     images = ArrayField(models.TextField())
 
     class Meta:

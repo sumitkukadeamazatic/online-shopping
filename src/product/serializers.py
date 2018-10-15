@@ -89,11 +89,17 @@ class ProductSerializer(serializers.ModelSerializer):
                                                          'title',
                                                          'description')[:3]
 
-class ProductSellerListingSerializer(serializers.ModelSerializer):
+class ProductListingSerializer(serializers.ModelSerializer):
+
     class Meta:
         '''meta'''
-        model = ProductSeller
-        fields = '__all__'
+        model = Product
+        fields = ('name', 'description', 'images', 'base_price', 'brand', 'slug', 'category')
+    
+    def validate_category(self, value):
+        if not Category.objects.filter(name=value, parent__isnull=False):
+            raise serializers.ValidationError("Sub-Category Not Found.")
+        return value
 
 class WishlistSerializer(serializers.ModelSerializer):
     '''

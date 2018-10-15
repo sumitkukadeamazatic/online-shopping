@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'corsheaders',
     'django_admin_row_actions',
     'rest_framework',
     'django_filters',
@@ -63,7 +64,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'querycount.middleware.QueryCountMiddleware'
+    'querycount.middleware.QueryCountMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -127,6 +129,24 @@ REST_KNOX = {
 }
 
 
-
-# REDIS related settings 
+# REDIS related settings
 BROKER_URL = 'redis://127.0.0.1:6379/'
+
+
+# CORS related settings
+CORS_ORIGIN_WHITELIST = (
+    '127.0.0.1:4200',
+    'localhost:4200'
+)
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media")

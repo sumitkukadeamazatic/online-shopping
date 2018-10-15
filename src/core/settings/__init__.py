@@ -125,3 +125,8 @@ REST_KNOX = {
     'TOKEN_TTL': timedelta(hours=10),
     'USER_SERIALIZER': 'user.serializers.KnoxUserLoginSerializer',
 }
+
+
+
+# REDIS related settings 
+BROKER_URL = 'redis://127.0.0.1:6379/'

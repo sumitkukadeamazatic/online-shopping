@@ -1,13 +1,16 @@
 """
 product app models
 """
-
 from user.models import User
+from seller.models import Seller
+from utils.models import CustomBaseModelMixin
+
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from utils.models import CustomBaseModelMixin
-from seller.models import Seller
+from django.core.exceptions import ValidationError
+from django_extensions.db.fields import AutoSlugField
 #
+
 
 class Category(CustomBaseModelMixin):
     """
@@ -120,7 +123,7 @@ class Product(CustomBaseModelMixin):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
-    slug = models.SlugField(unique=True)
+    slug = AutoSlugField(populate_from='name', unique=True, db_index=True)
     images = ArrayField(models.TextField())
 
     class Meta:
@@ -186,6 +189,12 @@ class ProductSeller(CustomBaseModelMixin):
     def __str__(self):
         return self.seller.company_name+"-"+self.product.name
 
+    def validate_unique(self, exclude=None):
+        existing_relation = ProductSeller.objects.filter(
+            product=self.product, seller=self.seller).first()
+        if not existing_relation is None:
+            raise ValidationError('Product-Seller relation already exists.')
+
 
 class Review(CustomBaseModelMixin):
     """
@@ -214,4 +223,5 @@ class Wishlist(CustomBaseModelMixin):
        This represents wishlist table in database.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_seller = models.ForeignKey(ProductSeller, on_delete=models.CASCADE)
+

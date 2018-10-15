@@ -1,11 +1,8 @@
 """
 product app models
 """
-from rest_framework import viewsets
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404, get_list_or_404
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden
+from django.shortcuts import get_list_or_404
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated,
                                         IsAuthenticatedOrReadOnly,
@@ -17,8 +14,19 @@ from .serializers import (WishlistSerializer,
                           ProductReviewSerializer,
                           SellerReviewSerializer,
                           ProductSellerSerializer,
+                          ProductListingSerializer,
                           ProductSerializer)
 
+class CreateDestroyUpdateModelViewSet(mixins.CreateModelMixin,
+                                      mixins.UpdateModelMixin,
+                                      mixins.DestroyModelMixin,
+                                      viewsets.GenericViewSet):
+    """
+    Custom model viewset
+    A viewset that provides default `create()`, `update()`,
+    `partial_update()`, `destroy()` actions.
+    """
+    pass
 
 class WishlistViewset(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
     '''
@@ -57,6 +65,16 @@ class ProductView(viewsets.ReadOnlyModelViewSet): #pylint: disable=too-many-ance
     filter_fields = ('slug')
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
+
+class SellerProductListingView(CreateDestroyUpdateModelViewSet):
+    '''
+    Seller Product:
+    create product in product list,
+    seller can access seller product
+    '''
+    queryset = Product.objects.all()
+    serializer_class = ProductListingSerializer
+    permission_classes = (IsAuthenticated,)
 
 class ProductSellerView(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
     '''
@@ -99,10 +117,8 @@ class SellerReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancesto
 
 
     def retrieve(self, request, pk=None):
-        queryset = Review.objects.all()
-        review = get_list_or_404(queryset, seller=pk)
-        serializer = SellerReviewSerializer(review, many=True)
-        #return Response(serializer.data)
+        queryset = Review.objects.filter(seller=pk)
+        serializer = SellerReviewSerializer(queryset, many=True)
         page = self.paginate_queryset(self.queryset)
         return self.get_paginated_response(serializer.data)
 
@@ -133,9 +149,8 @@ class ProductReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancest
 
 
     def retrieve(self, request, pk=None):
-        queryset = Review.objects.all()
-        review = get_list_or_404(queryset, product=pk)
-        serializer = ProductReviewSerializer(review, many=True)
+        queryset = Review.objects.filter(product=pk)
+        serializer = ProductReviewSerializer(queryset, many=True)
         page = self.paginate_queryset(self.queryset)
         return self.get_paginated_response(serializer.data)
 

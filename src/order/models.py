@@ -15,7 +15,10 @@ class Cart(CustomBaseModelMixin):
     user = models.ForeignKey(
         user_model.User,
         on_delete=models.CASCADE,
-        related_name=None)
+        related_name=None,
+        blank=True,
+        null=True
+    )
     is_cart_processed = models.BooleanField()
 
 
@@ -25,6 +28,7 @@ class PaymentMethod(CustomBaseModelMixin):
     """
     mode = models.CharField(max_length=20)
     slug = models.CharField(max_length=50, unique=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.mode
@@ -71,6 +75,9 @@ class Order(CustomBaseModelMixin):
                     'billing_state'],
                 name='order_index')]
 
+    def __str__(self):
+        return "Order No. %s" % self.id  # pylint: disable=no-member
+
 
 class CartProduct(CustomBaseModelMixin):
     """
@@ -109,6 +116,11 @@ class Lineitem(CustomBaseModelMixin):
     gift_wrap_charges = models.DecimalField(
         max_digits=19, decimal_places=2, blank=True, null=True)
 
+    def __str__(self):
+        product_name = product_model.ProductSeller.objects.filter(
+            pk=self.product_seller_id).values('product__name').first()
+        return "Order No. %s - %s" % (self.order_id, product_name['product__name'])
+
 
 class OrderLog(CustomBaseModelMixin):
     """
@@ -139,6 +151,9 @@ class ShippingDetails(CustomBaseModelMixin):
                     'deliverd_date',
                     'courior_name'],
                 name='shiping_details_index')]
+
+    def __str__(self):
+        return '%s - %s' % (self.courior_name, self.tracking_number)
 
 
 class LineShippingDetails(CustomBaseModelMixin):

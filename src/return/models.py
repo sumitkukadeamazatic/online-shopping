@@ -33,6 +33,9 @@ class Order(CustomBaseModelMixin):
             raise ValueError('Invalid status')
         super(Order, self).save(**kwargs)
 
+    def __str__(self):
+        return 'Return order No. %s' % self.id                                   # pylint: disable=no-member
+
 
 class Lineitem(CustomBaseModelMixin):
     """ Model
@@ -54,7 +57,7 @@ class Lineitem(CustomBaseModelMixin):
     )
 
     return_order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    lineitem = models.ForeignKey(
+    lineitem = models.OneToOneField(
         order_model.Lineitem,
         on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
@@ -78,6 +81,11 @@ class Lineitem(CustomBaseModelMixin):
         if not any(status in _tuple for _tuple in self.STATUS_CHOICES_FIELDS):
             raise ValueError('Invalid status')
         super(Lineitem, self).save(**kwargs)
+
+    def __str__(self):
+        product_name = order_model.Lineitem.objects.filter(
+            pk=self.lineitem_id).values('product_seller__product__name').first()
+        return 'Return order No.%s - %s' % (self.id, product_name['product_seller__product__name'])  # pylint: disable=no-member
 
 
 class OrderLog(CustomBaseModelMixin):

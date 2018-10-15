@@ -4,7 +4,7 @@
 from user import models as user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 from order import models as order_model
 from product import models as product_model
 from utils.models import CustomBaseModelMixin
@@ -15,6 +15,15 @@ class Offer(CustomBaseModelMixin):
     """
     Configuration of OfferModel
     """
+    WEEK_DAYS_CHOICES = (
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
+    )
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
     description = models.TextField()
@@ -36,13 +45,14 @@ class Offer(CustomBaseModelMixin):
         blank=True,
         null=True)
     amount_limit = models.DecimalField(
-        max_digits=5, decimal_places=2, blank=True, null=True)
+        max_digits=7, decimal_places=2, blank=True, null=True)
     for_new_user = models.BooleanField()
     valid_from = models.DateTimeField(blank=True, null=True)
     valid_upto = models.DateTimeField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
-    days = ArrayField(models.PositiveIntegerField(), blank=True, null=True)
+    days = ArrayField(models.PositiveSmallIntegerField(choices=WEEK_DAYS_CHOICES),
+                      blank=True, null=True)
     max_count = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:

@@ -36,7 +36,7 @@ class ProductAdmin(admin.ModelAdmin):
         'images']
     list_filter = ['created_at', 'updated_at']
     list_editable = ['base_price', 'images']
-    prepopulated_fields = {'slug': ('name',)}
+    #prepopulated_fields = {'slug': ('name',)}
 
 
 class TaxAdmin(admin.ModelAdmin):

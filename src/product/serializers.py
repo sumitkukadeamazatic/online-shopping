@@ -97,8 +97,9 @@ class ProductListingSerializer(serializers.ModelSerializer):
         fields = ('name', 'description', 'images', 'base_price', 'brand', 'slug', 'category')
     
     def validate_category(self, value):
+        # Seller can only add product in sub-category only
         if not Category.objects.filter(name=value, parent__isnull=False):
-            raise serializers.ValidationError("Sub-Category Not Found.")
+            raise serializers.ValidationError("Product Listing is allowd only in sub-categories only.")
         return value
 
 class WishlistSerializer(serializers.ModelSerializer):

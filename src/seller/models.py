@@ -26,6 +26,7 @@ class Seller(CustomBaseModelMixin):
     contact_number = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=INPROGRESS)
     is_verified = models.BooleanField(default=False)
+    average_rating = models.DecimalField(max_digits=4, decimal_places=2, null=True)
 
     class Meta:
         indexes = [

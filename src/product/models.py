@@ -2,14 +2,13 @@
 product app models
 """
 from user.models import User
+from django.db import models
+from django.db.models import Avg
+from django.contrib.postgres.fields import ArrayField
+from django_extensions.db.fields import AutoSlugField
+
 from seller.models import Seller
 from utils.models import CustomBaseModelMixin
-
-from django.db import models
-from django.contrib.postgres.fields import ArrayField
-from django.core.exceptions import ValidationError
-from django_extensions.db.fields import AutoSlugField
-#
 
 
 class Category(CustomBaseModelMixin):
@@ -125,6 +124,7 @@ class Product(CustomBaseModelMixin):
     base_price = models.DecimalField(max_digits=19, decimal_places=2)
     slug = AutoSlugField(populate_from='name', unique=True, db_index=True)
     images = ArrayField(models.TextField())
+    average_rating = models.DecimalField(max_digits=4, decimal_places=2, null=True)
 
     class Meta:
         '''meta'''
@@ -135,6 +135,7 @@ class Product(CustomBaseModelMixin):
                 ],
                 name='product_index'),
         ]
+
 
     def __str__(self):
         return self.name
@@ -149,6 +150,7 @@ class ProductFeature(CustomBaseModelMixin):
     value = models.CharField(max_length=50)
 
     class Meta:
+        '''Meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -176,6 +178,8 @@ class ProductSeller(CustomBaseModelMixin):
     is_default = models.BooleanField()
 
     class Meta:
+        '''Meta'''
+        unique_together = (("product", "seller"),)
         indexes = [
             models.Index(
                 fields=[
@@ -188,12 +192,6 @@ class ProductSeller(CustomBaseModelMixin):
 
     def __str__(self):
         return self.seller.company_name+"-"+self.product.name
-
-    def validate_unique(self, exclude=None):
-        existing_relation = ProductSeller.objects.filter(
-            product=self.product, seller=self.seller).first()
-        if not existing_relation is None:
-            raise ValidationError('Product-Seller relation already exists.')
 
 
 class Review(CustomBaseModelMixin):
@@ -209,7 +207,35 @@ class Review(CustomBaseModelMixin):
     title = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        '''Overriding this to update average ratings in product/seller'''
+        super().save(*args, **kwargs)
+        if self.product_id:
+            average = Review.objects.filter(
+                product_id=self.product_id).aggregate(Avg('rating'))['rating__avg']
+            Product.objects.filter(pk=self.product_id).update(average_rating=average)
+
+        if self.seller_id:
+            average = Review.objects.filter(
+                seller_id=self.seller_id).aggregate(Avg('rating'))['rating__avg']
+            Seller.objects.filter(pk=self.seller_id).update(average_rating=average)
+
+    def update(self, *args, **kwargs):
+        '''Overriding this to update average ratings in product/seller'''
+        super().update(*args, **kwargs)
+        if self.product_id:
+            average = Review.objects.filter(
+                product_id=self.product_id).aggregate(Avg('rating'))['rating__avg']
+            Product.objects.filter(pk=self.product_id).update(average_rating=average)
+
+        if self.seller_id:
+            average = Review.objects.filter(
+                seller_id=self.seller_id).aggregate(Avg('rating'))['rating__avg']
+            Seller.objects.filter(pk=self.seller_id).update(average_rating=average)
+
+
     class Meta:
+        '''Meta'''
         indexes = [
             models.Index(
                 fields=[
@@ -224,4 +250,3 @@ class Wishlist(CustomBaseModelMixin):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product_seller = models.ForeignKey(ProductSeller, on_delete=models.CASCADE)
-

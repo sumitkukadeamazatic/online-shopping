@@ -3,12 +3,13 @@ product app models
 """
 from django.shortcuts import get_list_or_404
 from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 from rest_framework.permissions import (AllowAny,
                                         IsAuthenticated,
                                         IsAuthenticatedOrReadOnly,
                                         IsAdminUser)
 from .filters import ProductFilter
-from .models import Category, Product, ProductSeller, Review, Wishlist
+from .models import Category, Product, ProductSeller, Review, Wishlist, Seller
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
                           ProductReviewSerializer,
@@ -76,6 +77,14 @@ class SellerProductListingView(CreateDestroyUpdateModelViewSet):
     serializer_class = ProductListingSerializer
     permission_classes = (IsAuthenticated,)
 
+    def create(self, request):
+        '''Overriding create, to add logged in user id'''
+        request.data['user'] = request.user.id
+        if not Seller.objects.filter(id=request.user.id).exists():
+            return Response({'error':'User is not seller.'})
+        return super().create(request)
+
+
 class ProductSellerView(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors
     '''
     Product Seller view -
@@ -90,8 +99,8 @@ class ProductSellerView(viewsets.ModelViewSet): #pylint: disable=too-many-ancest
         return super(ProductSellerView, self).get_permissions()
 
     def retrieve(self, request, pk=None):
-        queryset = ProductSeller.objects.all()
-        seller = get_list_or_404(queryset, product=pk)
+        #queryset = ProductSeller.objects.all()
+        seller = get_list_or_404(ProductSeller.objects.filter(product=pk), product=pk)
         serializer = ProductSellerSerializer(seller, many=True)
         page = self.paginate_queryset(self.queryset)
         return self.get_paginated_response(serializer.data)
@@ -130,7 +139,6 @@ class SellerReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancesto
     queryset = Review.objects.exclude(seller__isnull=True)
     serializer_class = SellerReviewSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-
 
 
 class ProductReviewView(viewsets.ModelViewSet): #pylint: disable=too-many-ancestors

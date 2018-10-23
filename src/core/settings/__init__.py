@@ -8,7 +8,9 @@ try:
     from .local import (SECRET_KEY,
                         DEBUG,
                         DATABASES,
-                        APP_ENVIRONMENT)
+                        APP_ENVIRONMENT,
+                        MEDIA_ROOT,
+                        MEDIA_URL)
 except ImportError:
     from .production import (SECRET_KEY,
                              DEBUG,
@@ -16,7 +18,19 @@ except ImportError:
                              AUTH_PASSWORD_VALIDATORS,
                              SENDGRID_API_KEY,
                              DEFAULT_FROM_MAIL,
-                             APP_ENVIRONMENT)
+                             APP_ENVIRONMENT,
+                             AWS_ACCESS_KEY_ID,
+                             AWS_SECRET_ACCESS_KEY,
+                             AWS_FILE_EXPIRE,
+                             AWS_PRELOAD_METADATA,
+                             AWS_QUERYSTRING_AUTH,
+                             DEFAULT_FILE_STORAGE,
+                             AWS_STORAGE_BUCKET_NAME,
+                             S3DIRECT_REGION,
+                             S3_URL,
+                             MEDIA_URL,
+                             MEDIA_ROOT,
+                             AWS_HEADERS)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'corsheaders',
+    'storages',
     'django_admin_row_actions',
     'rest_framework',
     'django_filters',
@@ -147,6 +162,3 @@ CORS_ALLOW_METHODS = (
     'POST',
     'PUT',
 )
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media")

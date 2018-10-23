@@ -12,7 +12,8 @@ from .models import (Product,
                      Review,
                      ProductSeller,
                      ProductFeature,
-                     Feature)
+                     Feature,
+                     Seller)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -89,11 +90,17 @@ class ProductSerializer(serializers.ModelSerializer):
                                                          'title',
                                                          'description')[:3]
 
-class ProductSellerListingSerializer(serializers.ModelSerializer):
+class ProductListingSerializer(serializers.ModelSerializer):
     class Meta:
         '''meta'''
-        model = ProductSeller
-        fields = '__all__'
+        model = Product
+        fields = ('name', 'description', 'images', 'base_price', 'brand', 'slug', 'category')
+
+    def validate_category(self, value):
+        # Seller can only add product in sub-category only
+        if not Category.objects.filter(name=value, parent__isnull=False):
+            raise serializers.ValidationError("Product Listing is allowd only in sub-categories.")
+        return value
 
 class WishlistSerializer(serializers.ModelSerializer):
     '''
@@ -105,7 +112,7 @@ class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         '''meta'''
         model = Wishlist
-        fields = ('id', 'product_seller','name','rating','selling_price')
+        fields = ('id', 'product_seller', 'name', 'rating', 'selling_price')
 
     def create(self, validate_data): #pylint: disable=arguments-differ
         '''create'''

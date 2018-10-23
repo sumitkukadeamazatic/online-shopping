@@ -8,14 +8,15 @@ from rest_framework.permissions import (AllowAny,
                                         IsAuthenticatedOrReadOnly,
                                         IsAdminUser)
 from .filters import ProductFilter
-from .models import Category, Product, ProductSeller, Review, Wishlist
+from .models import Category, Product, ProductSeller, Review, Wishlist, ProductImage
 from .serializers import (WishlistSerializer,
                           CategorySerializer,
                           ProductReviewSerializer,
                           SellerReviewSerializer,
                           ProductSellerSerializer,
                           ProductListingSerializer,
-                          ProductSerializer)
+                          ProductSerializer,
+                          ProductImageSerializer)
 
 class CreateDestroyUpdateModelViewSet(mixins.CreateModelMixin,
                                       mixins.UpdateModelMixin,
@@ -40,7 +41,7 @@ class WishlistViewset(viewsets.ModelViewSet): #pylint: disable=too-many-ancestor
 
     def get_queryset(self):
         """
-            tihs method is used to filter whishlist queryset using user
+            this method is used to filter whishlist queryset using user
         """
         return Wishlist.objects.filter(user=self.request.user)
 
@@ -56,6 +57,7 @@ class CategoryView(viewsets.ReadOnlyModelViewSet): #pylint: disable=too-many-anc
     permission_classes = (AllowAny,)
 
 class ProductView(viewsets.ReadOnlyModelViewSet): #pylint: disable=too-many-ancestors
+
     '''
     Product View:
     to get product list also added filters
@@ -65,6 +67,11 @@ class ProductView(viewsets.ReadOnlyModelViewSet): #pylint: disable=too-many-ance
     filter_fields = ('slug')
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
+
+class ProductImageView(CreateDestroyUpdateModelViewSet):
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
+    permission_classes = (IsAuthenticated,)
 
 class SellerProductListingView(CreateDestroyUpdateModelViewSet):
     '''

@@ -7,6 +7,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 from rest_framework.validators import UniqueTogetherValidator
 from .models import (Product,
+                     ProductImage,
                      Category,
                      Wishlist,
                      Review,
@@ -88,6 +89,12 @@ class ProductSerializer(serializers.ModelSerializer):
                                                          'user',
                                                          'title',
                                                          'description')[:3]
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        '''meta'''
+        model = ProductImage
+        fields = ('product', 'is_main_image', 'image')
 
 class ProductListingSerializer(serializers.ModelSerializer):
 

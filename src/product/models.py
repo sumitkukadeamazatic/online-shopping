@@ -2,13 +2,15 @@
 product app models
 """
 from user.models import User
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Avg
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
 from django_extensions.db.fields import AutoSlugField
 
 from seller.models import Seller
 from utils.models import CustomBaseModelMixin
+
 
 
 class Category(CustomBaseModelMixin):
@@ -162,6 +164,19 @@ class ProductFeature(CustomBaseModelMixin):
     def __str__(self):
         return self.feature.name + " of " + self.product.name
 
+class ProductImage(CustomBaseModelMixin):
+    '''Uploading Product images here'''
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    is_main_image = models.BooleanField(default=False)
+    image = models.ImageField(upload_to=settings.IMAGE_LOCATION)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        '''Overriding this because we dont want multiple main images flag to be True'''
+        if self.is_main_image:
+            ProductImage.objects.filter(is_main_image=True,
+                                        product=self.product).update(is_main_image=False)
+        super(ProductImage, self).save(*args, **kwargs)
 
 class ProductSeller(CustomBaseModelMixin):
     """

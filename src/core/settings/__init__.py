@@ -127,6 +127,8 @@ REST_KNOX = {
 }
 
 
-
 # REDIS related settings 
 BROKER_URL = 'redis://127.0.0.1:6379/'
+
+# Product Image Upload path
+IMAGE_LOCATION = 'product/images/%Y/%m/%d'
